@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -430,7 +431,12 @@ let SUBIDAS  = [{ id: "", label: "Sin subida a domicilio", precio: 0 }];
 
 // ── Construir CATALOGO y SUPLS desde el JSON del Gist ────────────────────────
 function buildCatalogo(data) {
-  // ── PRINCIPAL ──────────────────────────────────────────────
+  // Helper: normalizar familias (puede llegar como array o string "a,b,c")
+  function parseFamilias(f) {
+    if (Array.isArray(f)) return f.map(x => x.trim()).filter(Boolean);
+    if (typeof f === "string") return f.split(/[,\n]/).map(x => x.trim()).filter(Boolean);
+    return [];
+  }
   const famMeta = {}; // familia_id → { label, chip, tipo, maxLargo, maxAncho, grosores[], acabados{} }
 
   data.principal.forEach(row => {
@@ -463,15 +469,14 @@ function buildCatalogo(data) {
   });
 
   // ── SUPLEMENTOS → complementar famMeta + poblar SUPLS/ENTREGAS/SUBIDAS ────
-  const suplsVistos = new Set();
-
   data.suplementos.forEach(s => {
     if (!s.activo) return;
     const key = s.supl_key;
+    const familias = parseFamilias(s.familias);
 
     // Canteado/fresado → cantoPrecio en familia
     if (key.startsWith("canto_") || key === "fresado_alistonado") {
-      s.familias.forEach(fid => {
+      familias.forEach(fid => {
         if (famMeta[fid]) famMeta[fid].cantoPrecio = s.venta_iva;
       });
       return;
@@ -480,7 +485,7 @@ function buildCatalogo(data) {
     // Barnizados → añadir acabados y guardar precio suplemento
     if (key.startsWith("barnizado_")) {
       const esNatural = key.includes("natural");
-      s.familias.forEach(fid => {
+      familias.forEach(fid => {
         if (!famMeta[fid]) return;
         const fm = famMeta[fid];
         const acabId = esNatural ? "barnizado" : "tintado";
@@ -495,18 +500,17 @@ function buildCatalogo(data) {
       return;
     }
 
-    // Esquinas → se gestionan en añadirLinea por familia, guardamos en famMeta
+    // Esquinas → guardamos precioEsquina en famMeta
     if (key.startsWith("esquina_")) {
-      s.familias.forEach(fid => {
+      familias.forEach(fid => {
         if (famMeta[fid]) famMeta[fid].precioEsquina = s.venta_iva;
       });
       return;
     }
 
-    // Entrega y subida → ENTREGAS / SUBIDAS por familia
+    // Entrega y subida → guardamos en famMeta.servicios
     if (key.startsWith("entrega_") || key.startsWith("subida_")) {
-      // Se gestionan dinámicamente al seleccionar familia; guardamos en famMeta
-      s.familias.forEach(fid => {
+      familias.forEach(fid => {
         if (!famMeta[fid]) return;
         if (!famMeta[fid].servicios) famMeta[fid].servicios = {};
         famMeta[fid].servicios[key] = { label: s.nombre, precio: s.venta_iva };
@@ -514,27 +518,25 @@ function buildCatalogo(data) {
       return;
     }
 
-    // Pasacables, cortes, ranurado → SUPLS por familia
-    // Agrupamos por nombre visible para evitar duplicados en la UI
-    // (puede haber _kk y _sy con distinto precio según familia)
-    s.familias.forEach(fid => {
-      const uiKey = key.replace(/_kk$/, "").replace(/_sy$/, ""); // id canónico sin sufijo
-      const suplId = `${uiKey}__${fid}`;
-      if (suplsVistos.has(suplId)) return;
-      suplsVistos.add(suplId);
-
+    // Pasacables, cortes, ranurado → SUPLS agrupados por uiKey+precio
+    const uiKey = key.replace(/_kk$/, "").replace(/_sy$/, "");
+    const existente = SUPLS.find(x => x.uiKey === uiKey && x.precio === s.venta_iva);
+    if (existente) {
+      familias.forEach(fid => { if (!existente.familias.includes(fid)) existente.familias.push(fid); });
+    } else {
       const pendiente = s.venta_iva === 0 && s.nota === "precio sin definir";
       SUPLS.push({
-        id: suplId,
+        id: `${uiKey}__${SUPLS.length}`,
+        uiKey,
         nombre: s.nombre,
         precio: s.venta_iva,
         tipo: "qty",
         unidad: s.unidad,
-        familias: s.familias,
+        familias: [...familias],
         pendiente,
         nota: s.nota || "",
       });
-    });
+    }
   });
 
   // ── Convertir acabadosMap a array ordenado ─────────────────
