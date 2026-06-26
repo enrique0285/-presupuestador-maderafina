@@ -163,6 +163,7 @@
     .clausula-item { font-size: 8pt; color: #555; margin-bottom: 5pt; line-height: 1.5; }
     .clausula-item strong { color: #222; }
     .pres-title-input { font-size: 18pt !important; font-weight: 700 !important; color: #111 !important; border: none !important; }
+    img[alt="Madera Fina"] { width: 80px !important; height: 80px !important; opacity: 1 !important; }
     .entrega-wrap { display: block !important; }
     .entrega-row { display: none !important; }
     .nota-cliente-wrap { display: block !important; border-top: none !important; padding-top: 0 !important; }
@@ -341,8 +342,11 @@
 <!-- ===== PANEL DERECHO: PRESUPUESTO ===== -->
 <div class="right">
   <div class="pres-header">
-    <div class="pres-title-wrap">
-      <input class="pres-title-input" id="pres-titulo" value="Presupuesto estimado" maxlength="60" title="Edita el título del presupuesto">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div class="pres-title-wrap">
+        <input class="pres-title-input" id="pres-titulo" value="Presupuesto estimado" maxlength="60" title="Edita el título del presupuesto">
+      </div>
+      <img src="https://enrique0285.github.io/-presupuestador-maderafina/Madera-Fina-Logo.jpg" alt="Madera Fina" style="width:64px;height:64px;object-fit:contain;opacity:0.85;flex-shrink:0;margin-left:12px;">
     </div>
     <div class="pres-subtitle" id="pres-fecha"></div>
   </div>
