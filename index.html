@@ -822,16 +822,25 @@ function añadirLinea() {
   let extras = [];
   let totalLinea = 0;
 
-  // Si es rechapado/alistonado barnizado, sumamos suplemento
-  if ((acabadoId === "barnizado" || acabadoId === "tintado") && fam.barnizadoNatural) {
+  // Si es rechapado/alistonado barnizado: precio base = sin barnizar, barnizado va como suplemento separado
+  let barnizadoSupl = null;
+  if ((acabadoId === "barnizado" || acabadoId === "tintado") && (fam.barnizadoNatural || fam.barnizadoTintado)) {
     const baseAcabado = fam.acabados.find(a => a.id === "natural");
-    precioM2 = baseAcabado.precios[grosorVal] + fam.barnizadoNatural;
-    extras.push({ nombre: "Barnizado " + acabadoObj.label.toLowerCase(), precioUnit: parseFloat((fam.barnizadoNatural * (largo/100) * (ancho/100)).toFixed(2)) });
+    precioM2 = baseAcabado.precios[grosorVal]; // precio base sin barnizar
+    const precioBarni = acabadoId === "barnizado" ? fam.barnizadoNatural : fam.barnizadoTintado;
+    const nombreBarni = acabadoObj.label; // ya viene "Barnizado natural" o "Barnizado tintado" del JSON
+    barnizadoSupl = { nombre: nombreBarni, precioUnit: parseFloat((precioBarni * (largo/100) * (ancho/100)).toFixed(2)) };
   }
 
   const m2 = (largo / 100) * (ancho / 100);
-  const baseUnit = parseFloat((precioM2 * m2).toFixed(2)); // precio 1 tablero
+  const baseUnit = parseFloat((precioM2 * m2).toFixed(2)); // precio 1 tablero sin barnizar
   totalLinea += baseUnit;
+
+  // Añadir barnizado como suplemento separado si aplica
+  if (barnizadoSupl) {
+    extras.push(barnizadoSupl);
+    totalLinea += barnizadoSupl.precioUnit;
+  }
 
   // Canteado — precio por tablero
   let ladosActivos = [];
