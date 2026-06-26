@@ -387,7 +387,7 @@
     <div class="iva-note">Precios ya incluyen IVA en el desglose de líneas</div>
     <div class="btn-row" style="margin-top:10px">
       <button class="btn-sec" onclick="resetPresupuesto()">Nueva consulta</button>
-      <button class="btn-prim" id="btn-imprimir" onclick="window.print()" disabled>Imprimir / PDF</button>
+      <button class="btn-prim" id="btn-imprimir" onclick="imprimirPpto()" disabled>Imprimir / PDF</button>
     </div>
     <div class="btn-row">
       <button class="btn-sec" onclick="copiarTexto()" id="btn-copiar" disabled>Copiar resumen</button>
@@ -873,20 +873,20 @@ function añadirLinea() {
   suplsParaFamilia(famId).forEach(s => {
     const v = estado.supls[s.id];
     if (s.tipo === "toggle" && v && s.precio > 0) {
-      extras.push({ nombre: s.nombre, precioUnit: s.precio });
+      extras.push({ nombre: s.nombre, precioUnit: s.precio, qty: null });
       totalLinea += s.precio;
     } else if (s.tipo === "qty" && v > 0 && s.precio > 0) {
       const unit = parseFloat((s.precio * v).toFixed(2));
-      extras.push({ nombre: s.nombre, precioUnit: unit });
+      extras.push({ nombre: s.nombre, precioUnit: unit, qty: v, precioUd: s.precio });
       totalLinea += unit;
     } else if ((s.tipo === "toggle" && v || s.tipo === "qty" && v > 0) && (s.precio === 0 || s.pendiente)) {
-      extras.push({ nombre: s.nombre + " ⚠ precio a definir", precioUnit: null });
+      extras.push({ nombre: s.nombre + " ⚠ precio a definir", precioUnit: null, qty: null });
     }
   });
 
   totalLinea = parseFloat(totalLinea.toFixed(2)); // precio de 1 tablero completo
 
-  // Pedido mínimo — se evalúa sobre el total con cantidad
+  // Pedido mínimo por producto
   const MINIMO = 45;
   let minimoAplicado = false;
   const totalConCantidad = parseFloat((totalLinea * cantidad).toFixed(2));
@@ -903,8 +903,8 @@ function añadirLinea() {
     grosor: grosorVal,
     largo, ancho, cantidad,
     precioM2, m2,
-    baseUnit,       // precio tablero sin extras
-    totalUnit: totalLinea,  // precio 1 tablero completo con extras
+    baseUnit,
+    totalUnit: totalLinea,
     totalConCantidad: minimoAplicado ? MINIMO : totalConCantidad,
     ajusteMinimo,
     extras,
@@ -958,9 +958,12 @@ function renderLineas() {
   notaWrap.style.display = "block";
 
   container.innerHTML = lineas.map(l => {
-    const extrasHtml = l.extras.map(e =>
-      `<div>· ${e.nombre}${e.precioUnit !== null && e.precioUnit > 0 ? ": " + fmt(e.precioUnit) + " €" : ""}</div>`
-    ).join("");
+    const extrasHtml = l.extras.map(e => {
+      if (e.precioUnit === null) return `<div>· ${e.nombre}</div>`;
+      if (e.precioUnit === 0) return `<div>· ${e.nombre}</div>`;
+      if (e.qty) return `<div>· ${e.nombre} ×${e.qty} · ${fmt(e.precioUnit)} €</div>`;
+      return `<div>· ${e.nombre}: ${fmt(e.precioUnit)} €</div>`;
+    }).join("");
     const pendBadge = l.pendiente ? '<span style="color:#C0392B;font-weight:600"> ⚠ pendiente precio</span>' : "";
     const udLabel = l.cantidad > 1 ? `${l.cantidad} ud.` : "1 ud.";
     const minimoHtml = l.minimoAplicado ? `<div style="font-size:11px;color:#8B4513;margin-top:4px;">+ ${fmt(l.ajusteMinimo)} € (pedido mínimo 45,00 €)</div>` : "";
@@ -986,7 +989,15 @@ function renderLineas() {
   calcularTotales();
 }
 
-function calcularTotales() {
+function imprimirPpto() {
+  const titulo = document.getElementById("pres-titulo").value || "Presupuesto estimado";
+  const now = new Date();
+  const fecha = now.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" }).replace(/\//g, "-");
+  const nombreOriginal = document.title;
+  document.title = `Madera Fina · ${titulo} · ${fecha}`;
+  window.print();
+  setTimeout(() => { document.title = nombreOriginal; }, 1000);
+}
   if (lineas.length === 0) return;
   const entregaId = document.getElementById("sel-entrega")?.value || "";
   const subidaId = document.getElementById("sel-subida")?.value || "";
