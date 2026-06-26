@@ -998,6 +998,8 @@ function imprimirPpto() {
   window.print();
   setTimeout(() => { document.title = nombreOriginal; }, 1000);
 }
+
+function calcularTotales() {
   if (lineas.length === 0) return;
   const entregaId = document.getElementById("sel-entrega")?.value || "";
   const subidaId = document.getElementById("sel-subida")?.value || "";
