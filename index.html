@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -167,8 +166,10 @@
     .entrega-wrap { display: block !important; }
     .entrega-row { display: none !important; }
     .nota-cliente-wrap { display: block !important; border-top: none !important; padding-top: 0 !important; }
+    .nota-cliente-wrap:has(#nota-cliente:placeholder-shown) { display: none !important; }
     .nota-cliente-wrap .section-label { display: none; }
     #nota-cliente { border: none !important; padding: 0 !important; font-size: 9pt; color: #333; font-style: italic; resize: none; }
+    #nota-cliente::placeholder { color: transparent !important; }
     select { border: none !important; background: transparent !important; appearance: none; font-size: 9pt; color: #444; }
   }
 
@@ -999,8 +1000,19 @@ function imprimirPpto() {
   const fecha = now.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" }).replace(/\//g, "-");
   const nombreOriginal = document.title;
   document.title = `Madera Fina · ${titulo} · ${fecha}`;
+
+  // Ocultar bloque de nota si está vacío (respaldo por si :has() no funciona al imprimir)
+  const notaWrap = document.getElementById("nota-cliente-wrap");
+  const notaVal = document.getElementById("nota-cliente").value.trim();
+  const notaWasVisible = notaWrap.style.display;
+  if (!notaVal) notaWrap.style.display = "none";
+
   window.print();
-  setTimeout(() => { document.title = nombreOriginal; }, 1000);
+
+  setTimeout(() => {
+    document.title = nombreOriginal;
+    notaWrap.style.display = notaWasVisible;
+  }, 1000);
 }
 
 function calcularTotales() {
