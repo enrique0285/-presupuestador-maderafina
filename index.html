@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -310,9 +311,15 @@
     <div class="canto-note" id="canto-note">Pulsa los lados para activar el canteado · Pulsa las esquinas para esquina redondeada (R=6cm)</div>
   </div>
 
+  <!-- TRABAJOS -->
+  <div class="section-card">
+    <div class="section-label">Trabajos</div>
+    <div class="supl-grid" id="trabajos-grid"></div>
+  </div>
+
   <!-- SUPLEMENTOS -->
   <div class="section-card">
-    <div class="section-label">Otros suplementos</div>
+    <div class="section-label">Suplementos</div>
     <div class="supl-grid" id="supl-grid"></div>
   </div>
 
@@ -333,6 +340,13 @@
       <div class="field" style="display:flex;align-items:flex-end;padding-bottom:1px;">
         <div style="font-size:11px;color:var(--text2);line-height:1.5;">Los suplementos (pasacables, cortes…) se multiplican por esta cantidad. Si cada tablero lleva 1 pasacable, pon 1.</div>
       </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #c3dfc9;">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--text);">Pedido mínimo (45,00 €)</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px;">Aplica si el total de este producto es inferior a 45 €</div>
+      </div>
+      <button class="toggle on" id="tog-minimo" onclick="toggleMinimo(this)" aria-label="Pedido mínimo"></button>
     </div>
   </div>
 
@@ -738,37 +752,56 @@ function resetCroquis() {
   });
 }
 
+// Claves que son "trabajos" (van en su propia sección)
+const TRABAJOS_KEYS = ["mecan_", "excent_"];
+function esTrabajo(s) { return TRABAJOS_KEYS.some(k => s.uiKey && s.uiKey.startsWith(k)); }
+
+let minimoActivo = true;
+
+function toggleMinimo(btn) {
+  minimoActivo = !minimoActivo;
+  btn.classList.toggle("on", minimoActivo);
+  btn.classList.toggle("off", !minimoActivo);
+}
+
 // ============================================================
 // SUPLEMENTOS
 // ============================================================
 function buildSupls(famId) {
   const activos = famId ? suplsParaFamilia(famId) : [];
-  // Resetear estado de suplementos
   estado.supls = {};
   activos.forEach(s => { estado.supls[s.id] = s.tipo === "toggle" ? false : 0; });
 
-  const g = document.getElementById("supl-grid");
-  if (!activos.length) { g.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px">Sin suplementos disponibles</div>'; return; }
+  const trabajos = activos.filter(s => esTrabajo(s));
+  const supls = activos.filter(s => !esTrabajo(s));
 
-  g.innerHTML = activos.map(s => {
-    const precioStr = s.pendiente ? "Precio a consultar" : s.precio > 0 ? `${fmt(s.precio)} €/${s.unidad}` : (s.nota || "");
-    const nota = `<div class="supl-price">${precioStr}</div>`;
-    if (s.tipo === "toggle") {
-      return `<div class="supl-item" id="si-${s.id}">
-        <div><div class="supl-name">${s.nombre}</div>${nota}</div>
-        <button class="toggle" id="tog-${s.id}" onclick="toggleSupl('${s.id}',this)" aria-label="${s.nombre}"></button>
-      </div>`;
-    } else {
-      return `<div class="supl-item" id="si-${s.id}">
-        <div><div class="supl-name">${s.nombre}</div>${nota}</div>
-        <div class="supl-right">
-          <button class="qty-btn" onclick="changeQty('${s.id}',-1)">−</button>
-          <span class="qty-val" id="qty-${s.id}">0</span>
-          <button class="qty-btn" onclick="changeQty('${s.id}',1)">+</button>
-        </div>
-      </div>`;
-    }
-  }).join("");
+  const renderGrid = (items) => {
+    if (!items.length) return '<div style="font-size:12px;color:var(--text3);padding:8px">—</div>';
+    return items.map(s => {
+      const precioStr = s.pendiente ? "Precio a consultar" : s.precio > 0 ? `${fmt(s.precio)} €/${s.unidad}` : (s.nota || "");
+      const nota = `<div class="supl-price">${precioStr}</div>`;
+      if (s.tipo === "toggle") {
+        return `<div class="supl-item" id="si-${s.id}">
+          <div><div class="supl-name">${s.nombre}</div>${nota}</div>
+          <button class="toggle" id="tog-${s.id}" onclick="toggleSupl('${s.id}',this)" aria-label="${s.nombre}"></button>
+        </div>`;
+      } else {
+        return `<div class="supl-item" id="si-${s.id}">
+          <div><div class="supl-name">${s.nombre}</div>${nota}</div>
+          <div class="supl-right">
+            <button class="qty-btn" onclick="changeQty('${s.id}',-1)">−</button>
+            <span class="qty-val" id="qty-${s.id}">0</span>
+            <button class="qty-btn" onclick="changeQty('${s.id}',1)">+</button>
+          </div>
+        </div>`;
+      }
+    }).join("");
+  };
+
+  const gt = document.getElementById("trabajos-grid");
+  const gs = document.getElementById("supl-grid");
+  if (gt) gt.innerHTML = renderGrid(trabajos);
+  if (gs) gs.innerHTML = renderGrid(supls);
 }
 
 function toggleSupl(id, btn) {
@@ -891,12 +924,12 @@ function añadirLinea() {
 
   totalLinea = parseFloat(totalLinea.toFixed(2)); // precio de 1 tablero completo
 
-  // Pedido mínimo por producto
+  // Pedido mínimo por producto (solo si está activado)
   const MINIMO = 45;
   let minimoAplicado = false;
   const totalConCantidad = parseFloat((totalLinea * cantidad).toFixed(2));
   let ajusteMinimo = 0;
-  if (totalConCantidad < MINIMO && !extras.some(e => e.precioUnit === null)) {
+  if (minimoActivo && totalConCantidad < MINIMO && !extras.some(e => e.precioUnit === null)) {
     ajusteMinimo = parseFloat((MINIMO - totalConCantidad).toFixed(2));
     minimoAplicado = true;
   }
@@ -1069,6 +1102,9 @@ function resetConfigurador() {
   document.getElementById("canto-info").style.display = "none";
   document.getElementById("canto-note").textContent = "Pulsa los lados para activar el canteado · Pulsa las esquinas para esquina redondeada (R=6cm)";
   document.getElementById("btn-add").disabled = true;
+  minimoActivo = true;
+  const togMin = document.getElementById("tog-minimo");
+  if (togMin) { togMin.classList.add("on"); togMin.classList.remove("off"); }
   resetCroquis();
   buildSupls(null); // limpia el grid de suplementos
 }
