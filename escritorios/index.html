@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escritorios · Madera Fina / Livelia</title>
+<style>
+  :root {
+    --bg: #F7F5F2; --surface: #FFFFFF; --surface2: #F2EFE9;
+    --border: #E0DDD6; --border2: #C8C4BC;
+    --text: #1C1A17; --text2: #6B6760; --text3: #9C9890;
+    --accent: #2B5C3F; --accent-light: #EAF2EC;
+    --danger: #C0392B;
+    --radius: 8px; --radius-lg: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+  .app { display: grid; grid-template-columns: 1fr 380px; min-height: 100vh; }
+  .left { padding: 2rem; overflow-y: auto; }
+  .right { background: var(--surface); border-left: 1px solid var(--border); padding: 2rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+  .header { margin-bottom: 2rem; }
+  .brand { font-size: 22px; font-weight: 600; color: var(--accent); letter-spacing: -0.5px; }
+  .brand span { color: var(--text3); font-weight: 400; font-size: 14px; margin-left: 8px; }
+  .section-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+  .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 1rem; }
+  .row { display: grid; gap: 12px; margin-bottom: 12px; }
+  .row.c2 { grid-template-columns: 1fr 1fr; }
+  .row.c3 { grid-template-columns: 1fr 1fr 1fr; }
+  .field label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 4px; font-weight: 500; }
+  select, input[type=number], input[type=text] {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius);
+    font-size: 14px; background: var(--surface); color: var(--text); outline: none; transition: border-color .15s;
+  }
+  select:focus, input:focus { border-color: var(--accent); }
+  select:disabled { background: var(--surface2); color: var(--text3); }
+  .chip { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .chip.mel { background: #EBF4FF; color: #1A5276; }
+  .chip.hpl { background: #F4ECFF; color: #6C3483; }
+  .chip.mad { background: #FEF9E7; color: #784212; }
+  .dim-note { font-size: 11px; color: var(--text3); margin-top: 3px; }
+  /* ESQUEMA VISUAL ESCRITORIO */
+  .esquema-wrap { display: flex; justify-content: center; padding: 1rem 0 0.5rem; }
+  .esquema-svg { width: 100%; max-width: 360px; }
+  .esquema-label { font-size: 10px; fill: var(--text2); font-family: 'Segoe UI', sans-serif; }
+  .esquema-dim { font-size: 9px; fill: var(--text3); font-family: 'Segoe UI', sans-serif; font-style: italic; }
+  /* SUPLEMENTOS */
+  .supl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .supl-item { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; background: var(--surface2); display: flex; align-items: center; justify-content: space-between; }
+  .supl-item.active { border-color: var(--accent); background: var(--accent-light); }
+  .supl-name { font-size: 12px; font-weight: 500; color: var(--text); }
+  .supl-price { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .supl-right { display: flex; align-items: center; gap: 6px; }
+  .qty-btn { width: 22px; height: 22px; border: 1px solid var(--border2); border-radius: 5px; background: var(--surface); color: var(--text); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .qty-btn:hover { background: var(--border); }
+  .qty-val { font-size: 13px; font-weight: 600; min-width: 14px; text-align: center; }
+  .toggle { width: 34px; height: 18px; border-radius: 9px; border: none; cursor: pointer; position: relative; background: var(--border2); transition: background .2s; flex-shrink: 0; }
+  .toggle.on { background: var(--accent); }
+  .toggle::after { content:''; position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; border-radius: 50%; background: #fff; transition: transform .2s; }
+  .toggle.on::after { transform: translateX(16px); }
+  /* DESGLOSE INCLUIDO */
+  .incluido-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+  .incluido-box strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+  .incluido-row { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid var(--border); }
+  .incluido-row:last-child { border-bottom: none; }
+  /* BTN */
+  .btn-add { width: 100%; padding: 11px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 4px; transition: background .15s; }
+  .btn-add:hover { background: #1e4530; }
+  .btn-add:disabled { background: var(--border2); cursor: not-allowed; }
+  /* PANEL DERECHO */
+  .pres-title-input { font-size: 16px; font-weight: 600; color: var(--text); background: transparent; border: none; border-bottom: 1.5px dashed var(--border2); outline: none; width: 100%; padding: 2px 0; cursor: text; }
+  .pres-title-input:focus { border-bottom-color: var(--accent); }
+  .pres-subtitle { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .lineas { flex: 1; overflow-y: auto; }
+  .linea { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; margin-bottom: 10px; background: var(--surface2); position: relative; }
+  .linea-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .linea-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .linea-specs { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .linea-price { font-size: 15px; font-weight: 700; color: var(--accent); white-space: nowrap; margin-left: 8px; }
+  .linea-del { position: absolute; top: 8px; right: 8px; background: none; border: none; cursor: pointer; color: var(--text3); font-size: 16px; padding: 2px 4px; border-radius: 4px; }
+  .linea-del:hover { background: #fdecea; color: var(--danger); }
+  .linea-extras { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  .entrega-wrap { padding: 10px 0 4px; border-top: 1px solid var(--border); margin-top: 6px; display: none; }
+  .entrega-row { display: flex; gap: 10px; }
+  .entrega-row .field label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 4px; font-weight: 500; }
+  .nota-cliente-wrap { padding: 10px 0 4px; border-top: 1px solid var(--border); margin-top: 4px; display: none; }
+  .notas-input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; resize: none; color: var(--text); background: var(--surface); }
+  .notas-input:focus { outline: none; border-color: var(--accent); }
+  .totales { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: auto; }
+  .total-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); margin-bottom: 6px; }
+  .total-row.big { font-size: 18px; font-weight: 700; color: var(--text); margin-top: 8px; }
+  .total-row.big .val { color: var(--accent); }
+  .iva-note { font-size: 11px; color: var(--text3); text-align: right; margin-top: 2px; }
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+  .btn-sec { flex: 1; padding: 9px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--surface); font-size: 13px; cursor: pointer; color: var(--text); }
+  .btn-sec:hover { background: var(--surface2); }
+  .btn-prim { flex: 1; padding: 9px; border: none; border-radius: var(--radius); background: var(--accent); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-prim:hover { background: #1e4530; }
+  .btn-prim:disabled { background: var(--border2); cursor: not-allowed; }
+  .clausulas-print { display: none; }
+  .info-box { background: var(--accent-light); border: 1px solid #c3dfc9; border-radius: var(--radius); padding: 10px 12px; font-size: 12px; color: #1e4530; margin-bottom: 12px; }
+
+  @media print {
+    @page { margin: 1.5cm 2cm; }
+    body { background: #fff !important; font-size: 12pt; color: #111 !important; }
+    .left { display: none !important; }
+    .app { display: block; }
+    .right { position: static; height: auto; border: none; padding: 0; background: #fff !important; }
+    .pres-title-input { font-size: 18pt !important; font-weight: 700 !important; color: #111 !important; border: none !important; }
+    img[alt="Madera Fina"] { width: 80px !important; height: 80px !important; opacity: 1 !important; }
+    .linea { border: 1px solid #ccc !important; background: #f9f9f9 !important; page-break-inside: avoid; margin-bottom: 8pt; }
+    .linea-name { font-size: 11pt; color: #111 !important; }
+    .linea-specs { font-size: 9pt; color: #444 !important; }
+    .linea-extras { font-size: 9pt; color: #333 !important; }
+    .linea-price { font-size: 12pt; color: #2B5C3F !important; }
+    .totales { border-top: 2px solid #333 !important; }
+    .total-row { font-size: 10pt; color: #111 !important; }
+    .total-row.big { font-size: 14pt !important; }
+    .total-row.big .val { color: #2B5C3F !important; }
+    .btn-row, .btn-prim, .btn-sec { display: none !important; }
+    .linea-del { display: none !important; }
+    .entrega-wrap { display: block !important; }
+    .entrega-row { display: none !important; }
+    .nota-cliente-wrap { display: block !important; border-top: none !important; padding-top: 0 !important; }
+    .nota-cliente-wrap .section-label { display: none; }
+    #nota-cliente { border: none !important; padding: 0 !important; font-size: 9pt; color: #333; font-style: italic; resize: none; }
+    .nota-cliente-wrap:has(#nota-cliente:placeholder-shown) { display: none !important; }
+    #nota-cliente::placeholder { color: transparent !important; }
+    select { border: none !important; background: transparent !important; appearance: none; font-size: 9pt; color: #444; }
+    .clausulas-print { display: block !important; margin-top: 24pt; border-top: 1px solid #ccc; padding-top: 12pt; }
+    .clausula-titulo { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #444; margin-bottom: 8pt; }
+    .clausula-item { font-size: 8pt; color: #555; margin-bottom: 5pt; line-height: 1.5; }
+    .clausula-item strong { color: #222; }
+  }
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    .right { position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== PANEL IZQUIERDO ===== -->
+<div class="left">
+  <div class="header">
+    <div class="brand">Madera Fina <span>· Escritorios</span></div>
+    <div id="loading-msg" style="margin-top:8px;font-size:12px;color:var(--text3);">⏳ Cargando tarifas…</div>
+  </div>
+
+  <!-- MODELO -->
+  <div class="section-card">
+    <div class="section-label">Modelo</div>
+    <div class="row c2">
+      <div class="field">
+        <label>Modelo de escritorio</label>
+        <select id="modelo" onchange="onModeloChange()">
+          <option value="">Seleccionar modelo...</option>
+          <option value="liso">Escritorio Liso</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Material <span id="chip-mat"></span></label>
+        <select id="material" onchange="onMaterialChange()" disabled>
+          <option value="">— elige modelo —</option>
+        </select>
+      </div>
+    </div>
+    <div class="row c2">
+      <div class="field">
+        <label>Acabado</label>
+        <select id="acabado" onchange="calcular()" disabled>
+          <option value="">—</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Grosor (cm)</label>
+        <select id="grosor" onchange="calcular()" disabled>
+          <option value="">—</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEDIDAS -->
+  <div class="section-card">
+    <div class="section-label">Medidas</div>
+    <div class="row c3">
+      <div class="field">
+        <label>Largo (cm)</label>
+        <input type="number" id="largo" value="140" min="60" max="300" oninput="calcular()">
+        <div class="dim-note" id="note-largo"></div>
+      </div>
+      <div class="field">
+        <label>Ancho (cm)</label>
+        <input type="number" id="ancho" value="70" min="40" max="100" oninput="calcular()">
+        <div class="dim-note" id="note-ancho"></div>
+      </div>
+      <div class="field">
+        <label>Alto (cm)</label>
+        <input type="number" id="alto" value="75" min="60" max="90" oninput="calcular()">
+        <div class="dim-note" id="note-alto"></div>
+      </div>
+    </div>
+
+    <!-- Esquema visual dinámico -->
+    <div class="esquema-wrap">
+      <svg class="esquema-svg" viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" id="esquema-svg">
+        <!-- Tapa -->
+        <rect x="30" y="14" width="300" height="18" rx="2" fill="#D4B896" stroke="#8B6914" stroke-width="1.5"/>
+        <text class="esquema-label" x="180" y="27" text-anchor="middle">Tapa</text>
+        <!-- Pata izq — alineada al borde izquierdo de la tapa -->
+        <rect x="30" y="32" width="18" height="148" rx="2" fill="#E8E8E0" stroke="#999" stroke-width="1"/>
+        <text class="esquema-label" x="39" y="112" text-anchor="middle" transform="rotate(-90,39,112)">Pata izq.</text>
+        <!-- Pata dcha — alineada al borde derecho de la tapa -->
+        <rect x="312" y="32" width="18" height="148" rx="2" fill="#E8E8E0" stroke="#999" stroke-width="1"/>
+        <text class="esquema-label" x="321" y="112" text-anchor="middle" transform="rotate(90,321,112)">Pata dcha.</text>
+        <!-- Trasera — panel entre patas, parte superior -->
+        <rect x="48" y="32" width="264" height="40" rx="1" fill="#D0D0C8" stroke="#999" stroke-width="1" opacity="0.9"/>
+        <text class="esquema-label" x="180" y="56" text-anchor="middle">Trasera · 40 cm</text>
+        <!-- Dimensiones -->
+        <text class="esquema-dim" id="svg-largo" x="180" y="8" text-anchor="middle">← 140 cm →</text>
+        <text class="esquema-dim" id="svg-alto" x="10" y="112" text-anchor="middle" transform="rotate(-90,10,112)">75 cm</text>
+        <text class="esquema-dim" id="svg-ancho" x="180" y="196" text-anchor="middle">Fondo: 70 cm</text>
+      </svg>
+    </div>
+    <div id="desglose-piezas" style="margin-top:8px;"></div>
+  </div>
+
+  <!-- INCLUIDO -->
+  <div class="section-card" id="card-incluido" style="display:none">
+    <div class="section-label">Trabajos incluidos</div>
+    <div class="incluido-box" id="trabajos-incluidos"></div>
+  </div>
+
+  <!-- SUPLEMENTOS -->
+  <div class="section-card">
+    <div class="section-label">Suplementos opcionales</div>
+    <div class="supl-grid" id="supl-grid"></div>
+  </div>
+
+  <!-- NOTAS + CANTIDAD -->
+  <div class="section-card">
+    <div class="section-label">Notas internas</div>
+    <textarea class="notas-input" id="notas-linea" rows="2" placeholder="Ej: color especial, urgente..."></textarea>
+  </div>
+
+  <div class="section-card" style="background:var(--accent-light);border-color:#c3dfc9;">
+    <div class="section-label" style="color:var(--accent);">Cantidad</div>
+    <div class="field">
+      <label>Nº de unidades</label>
+      <input type="number" id="cantidad" value="1" min="1" oninput="calcular()" style="font-size:16px;font-weight:600;">
+    </div>
+  </div>
+
+  <button class="btn-add" id="btn-add" onclick="añadirLinea()" disabled>+ Añadir al presupuesto</button>
+</div>
+
+<!-- ===== PANEL DERECHO ===== -->
+<div class="right">
+  <div class="pres-header" style="margin-bottom:1rem;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div style="flex:1">
+        <input class="pres-title-input" id="pres-titulo" value="Presupuesto estimado" maxlength="60">
+      </div>
+      <img src="https://enrique0285.github.io/-presupuestador-maderafina/Madera-Fina-Logo.jpg" alt="Madera Fina" style="width:64px;height:64px;object-fit:contain;opacity:0.85;flex-shrink:0;margin-left:12px;">
+    </div>
+    <div class="pres-subtitle" id="pres-fecha"></div>
+  </div>
+
+  <div class="lineas" id="lineas-container"></div>
+
+  <!-- ENTREGA -->
+  <div class="entrega-wrap" id="entrega-wrap">
+    <div class="entrega-row">
+      <div class="field" style="flex:1">
+        <label>Entrega</label>
+        <select id="sel-entrega" onchange="calcularTotales()">
+          <option value="">Sin entrega</option>
+        </select>
+      </div>
+      <div class="field" style="flex:1">
+        <label>Subida a domicilio</label>
+        <select id="sel-subida" onchange="calcularTotales()">
+          <option value="">Sin subida</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTA CLIENTE -->
+  <div class="nota-cliente-wrap" id="nota-cliente-wrap">
+    <div class="section-label" style="margin-bottom:4px">Nota para el cliente</div>
+    <textarea class="notas-input" id="nota-cliente" rows="2" placeholder="Nota visible para el cliente..."></textarea>
+  </div>
+
+  <div class="totales">
+    <div class="total-row" id="row-entrega" style="display:none"><span id="label-entrega"></span><span id="t-entrega"></span></div>
+    <div class="total-row" id="row-subida" style="display:none"><span id="label-subida"></span><span id="t-subida"></span></div>
+    <div class="total-row"><span>Subtotal (sin IVA)</span><span id="t-base">—</span></div>
+    <div class="total-row"><span>IVA 21%</span><span id="t-iva">—</span></div>
+    <div class="total-row big"><span>Total</span><span class="val" id="t-total">—</span></div>
+    <div class="iva-note">IVA incluido en el desglose de líneas</div>
+    <div class="btn-row" style="margin-top:10px">
+      <button class="btn-sec" onclick="resetPresupuesto()">Nueva consulta</button>
+      <button class="btn-prim" id="btn-imprimir" onclick="imprimirPpto()" disabled>Imprimir / PDF</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-sec" onclick="copiarTexto()" id="btn-copiar" disabled>Copiar resumen</button>
+    </div>
+  </div>
+
+  <!-- CLÁUSULAS PRINT -->
+  <div class="clausulas-print">
+    <div class="clausula-titulo">Condiciones del presupuesto</div>
+    <div class="clausula-item"><strong>Validez del presupuesto:</strong> Este presupuesto tiene una validez de 30 días naturales a partir de la fecha de emisión.</div>
+    <div class="clausula-item"><strong>Medidas:</strong> Las medidas indicadas han sido proporcionadas por el cliente. Madera Fina no se hace responsable de errores derivados de mediciones incorrectas.</div>
+    <div class="clausula-item"><strong>Tolerancias de fabricación:</strong> Los tableros se fabrican con una tolerancia estándar de ±2 mm en las dimensiones indicadas.</div>
+    <div class="clausula-item"><strong>Plazo de entrega:</strong> El plazo se comunicará al confirmar el pedido y quedará sujeto a disponibilidad de material.</div>
+    <div class="clausula-item"><strong>Forma de pago:</strong> El importe total deberá abonarse al confirmar el pedido. No se iniciará la fabricación hasta la recepción del pago.</div>
+  </div>
+</div>
+
+</div>
+<script>
+const GIST_URL = "https://gist.githubusercontent.com/enrique0285/ab5274e8a6a37e7ad753acfda769e188/raw/tarifas-maderafina.json";
+const TRASERA_FONDO = 40; // cm fijo
+
+// Rangos de medidas por modelo (actualizar cuando se definan)
+const MODELOS = {
+  liso: {
+    nombre: "Escritorio Liso",
+    largo:  { min: 100, max: 300, def: 140 },
+    ancho:  { min: 50,  max: 100, def: 70  },
+    alto:   { min: 60,  max: 90,  def: 75  },
+    // Familias permitidas (se cargan del Gist)
+    familias: ["melamina","hpl1","hpl2","rechapado-pino","rechapado-roble","rechapado-haya","alistonado-pino","alistonado-roble","alistonado-haya"],
+    // Mecanizados a testa incluidos (2 por defecto, uno por pata)
+    mecantesta_qty: 2,
+  }
+};
+
+let CATALOGO = {};
+let SUPLS_ESC = []; // suplementos para escritorios
+let ENTREGAS = [{ id: "", label: "Sin entrega", precio: 0 }];
+let SUBIDAS  = [{ id: "", label: "Sin subida a domicilio", precio: 0 }];
+let lineas = [];
+let lineaId = 0;
+let estado = { supls: {} };
+
+function fmt(n, dec=2) {
+  return n.toLocaleString("es-ES", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+
+// ── Parsear familias (array o string con comas) ───────────────────────────────
+function parseFamilias(f) {
+  if (Array.isArray(f)) return f.map(x => x.trim()).filter(Boolean);
+  if (typeof f === "string") return f.split(/[,\n]/).map(x => x.trim()).filter(Boolean);
+  return [];
+}
+
+// ── Construir catálogo desde Gist ────────────────────────────────────────────
+function buildCatalogo(data) {
+  const famMeta = {};
+  data.principal.forEach(row => {
+    const fid = row.familia_id;
+    if (!famMeta[fid]) {
+      const tipo = fid.startsWith("hpl") ? "hpl" : (fid.startsWith("alistonado") || fid.startsWith("rechapado")) ? "madera" : "melamina";
+      famMeta[fid] = {
+        label: row.nombre_familia.replace("Tablero ",""),
+        chip: tipo === "hpl" ? "hpl" : tipo === "madera" ? "mad" : "mel",
+        tipo, grosores: [], acabadosMap: {},
+        cantoPrecio: null, barnizadoNatural: null, barnizadoTintado: null,
+        precioEsquina: null, servicios: {},
+        mecantestaPrecio: null, // €/ud mecanizado a testa
+      };
+    }
+    const fm = famMeta[fid];
+    if (!fm.grosores.includes(row.grosor)) fm.grosores.push(row.grosor);
+    if (!fm.acabadosMap[row.acabado_id]) fm.acabadosMap[row.acabado_id] = { id: row.acabado_id, label: row.nombre_acabado, precios: {} };
+    fm.acabadosMap[row.acabado_id].precios[row.grosor] = row.venta_iva;
+  });
+
+  data.suplementos.forEach(s => {
+    const familias = parseFamilias(s.familias);
+    const key = s.supl_key;
+
+    if (key.startsWith("canto_") || key === "fresado_alistonado") {
+      familias.forEach(fid => { if (famMeta[fid]) famMeta[fid].cantoPrecio = s.venta_iva; });
+      return;
+    }
+    if (key.startsWith("barnizado_")) {
+      const esNatural = key.includes("natural");
+      familias.forEach(fid => {
+        if (!famMeta[fid]) return;
+        const fm = famMeta[fid];
+        const acabId = esNatural ? "barnizado" : "tintado";
+        if (!fm.acabadosMap[acabId]) {
+          fm.acabadosMap[acabId] = { id: acabId, label: esNatural ? "Barnizado natural" : "Barnizado tintado", precios: {} };
+          fm.grosores.forEach(g => { fm.acabadosMap[acabId].precios[g] = null; });
+        }
+        if (esNatural) fm.barnizadoNatural = s.venta_iva;
+        else fm.barnizadoTintado = s.venta_iva;
+      });
+      return;
+    }
+    if (key.startsWith("esquina_")) {
+      familias.forEach(fid => { if (famMeta[fid]) famMeta[fid].precioEsquina = s.venta_iva; });
+      return;
+    }
+    if (key.startsWith("mecantesta_")) {
+      familias.forEach(fid => { if (famMeta[fid]) famMeta[fid].mecantestaPrecio = s.venta_iva; });
+      return;
+    }
+    if (key.startsWith("entrega_") || key.startsWith("subida_")) {
+      familias.forEach(fid => {
+        if (!famMeta[fid]) return;
+        famMeta[fid].servicios[key] = { label: s.nombre, precio: s.venta_iva };
+      });
+      return;
+    }
+    // Suplementos opcionales para escritorios: pasacables, esquinas, fresado/canto
+    const SUPLS_PERMITIDOS = ["pasacables_", "esquina_", "canto_", "fresado_"];
+    if (SUPLS_PERMITIDOS.some(p => key.startsWith(p))) {
+      const uiKey = key.replace(/_kk$/,"").replace(/_sy$/,"");
+      const existente = SUPLS_ESC.find(x => x.uiKey === uiKey && x.precio === s.venta_iva);
+      if (existente) {
+        familias.forEach(fid => { if (!existente.familias.includes(fid)) existente.familias.push(fid); });
+      } else {
+        SUPLS_ESC.push({
+          id: `${uiKey}__${SUPLS_ESC.length}`, uiKey,
+          nombre: s.nombre, precio: s.venta_iva,
+          tipo: "qty", unidad: s.unidad,
+          familias: [...familias],
+          nota: s.nota || "",
+        });
+      }
+    }
+  });
+
+  const ORDEN = ["basic","platinium","gold","natural","barnizado","tintado"];
+  Object.keys(famMeta).forEach(fid => {
+    const fm = famMeta[fid];
+    fm.acabados = ORDEN.filter(id => fm.acabadosMap[id]).map(id => fm.acabadosMap[id]);
+    fm.grosores.sort((a,b) => a-b);
+    delete fm.acabadosMap;
+    CATALOGO[fid] = fm;
+  });
+}
+
+// ── Calcular piezas ───────────────────────────────────────────────────────────
+function calcularPiezas(largo, ancho, alto) {
+  return [
+    { nombre: "Tapa",         l: largo, a: ancho,        m2: (largo/100)*(ancho/100) },
+    { nombre: "Pata izq.",    l: alto,  a: ancho,         m2: (alto/100)*(ancho/100) },
+    { nombre: "Pata dcha.",   l: alto,  a: ancho,         m2: (alto/100)*(ancho/100) },
+    { nombre: "Trasera",      l: largo, a: TRASERA_FONDO, m2: (largo/100)*(TRASERA_FONDO/100) },
+  ];
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+window.onload = async () => {
+  document.getElementById("pres-fecha").textContent =
+    new Date().toLocaleDateString("es-ES", { day:"2-digit", month:"long", year:"numeric" });
+  try {
+    const resp = await fetch(GIST_URL + "?t=" + Date.now());
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const data = await resp.json();
+    buildCatalogo(data);
+    document.getElementById("loading-msg").remove();
+    renderLineas();
+  } catch(err) {
+    document.getElementById("loading-msg").textContent = "⚠ Error cargando tarifas. Recarga la página.";
+    console.error(err);
+  }
+};
+
+// ── Cambio de modelo ──────────────────────────────────────────────────────────
+function onModeloChange() {
+  const modeloId = document.getElementById("modelo").value;
+  const matSel = document.getElementById("material");
+  const chipEl = document.getElementById("chip-mat");
+  matSel.innerHTML = '<option value="">Seleccionar material...</option>';
+  matSel.disabled = true;
+  document.getElementById("acabado").innerHTML = '<option value="">—</option>';
+  document.getElementById("acabado").disabled = true;
+  document.getElementById("grosor").innerHTML = '<option value="">—</option>';
+  document.getElementById("grosor").disabled = true;
+  chipEl.innerHTML = "";
+  document.getElementById("card-incluido").style.display = "none";
+  document.getElementById("btn-add").disabled = true;
+
+  if (!modeloId) return;
+  const modelo = MODELOS[modeloId];
+
+  // Poblar materiales disponibles
+  const familiasSoportadas = modelo.familias.filter(fid => CATALOGO[fid]);
+  // Agrupar por tipo para mostrar opciones limpias
+  const tipos = {};
+  familiasSoportadas.forEach(fid => {
+    const fm = CATALOGO[fid];
+    if (!tipos[fm.tipo]) tipos[fm.tipo] = [];
+    tipos[fm.tipo].push({ fid, label: fm.label });
+  });
+
+  Object.entries(tipos).forEach(([tipo, items]) => {
+    const grp = document.createElement("optgroup");
+    grp.label = tipo === "melamina" ? "Melamina" : tipo === "hpl" ? "HPL" : "Madera";
+    items.forEach(({ fid, label }) => {
+      const o = document.createElement("option");
+      o.value = fid; o.textContent = label;
+      grp.appendChild(o);
+    });
+    matSel.appendChild(grp);
+  });
+  matSel.disabled = false;
+
+  // Rangos medidas
+  const r = modelo;
+  document.getElementById("largo").min = r.largo.min; document.getElementById("largo").max = r.largo.max; document.getElementById("largo").value = r.largo.def;
+  document.getElementById("ancho").min = r.ancho.min; document.getElementById("ancho").max = r.ancho.max; document.getElementById("ancho").value = r.ancho.def;
+  document.getElementById("alto").min  = r.alto.min;  document.getElementById("alto").max  = r.alto.max;  document.getElementById("alto").value  = r.alto.def;
+  document.getElementById("note-largo").textContent = `${r.largo.min}–${r.largo.max} cm`;
+  document.getElementById("note-ancho").textContent = `${r.ancho.min}–${r.ancho.max} cm`;
+  document.getElementById("note-alto").textContent  = `${r.alto.min}–${r.alto.max} cm`;
+
+  actualizarEsquema();
+  buildSuplsEsc(null);
+}
+
+function onMaterialChange() {
+  const famId = document.getElementById("material").value;
+  const acabadoSel = document.getElementById("acabado");
+  const grosorSel = document.getElementById("grosor");
+  const chipEl = document.getElementById("chip-mat");
+  acabadoSel.innerHTML = '<option value="">Seleccionar...</option>';
+  grosorSel.innerHTML = '<option value="">—</option>';
+  chipEl.innerHTML = "";
+  document.getElementById("card-incluido").style.display = "none";
+  document.getElementById("btn-add").disabled = true;
+
+  if (!famId || !CATALOGO[famId]) return;
+  const fam = CATALOGO[famId];
+  chipEl.innerHTML = `<span class="chip ${fam.chip}">${fam.label}</span>`;
+
+  fam.acabados.forEach(a => {
+    const o = document.createElement("option");
+    o.value = a.id; o.textContent = a.label;
+    acabadoSel.appendChild(o);
+  });
+  acabadoSel.disabled = false;
+
+  fam.grosores.forEach(g => {
+    const o = document.createElement("option");
+    o.value = g; o.textContent = g + " cm";
+    grosorSel.appendChild(o);
+  });
+  grosorSel.disabled = false;
+
+  buildSuplsEsc(famId);
+  buildEntregasSubidas(famId);
+  calcular();
+}
+
+// ── Entrega/subida ────────────────────────────────────────────────────────────
+function buildEntregasSubidas(famId) {
+  const fm = CATALOGO[famId];
+  if (!fm?.servicios) return;
+  ENTREGAS = [{ id:"", label:"Sin entrega", precio:0 }];
+  SUBIDAS  = [{ id:"", label:"Sin subida a domicilio", precio:0 }];
+  Object.entries(fm.servicios).forEach(([key,val]) => {
+    if (key.startsWith("entrega_")) ENTREGAS.push({ id:key, label:val.label, precio:val.precio });
+    if (key.startsWith("subida_"))  SUBIDAS.push({ id:key, label:val.label, precio:val.precio });
+  });
+  const selE = document.getElementById("sel-entrega");
+  const selS = document.getElementById("sel-subida");
+  selE.innerHTML = ENTREGAS.map(e => `<option value="${e.id}">${e.label}${e.precio>0?" — "+fmt(e.precio)+" €":""}</option>`).join("");
+  selS.innerHTML = SUBIDAS.map(s => `<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
+}
+
+// ── Suplementos escritorio ────────────────────────────────────────────────────
+function buildSuplsEsc(famId) {
+  estado.supls = {};
+  const activos = famId ? SUPLS_ESC.filter(s => s.familias.includes(famId)) : [];
+  activos.forEach(s => { estado.supls[s.id] = 0; });
+
+  const g = document.getElementById("supl-grid");
+  if (!activos.length) { g.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px">—</div>'; return; }
+  g.innerHTML = activos.map(s => {
+    const precioStr = s.precio > 0 ? `${fmt(s.precio)} €/${s.unidad}` : (s.nota || "");
+    return `<div class="supl-item" id="si-${s.id}">
+      <div><div class="supl-name">${s.nombre}</div><div class="supl-price">${precioStr}</div></div>
+      <div class="supl-right">
+        <button class="qty-btn" onclick="changeQty('${s.id}',-1)">−</button>
+        <span class="qty-val" id="qty-${s.id}">0</span>
+        <button class="qty-btn" onclick="changeQty('${s.id}',1)">+</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function changeQty(id, delta) {
+  estado.supls[id] = Math.max(0, (estado.supls[id]||0) + delta);
+  document.getElementById("qty-"+id).textContent = estado.supls[id];
+  document.getElementById("si-"+id).classList.toggle("active", estado.supls[id] > 0);
+}
+
+// ── Esquema SVG ───────────────────────────────────────────────────────────────
+function actualizarEsquema() {
+  const largo = parseFloat(document.getElementById("largo").value) || 0;
+  const ancho = parseFloat(document.getElementById("ancho").value) || 0;
+  const alto  = parseFloat(document.getElementById("alto").value)  || 0;
+  document.getElementById("svg-largo").textContent = `← ${largo} cm →`;
+  document.getElementById("svg-alto").textContent  = `${alto} cm`;
+  document.getElementById("svg-ancho").textContent = `Fondo: ${ancho} cm`;
+}
+
+// ── Calcular (preview) ────────────────────────────────────────────────────────
+function calcular() {
+  actualizarEsquema();
+  const famId    = document.getElementById("material").value;
+  const acabadoId = document.getElementById("acabado").value;
+  const grosor   = parseFloat(document.getElementById("grosor").value);
+  const largo    = parseFloat(document.getElementById("largo").value) || 0;
+  const ancho    = parseFloat(document.getElementById("ancho").value) || 0;
+  const alto     = parseFloat(document.getElementById("alto").value)  || 0;
+  const modeloId = document.getElementById("modelo").value;
+  const btn = document.getElementById("btn-add");
+
+  if (!famId || !acabadoId || !grosor || largo<=0 || ancho<=0 || alto<=0) { btn.disabled=true; return; }
+
+  const fam = CATALOGO[famId];
+  const acabadoObj = fam?.acabados.find(a => a.id === acabadoId);
+  if (!acabadoObj) { btn.disabled=true; return; }
+
+  // Desglose de piezas
+  const piezas = calcularPiezas(largo, ancho, alto);
+  const m2Total = piezas.reduce((s,p) => s+p.m2, 0);
+
+  // Trabajos incluidos
+  const modelo = MODELOS[modeloId];
+  const mecantestaPrecio = fam.mecantestaPrecio || 0;
+  const mecantesta_qty = modelo.mecantesta_qty;
+  const mecantesta_total = parseFloat((mecantestaPrecio * mecantesta_qty).toFixed(2));
+
+  const cardIncluido = document.getElementById("card-incluido");
+  const trabajosIncluidos = document.getElementById("trabajos-incluidos");
+  if (mecantesta_total > 0) {
+    cardIncluido.style.display = "block";
+    trabajosIncluidos.innerHTML = `
+      <strong>Incluidos en el precio</strong>
+      <div class="incluido-row"><span>Mecanizado a testa ×${mecantesta_qty}</span><span>${fmt(mecantesta_total)} €</span></div>
+    `;
+  } else {
+    cardIncluido.style.display = mecantestaPrecio === 0 && mecantesta_qty > 0 ? "block" : "none";
+    if (cardIncluido.style.display === "block") {
+      trabajosIncluidos.innerHTML = `<strong>Incluidos en el precio</strong><div class="incluido-row"><span>Mecanizado a testa ×${mecantesta_qty}</span><span style="color:var(--text3)">— pendiente precio</span></div>`;
+    }
+  }
+
+  // Desglose visual de piezas
+  let precioM2 = acabadoObj.precios[grosor];
+  if ((acabadoId === "barnizado" || acabadoId === "tintado") && fam.barnizadoNatural) {
+    const base = fam.acabados.find(a => a.id === "natural");
+    precioM2 = base?.precios[grosor];
+  }
+  if (!precioM2) { btn.disabled=true; return; }
+
+  const desgloseEl = document.getElementById("desglose-piezas");
+  desgloseEl.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-top:4px;">
+    ${piezas.map(p => `<span style="margin-right:12px;">${p.nombre}: ${fmt(p.m2,4)} m²</span>`).join("")}
+    <span style="font-weight:600;color:var(--text2)">Total: ${fmt(m2Total,4)} m²</span>
+  </div>`;
+
+  btn.disabled = false;
+}
+
+// ── Añadir línea ──────────────────────────────────────────────────────────────
+function añadirLinea() {
+  const modeloId  = document.getElementById("modelo").value;
+  const famId     = document.getElementById("material").value;
+  const acabadoId = document.getElementById("acabado").value;
+  const grosor    = parseFloat(document.getElementById("grosor").value);
+  const largo     = parseFloat(document.getElementById("largo").value);
+  const ancho     = parseFloat(document.getElementById("ancho").value);
+  const alto      = parseFloat(document.getElementById("alto").value);
+  const cantidad  = parseInt(document.getElementById("cantidad").value) || 1;
+  const notas     = document.getElementById("notas-linea").value.trim();
+
+  const fam = CATALOGO[famId];
+  const modelo = MODELOS[modeloId];
+  const acabadoObj = fam.acabados.find(a => a.id === acabadoId);
+
+  let precioM2 = acabadoObj.precios[grosor];
+  const extras = [];
+  let totalUnit = 0;
+
+  // Barnizado
+  let barnizadoSupl = null;
+  if ((acabadoId === "barnizado" || acabadoId === "tintado") && fam.barnizadoNatural) {
+    const base = fam.acabados.find(a => a.id === "natural");
+    precioM2 = base.precios[grosor];
+    const precioBarni = acabadoId === "barnizado" ? fam.barnizadoNatural : fam.barnizadoTintado;
+    const piezas = calcularPiezas(largo, ancho, alto);
+    const m2Total = piezas.reduce((s,p) => s+p.m2, 0);
+    barnizadoSupl = { nombre: acabadoObj.label, precioUnit: parseFloat((precioBarni * m2Total).toFixed(2)), qty: null };
+  }
+
+  const piezas = calcularPiezas(largo, ancho, alto);
+  const m2Total = parseFloat(piezas.reduce((s,p) => s+p.m2, 0).toFixed(4));
+  const baseUnit = parseFloat((precioM2 * m2Total).toFixed(2));
+  totalUnit += baseUnit;
+  if (barnizadoSupl) { extras.push(barnizadoSupl); totalUnit += barnizadoSupl.precioUnit; }
+
+  // Mecanizados a testa incluidos
+  const mecantestaPrecio = fam.mecantestaPrecio || 0;
+  const mecantesta_qty = modelo.mecantesta_qty;
+  if (mecantesta_qty > 0) {
+    const mecTotal = parseFloat((mecantestaPrecio * mecantesta_qty).toFixed(2));
+    extras.push({ nombre: `Mecanizado a testa ×${mecantesta_qty}`, precioUnit: mecTotal, qty: null, incluido: true });
+    totalUnit += mecTotal;
+  }
+
+  // Suplementos opcionales
+  const suplsFam = SUPLS_ESC.filter(s => s.familias.includes(famId));
+  suplsFam.forEach(s => {
+    const v = estado.supls[s.id] || 0;
+    if (v > 0 && s.precio > 0) {
+      // Para pasacables: precio/ud × qty
+      // Para canteado/fresado: precio/ml × ml (se simplifica como precio × qty aquí)
+      const unit = parseFloat((s.precio * v).toFixed(2));
+      extras.push({ nombre: s.nombre, precioUnit: unit, qty: v });
+      totalUnit += unit;
+    }
+  });
+
+  totalUnit = parseFloat(totalUnit.toFixed(2));
+  const totalConCantidad = parseFloat((totalUnit * cantidad).toFixed(2));
+
+  lineas.push({
+    id: ++lineaId,
+    modeloNombre: MODELOS[modeloId].nombre,
+    famLabel: fam.label,
+    acabadoLabel: acabadoObj.label,
+    grosor, largo, ancho, alto, cantidad,
+    precioM2, m2Total, baseUnit,
+    totalUnit, totalConCantidad,
+    piezas, extras, notas,
+    pendiente: extras.some(e => e.precioUnit === 0),
+  });
+
+  renderLineas();
+  resetConfigurador();
+}
+
+// ── Render panel derecho ──────────────────────────────────────────────────────
+function renderLineas() {
+  const container = document.getElementById("lineas-container");
+  const btnImpr = document.getElementById("btn-imprimir");
+  const btnCop  = document.getElementById("btn-copiar");
+  const entregaWrap = document.getElementById("entrega-wrap");
+  const notaWrap    = document.getElementById("nota-cliente-wrap");
+
+  if (lineas.length === 0) {
+    container.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);text-align:center;gap:8px;padding:2rem 0">
+      <div style="font-size:32px;opacity:.4">🖥️</div>
+      <div style="font-size:13px;font-weight:500">Sin líneas todavía</div>
+      <div style="font-size:12px">Configura el escritorio y pulsa "Añadir"</div>
+    </div>`;
+    btnImpr.disabled = true; btnCop.disabled = true;
+    entregaWrap.style.display = "none"; notaWrap.style.display = "none";
+    document.getElementById("t-base").textContent = "—";
+    document.getElementById("t-iva").textContent  = "—";
+    document.getElementById("t-total").textContent = "—";
+    return;
+  }
+
+  btnImpr.disabled = false; btnCop.disabled = false;
+  entregaWrap.style.display = "block"; notaWrap.style.display = "block";
+
+  container.innerHTML = lineas.map(l => {
+    const extrasHtml = l.extras.map(e => {
+      const badge = e.incluido ? ' <span style="font-size:10px;color:var(--accent);font-weight:600">[incluido]</span>' : "";
+      if (e.precioUnit === 0) return `<div>· ${e.nombre}${badge} <span style="color:var(--text3)">— pendiente precio</span></div>`;
+      if (e.qty) return `<div>· ${e.nombre} ×${e.qty}${badge}: ${fmt(e.precioUnit)} €</div>`;
+      return `<div>· ${e.nombre}${badge}: ${fmt(e.precioUnit)} €</div>`;
+    }).join("");
+    const udLabel = l.cantidad > 1 ? `${l.cantidad} ud.` : "1 ud.";
+    const cantidadHtml = l.cantidad > 1
+      ? `<div style="font-size:11px;color:var(--text2);margin-top:4px;">Precio unitario: ${fmt(l.totalUnit)} € × ${l.cantidad} ud.</div>` : "";
+    return `<div class="linea">
+      <button class="linea-del" onclick="eliminarLinea(${l.id})" title="Eliminar">×</button>
+      <div class="linea-top">
+        <div>
+          <div class="linea-name">${udLabel} &nbsp;${l.modeloNombre} · ${l.famLabel} · ${l.acabadoLabel} · ${l.grosor} cm</div>
+          <div class="linea-specs">${l.largo}×${l.ancho}×${l.alto} cm · ${fmt(l.m2Total,4)} m² total · ${fmt(l.precioM2)} €/m²</div>
+        </div>
+        <div class="linea-price">${fmt(l.totalConCantidad)} €</div>
+      </div>
+      <div class="linea-extras">${extrasHtml}</div>
+      ${cantidadHtml}
+      ${l.notas ? `<div style="font-size:11px;color:#8B6914;margin-top:4px;font-style:italic">📝 ${l.notas}</div>` : ""}
+    </div>`;
+  }).join("");
+
+  calcularTotales();
+}
+
+function calcularTotales() {
+  if (lineas.length === 0) return;
+  const entregaId = document.getElementById("sel-entrega")?.value || "";
+  const subidaId  = document.getElementById("sel-subida")?.value  || "";
+  const entregaObj = ENTREGAS.find(e => e.id === entregaId) || ENTREGAS[0];
+  const subidaObj  = SUBIDAS.find(s => s.id === subidaId)   || SUBIDAS[0];
+  const subtotal = lineas.reduce((s,l) => s+l.totalConCantidad, 0);
+  const total = subtotal + entregaObj.precio + subidaObj.precio;
+  const base  = total / 1.21;
+  const iva   = total - base;
+
+  const rowE = document.getElementById("row-entrega");
+  const rowS = document.getElementById("row-subida");
+  if (entregaObj.precio > 0) {
+    rowE.style.display="flex";
+    document.getElementById("label-entrega").textContent = entregaObj.label;
+    document.getElementById("t-entrega").textContent = fmt(entregaObj.precio)+" €";
+  } else rowE.style.display="none";
+  if (subidaObj.precio > 0) {
+    rowS.style.display="flex";
+    document.getElementById("label-subida").textContent = subidaObj.label;
+    document.getElementById("t-subida").textContent = fmt(subidaObj.precio)+" €";
+  } else rowS.style.display="none";
+
+  document.getElementById("t-base").textContent  = fmt(base)+" €";
+  document.getElementById("t-iva").textContent   = fmt(iva)+" €";
+  document.getElementById("t-total").textContent = fmt(total)+" €";
+}
+
+function eliminarLinea(id) {
+  lineas = lineas.filter(l => l.id !== id);
+  renderLineas();
+}
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
+function resetConfigurador() {
+  document.getElementById("modelo").value = "";
+  document.getElementById("material").innerHTML = '<option value="">— elige modelo —</option>';
+  document.getElementById("material").disabled = true;
+  document.getElementById("acabado").innerHTML  = '<option value="">—</option>';
+  document.getElementById("acabado").disabled   = true;
+  document.getElementById("grosor").innerHTML   = '<option value="">—</option>';
+  document.getElementById("grosor").disabled    = true;
+  document.getElementById("chip-mat").innerHTML = "";
+  document.getElementById("cantidad").value = 1;
+  document.getElementById("notas-linea").value = "";
+  document.getElementById("card-incluido").style.display = "none";
+  document.getElementById("desglose-piezas").innerHTML = "";
+  document.getElementById("btn-add").disabled = true;
+  buildSuplsEsc(null);
+}
+
+function resetPresupuesto() {
+  lineas = []; lineaId = 0;
+  document.getElementById("sel-entrega").value = "";
+  document.getElementById("sel-subida").value  = "";
+  document.getElementById("nota-cliente").value = "";
+  document.getElementById("pres-titulo").value = "Presupuesto estimado";
+  resetConfigurador();
+  renderLineas();
+}
+
+// ── Imprimir ──────────────────────────────────────────────────────────────────
+function imprimirPpto() {
+  const titulo = document.getElementById("pres-titulo").value || "Presupuesto estimado";
+  const fecha  = new Date().toLocaleDateString("es-ES",{day:"2-digit",month:"2-digit",year:"numeric"}).replace(/\//g,"-");
+  const orig   = document.title;
+  document.title = `Madera Fina · ${titulo} · ${fecha}`;
+  const notaWrap = document.getElementById("nota-cliente-wrap");
+  const notaVal  = document.getElementById("nota-cliente").value.trim();
+  const notaWas  = notaWrap.style.display;
+  if (!notaVal) notaWrap.style.display = "none";
+  window.print();
+  setTimeout(() => { document.title = orig; notaWrap.style.display = notaWas; }, 1000);
+}
+
+// ── Copiar resumen ────────────────────────────────────────────────────────────
+function copiarTexto() {
+  const now    = new Date().toLocaleDateString("es-ES");
+  const titulo = document.getElementById("pres-titulo").value || "Presupuesto estimado";
+  const entregaId = document.getElementById("sel-entrega")?.value || "";
+  const subidaId  = document.getElementById("sel-subida")?.value  || "";
+  const entregaObj = ENTREGAS.find(e => e.id === entregaId) || ENTREGAS[0];
+  const subidaObj  = SUBIDAS.find(s => s.id === subidaId)   || SUBIDAS[0];
+  const nota = document.getElementById("nota-cliente")?.value?.trim();
+  const sep  = "─".repeat(42);
+
+  let txt = `Madera Fina · ${titulo}\nFecha: ${now}\n${sep}\n`;
+  lineas.forEach((l, i) => {
+    txt += `\n${i+1}. ${l.modeloNombre} · ${l.famLabel}\n`;
+    txt += `   ${l.acabadoLabel} · Grosor ${l.grosor} cm\n`;
+    txt += `   Medidas: ${l.largo}×${l.ancho}×${l.alto} cm · ${l.cantidad > 1 ? l.cantidad+" ud." : "1 ud."}\n`;
+    txt += `   Superficie total: ${fmt(l.m2Total,4)} m² · ${fmt(l.precioM2)} €/m²\n`;
+    l.extras.forEach(e => {
+      if (e.precioUnit > 0) txt += `   + ${e.nombre}: ${fmt(e.precioUnit)} €${e.incluido?" [incluido]":""}\n`;
+    });
+    if (l.cantidad > 1) txt += `   Precio unitario: ${fmt(l.totalUnit)} € × ${l.cantidad} ud.\n`;
+    txt += `   Subtotal: ${fmt(l.totalConCantidad)} €\n`;
+    if (l.notas) txt += `   · ${l.notas}\n`;
+  });
+
+  const subtotal = lineas.reduce((s,l) => s+l.totalConCantidad, 0);
+  if (entregaObj.precio > 0) txt += `\n${entregaObj.label}: ${fmt(entregaObj.precio)} €`;
+  if (subidaObj.precio  > 0) txt += `\n${subidaObj.label}: ${fmt(subidaObj.precio)} €`;
+  const total = subtotal + entregaObj.precio + subidaObj.precio;
+  txt += `\n\n${sep}\nBase imponible: ${fmt(total/1.21)} €\nIVA 21%: ${fmt(total - total/1.21)} €\nTOTAL: ${fmt(total)} €\n`;
+  if (nota) txt += `\n${sep}\n${nota}\n`;
+
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.getElementById("btn-copiar");
+    const orig = btn.textContent;
+    btn.textContent = "✓ Copiado";
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+</script>
+</body>
+</html>
