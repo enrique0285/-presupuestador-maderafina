@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -168,16 +169,29 @@
     </div>
     <div class="row c2">
       <div class="field">
-        <label>Acabado</label>
-        <select id="acabado" onchange="calcular()" disabled>
+        <label>Grosor (cm)</label>
+        <select id="grosor" onchange="onGrosorChange()" disabled>
           <option value="">—</option>
         </select>
       </div>
-      <div class="field">
-        <label>Grosor (cm)</label>
-        <select id="grosor" onchange="calcular()" disabled>
-          <option value="">—</option>
-        </select>
+      <div class="field"></div>
+    </div>
+    <!-- Acabados separados -->
+    <div id="card-acabados" style="display:none">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px;margin-top:4px;">Acabados</div>
+      <div class="row c2">
+        <div class="field">
+          <label>Estructura (patas + trasera)</label>
+          <select id="acabado-estructura" onchange="calcular()" disabled>
+            <option value="">—</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tapa <span style="font-size:10px;color:var(--text3);font-weight:400">— puede ser diferente</span></label>
+          <select id="acabado-tapa" onchange="calcular()" disabled>
+            <option value="">— igual que estructura —</option>
+          </select>
+        </div>
       </div>
     </div>
   </div>
@@ -419,8 +433,10 @@ function buildCatalogo(data) {
       });
       return;
     }
-    // Suplementos opcionales para escritorios: pasacables, esquinas, fresado/canto
-    const SUPLS_PERMITIDOS = ["pasacables_", "esquina_", "canto_", "fresado_"];
+    if (key.startsWith("canto_") || key === "fresado_alistonado") {
+      familias.forEach(fid => { if (famMeta[fid]) famMeta[fid].cantoPrecio = s.venta_iva; });
+      return;
+    }
     if (SUPLS_PERMITIDOS.some(p => key.startsWith(p))) {
       const uiKey = key.replace(/_kk$/,"").replace(/_sy$/,"");
       const existente = SUPLS_ESC.find(x => x.uiKey === uiKey && x.precio === s.venta_iva);
@@ -450,12 +466,13 @@ function buildCatalogo(data) {
 
 // ── Calcular piezas ───────────────────────────────────────────────────────────
 function calcularPiezas(largo, ancho, alto) {
-  return [
-    { nombre: "Tapa",         l: largo, a: ancho,        m2: (largo/100)*(ancho/100) },
-    { nombre: "Pata izq.",    l: alto,  a: ancho,         m2: (alto/100)*(ancho/100) },
-    { nombre: "Pata dcha.",   l: alto,  a: ancho,         m2: (alto/100)*(ancho/100) },
-    { nombre: "Trasera",      l: largo, a: TRASERA_FONDO, m2: (largo/100)*(TRASERA_FONDO/100) },
+  const piezas = [
+    { nombre: "Tapa",       l: largo, a: ancho,        m2: (largo/100)*(ancho/100),        ml: 2*(largo+ancho)/100 },
+    { nombre: "Pata izq.",  l: alto,  a: ancho,        m2: (alto/100)*(ancho/100),          ml: 2*(alto+ancho)/100 },
+    { nombre: "Pata dcha.", l: alto,  a: ancho,        m2: (alto/100)*(ancho/100),          ml: 2*(alto+ancho)/100 },
+    { nombre: "Trasera",    l: largo, a: TRASERA_FONDO, m2: (largo/100)*(TRASERA_FONDO/100), ml: 2*(largo+TRASERA_FONDO)/100 },
   ];
+  return piezas;
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
@@ -530,25 +547,24 @@ function onModeloChange() {
 
 function onMaterialChange() {
   const famId = document.getElementById("material").value;
-  const acabadoSel = document.getElementById("acabado");
   const grosorSel = document.getElementById("grosor");
   const chipEl = document.getElementById("chip-mat");
-  acabadoSel.innerHTML = '<option value="">Seleccionar...</option>';
+  const cardAcabados = document.getElementById("card-acabados");
+
   grosorSel.innerHTML = '<option value="">—</option>';
+  grosorSel.disabled = true;
+  document.getElementById("acabado-estructura").innerHTML = '<option value="">—</option>';
+  document.getElementById("acabado-estructura").disabled = true;
+  document.getElementById("acabado-tapa").innerHTML = '<option value="">— igual que estructura —</option>';
+  document.getElementById("acabado-tapa").disabled = true;
   chipEl.innerHTML = "";
+  cardAcabados.style.display = "none";
   document.getElementById("card-incluido").style.display = "none";
   document.getElementById("btn-add").disabled = true;
 
   if (!famId || !CATALOGO[famId]) return;
   const fam = CATALOGO[famId];
   chipEl.innerHTML = `<span class="chip ${fam.chip}">${fam.label}</span>`;
-
-  fam.acabados.forEach(a => {
-    const o = document.createElement("option");
-    o.value = a.id; o.textContent = a.label;
-    acabadoSel.appendChild(o);
-  });
-  acabadoSel.disabled = false;
 
   fam.grosores.forEach(g => {
     const o = document.createElement("option");
@@ -559,6 +575,39 @@ function onMaterialChange() {
 
   buildSuplsEsc(famId);
   buildEntregasSubidas(famId);
+}
+
+function onGrosorChange() {
+  const famId = document.getElementById("material").value;
+  const grosor = parseFloat(document.getElementById("grosor").value);
+  const cardAcabados = document.getElementById("card-acabados");
+  const acabadoEstrSel = document.getElementById("acabado-estructura");
+  const acabadoTapaSel = document.getElementById("acabado-tapa");
+
+  acabadoEstrSel.innerHTML = '<option value="">—</option>';
+  acabadoTapaSel.innerHTML = '<option value="">— igual que estructura —</option>';
+  acabadoEstrSel.disabled = true;
+  acabadoTapaSel.disabled = true;
+  cardAcabados.style.display = "none";
+  document.getElementById("btn-add").disabled = true;
+
+  if (!famId || !grosor) return;
+  const fam = CATALOGO[famId];
+
+  // Solo acabados que tienen precio para este grosor
+  const disponibles = fam.acabados.filter(a => a.precios[grosor] !== undefined && a.precios[grosor] !== null);
+  disponibles.forEach(a => {
+    const o1 = document.createElement("option");
+    o1.value = a.id; o1.textContent = a.label;
+    acabadoEstrSel.appendChild(o1);
+    const o2 = document.createElement("option");
+    o2.value = a.id; o2.textContent = a.label;
+    acabadoTapaSel.appendChild(o2);
+  });
+  acabadoEstrSel.disabled = false;
+  acabadoTapaSel.disabled = false;
+  cardAcabados.style.display = "block";
+
   calcular();
 }
 
@@ -618,22 +667,23 @@ function actualizarEsquema() {
 // ── Calcular (preview) ────────────────────────────────────────────────────────
 function calcular() {
   actualizarEsquema();
-  const famId    = document.getElementById("material").value;
-  const acabadoId = document.getElementById("acabado").value;
-  const grosor   = parseFloat(document.getElementById("grosor").value);
-  const largo    = parseFloat(document.getElementById("largo").value) || 0;
-  const ancho    = parseFloat(document.getElementById("ancho").value) || 0;
-  const alto     = parseFloat(document.getElementById("alto").value)  || 0;
+  const famId       = document.getElementById("material").value;
+  const acabadoEstr = document.getElementById("acabado-estructura").value;
+  const acabadoTapa = document.getElementById("acabado-tapa").value || acabadoEstr;
+  const grosor      = parseFloat(document.getElementById("grosor").value);
+  const largo  = parseFloat(document.getElementById("largo").value)  || 0;
+  const ancho  = parseFloat(document.getElementById("ancho").value)  || 0;
+  const alto   = parseFloat(document.getElementById("alto").value)   || 0;
   const modeloId = document.getElementById("modelo").value;
   const btn = document.getElementById("btn-add");
 
-  if (!famId || !acabadoId || !grosor || largo<=0 || ancho<=0 || alto<=0) { btn.disabled=true; return; }
+  if (!famId || !acabadoEstr || !grosor || largo<=0 || ancho<=0 || alto<=0) { btn.disabled=true; return; }
 
   const fam = CATALOGO[famId];
-  const acabadoObj = fam?.acabados.find(a => a.id === acabadoId);
-  if (!acabadoObj) { btn.disabled=true; return; }
+  const acabadoEstrObj = fam?.acabados.find(a => a.id === acabadoEstr);
+  const acabadoTapaObj = fam?.acabados.find(a => a.id === acabadoTapa);
+  if (!acabadoEstrObj || !acabadoTapaObj) { btn.disabled=true; return; }
 
-  // Desglose de piezas
   const piezas = calcularPiezas(largo, ancho, alto);
   const m2Total = piezas.reduce((s,p) => s+p.m2, 0);
 
@@ -642,34 +692,28 @@ function calcular() {
   const mecantestaPrecio = fam.mecantestaPrecio || 0;
   const mecantesta_qty = modelo.mecantesta_qty;
   const mecantesta_total = parseFloat((mecantestaPrecio * mecantesta_qty).toFixed(2));
-
   const cardIncluido = document.getElementById("card-incluido");
   const trabajosIncluidos = document.getElementById("trabajos-incluidos");
-  if (mecantesta_total > 0) {
-    cardIncluido.style.display = "block";
-    trabajosIncluidos.innerHTML = `
-      <strong>Incluidos en el precio</strong>
-      <div class="incluido-row"><span>Mecanizado a testa ×${mecantesta_qty}</span><span>${fmt(mecantesta_total)} €</span></div>
-    `;
-  } else {
-    cardIncluido.style.display = mecantestaPrecio === 0 && mecantesta_qty > 0 ? "block" : "none";
-    if (cardIncluido.style.display === "block") {
-      trabajosIncluidos.innerHTML = `<strong>Incluidos en el precio</strong><div class="incluido-row"><span>Mecanizado a testa ×${mecantesta_qty}</span><span style="color:var(--text3)">— pendiente precio</span></div>`;
-    }
-  }
+  cardIncluido.style.display = "block";
+  const mlTotal = parseFloat(piezas.reduce((s,p) => s+(2*(p.l+p.a)/100), 0).toFixed(3));
+  const cantoPrecio = fam.cantoPrecio || 0;
+  trabajosIncluidos.innerHTML = `<strong>Incluidos en el precio</strong>
+    <div class="incluido-row"><span>Canteado todos los lados (${fmt(mlTotal,2)} ml)</span><span>${cantoPrecio > 0 ? fmt(parseFloat((cantoPrecio*mlTotal).toFixed(2)))+" €" : "— pendiente precio"}</span></div>
+    <div class="incluido-row"><span>Mecanizado a testa ×${mecantesta_qty}</span><span>${mecantestaPrecio > 0 ? fmt(mecantesta_total)+" €" : "— pendiente precio"}</span></div>`;
 
-  // Desglose visual de piezas
-  let precioM2 = acabadoObj.precios[grosor];
-  if ((acabadoId === "barnizado" || acabadoId === "tintado") && fam.barnizadoNatural) {
-    const base = fam.acabados.find(a => a.id === "natural");
-    precioM2 = base?.precios[grosor];
-  }
-  if (!precioM2) { btn.disabled=true; return; }
-
+  // Desglose piezas
+  const precioTapa = acabadoTapaObj.precios[grosor] || 0;
+  const precioEstr = acabadoEstrObj.precios[grosor] || 0;
+  const tapaPieza = piezas.find(p => p.nombre === "Tapa");
+  const estrPiezas = piezas.filter(p => p.nombre !== "Tapa");
+  const mlTotal = parseFloat(piezas.reduce((s,p) => s+p.ml, 0).toFixed(3));
+  const cantoPrecio = fam.cantoPrecio || 0;
   const desgloseEl = document.getElementById("desglose-piezas");
   desgloseEl.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-top:4px;">
-    ${piezas.map(p => `<span style="margin-right:12px;">${p.nombre}: ${fmt(p.m2,4)} m²</span>`).join("")}
-    <span style="font-weight:600;color:var(--text2)">Total: ${fmt(m2Total,4)} m²</span>
+    <span style="margin-right:12px;">Tapa: ${fmt(tapaPieza.m2,4)} m² × ${fmt(precioTapa)} €/m²</span>
+    ${estrPiezas.map(p=>`<span style="margin-right:12px;">${p.nombre}: ${fmt(p.m2,4)} m²</span>`).join("")}
+    <span style="color:var(--text2);font-weight:600">Estructura: ${fmt(estrPiezas.reduce((s,p)=>s+p.m2,0),4)} m² × ${fmt(precioEstr)} €/m²</span>
+    <span style="margin-left:12px;color:var(--accent);">Canteado: ${fmt(mlTotal,2)} ml × ${fmt(cantoPrecio)} €/ml</span>
   </div>`;
 
   btn.disabled = false;
@@ -677,40 +721,76 @@ function calcular() {
 
 // ── Añadir línea ──────────────────────────────────────────────────────────────
 function añadirLinea() {
-  const modeloId  = document.getElementById("modelo").value;
-  const famId     = document.getElementById("material").value;
-  const acabadoId = document.getElementById("acabado").value;
-  const grosor    = parseFloat(document.getElementById("grosor").value);
-  const largo     = parseFloat(document.getElementById("largo").value);
-  const ancho     = parseFloat(document.getElementById("ancho").value);
-  const alto      = parseFloat(document.getElementById("alto").value);
-  const cantidad  = parseInt(document.getElementById("cantidad").value) || 1;
-  const notas     = document.getElementById("notas-linea").value.trim();
+  const modeloId    = document.getElementById("modelo").value;
+  const famId       = document.getElementById("material").value;
+  const acabadoEstr = document.getElementById("acabado-estructura").value;
+  const acabadoTapa = document.getElementById("acabado-tapa").value || acabadoEstr;
+  const grosor      = parseFloat(document.getElementById("grosor").value);
+  const largo  = parseFloat(document.getElementById("largo").value);
+  const ancho  = parseFloat(document.getElementById("ancho").value);
+  const alto   = parseFloat(document.getElementById("alto").value);
+  const cantidad = parseInt(document.getElementById("cantidad").value) || 1;
+  const notas    = document.getElementById("notas-linea").value.trim();
 
   const fam = CATALOGO[famId];
   const modelo = MODELOS[modeloId];
-  const acabadoObj = fam.acabados.find(a => a.id === acabadoId);
+  const acabadoEstrObj = fam.acabados.find(a => a.id === acabadoEstr);
+  const acabadoTapaObj = fam.acabados.find(a => a.id === acabadoTapa);
+  const mismoAcabado = acabadoEstr === acabadoTapa;
 
-  let precioM2 = acabadoObj.precios[grosor];
+  const piezas = calcularPiezas(largo, ancho, alto);
+  const tapaPieza  = piezas.find(p => p.nombre === "Tapa");
+  const estrPiezas = piezas.filter(p => p.nombre !== "Tapa");
+
+  // Precios base por pieza
+  const getPrecioM2 = (acabadoObj, acabadoId) => {
+    if ((acabadoId === "barnizado" || acabadoId === "tintado") && fam.barnizadoNatural) {
+      return fam.acabados.find(a => a.id === "natural")?.precios[grosor];
+    }
+    return acabadoObj.precios[grosor];
+  };
+
+  const precioM2Tapa = getPrecioM2(acabadoTapaObj, acabadoTapa);
+  const precioM2Estr = getPrecioM2(acabadoEstrObj, acabadoEstr);
+
   const extras = [];
   let totalUnit = 0;
 
-  // Barnizado
-  let barnizadoSupl = null;
-  if ((acabadoId === "barnizado" || acabadoId === "tintado") && fam.barnizadoNatural) {
-    const base = fam.acabados.find(a => a.id === "natural");
-    precioM2 = base.precios[grosor];
-    const precioBarni = acabadoId === "barnizado" ? fam.barnizadoNatural : fam.barnizadoTintado;
-    const piezas = calcularPiezas(largo, ancho, alto);
-    const m2Total = piezas.reduce((s,p) => s+p.m2, 0);
-    barnizadoSupl = { nombre: acabadoObj.label, precioUnit: parseFloat((precioBarni * m2Total).toFixed(2)), qty: null };
+  // Tapa
+  const baseTapa = parseFloat((precioM2Tapa * tapaPieza.m2).toFixed(2));
+  totalUnit += baseTapa;
+
+  // Barnizado tapa si aplica
+  if ((acabadoTapa === "barnizado" || acabadoTapa === "tintado") && fam.barnizadoNatural) {
+    const precioBarni = acabadoTapa === "barnizado" ? fam.barnizadoNatural : fam.barnizadoTintado;
+    const barniTapa = parseFloat((precioBarni * tapaPieza.m2).toFixed(2));
+    extras.push({ nombre: `${acabadoTapaObj.label} (tapa)`, precioUnit: barniTapa, qty: null });
+    totalUnit += barniTapa;
   }
 
-  const piezas = calcularPiezas(largo, ancho, alto);
-  const m2Total = parseFloat(piezas.reduce((s,p) => s+p.m2, 0).toFixed(4));
-  const baseUnit = parseFloat((precioM2 * m2Total).toFixed(2));
-  totalUnit += baseUnit;
-  if (barnizadoSupl) { extras.push(barnizadoSupl); totalUnit += barnizadoSupl.precioUnit; }
+  // Estructura (patas + trasera)
+  const m2Estr = parseFloat(estrPiezas.reduce((s,p)=>s+p.m2,0).toFixed(4));
+  const baseEstr = parseFloat((precioM2Estr * m2Estr).toFixed(2));
+  totalUnit += baseEstr;
+
+  // Barnizado estructura si aplica
+  if ((acabadoEstr === "barnizado" || acabadoEstr === "tintado") && fam.barnizadoNatural) {
+    const precioBarni = acabadoEstr === "barnizado" ? fam.barnizadoNatural : fam.barnizadoTintado;
+    const barniEstr = parseFloat((precioBarni * m2Estr).toFixed(2));
+    extras.push({ nombre: `${acabadoEstrObj.label} (estructura)`, precioUnit: barniEstr, qty: null });
+    totalUnit += barniEstr;
+  }
+
+  // Canteado automático — perímetro completo de todas las piezas
+  const mlTotal = parseFloat(piezas.reduce((s,p) => s+p.ml, 0).toFixed(3));
+  const cantoPrecio = fam.cantoPrecio || 0;
+  if (mlTotal > 0 && cantoPrecio > 0) {
+    const cantoTotal = parseFloat((cantoPrecio * mlTotal).toFixed(2));
+    extras.push({ nombre: `Canteado todos los lados (${fmt(mlTotal,2)} ml)`, precioUnit: cantoTotal, qty: null, incluido: true });
+    totalUnit += cantoTotal;
+  } else if (mlTotal > 0 && cantoPrecio === 0) {
+    extras.push({ nombre: `Canteado todos los lados (${fmt(mlTotal,2)} ml)`, precioUnit: 0, qty: null, incluido: true });
+  }
 
   // Mecanizados a testa incluidos
   const mecantestaPrecio = fam.mecantestaPrecio || 0;
@@ -722,28 +802,28 @@ function añadirLinea() {
   }
 
   // Suplementos opcionales
-  const suplsFam = SUPLS_ESC.filter(s => s.familias.includes(famId));
-  suplsFam.forEach(s => {
+  SUPLS_ESC.filter(s => s.familias.includes(famId)).forEach(s => {
     const v = estado.supls[s.id] || 0;
     if (v > 0 && s.precio > 0) {
-      // Para pasacables: precio/ud × qty
-      // Para canteado/fresado: precio/ml × ml (se simplifica como precio × qty aquí)
-      const unit = parseFloat((s.precio * v).toFixed(2));
-      extras.push({ nombre: s.nombre, precioUnit: unit, qty: v });
-      totalUnit += unit;
+      extras.push({ nombre: s.nombre, precioUnit: parseFloat((s.precio * v).toFixed(2)), qty: v });
+      totalUnit += parseFloat((s.precio * v).toFixed(2));
     }
   });
 
   totalUnit = parseFloat(totalUnit.toFixed(2));
   const totalConCantidad = parseFloat((totalUnit * cantidad).toFixed(2));
+  const m2Total = parseFloat(piezas.reduce((s,p)=>s+p.m2,0).toFixed(4));
 
   lineas.push({
     id: ++lineaId,
     modeloNombre: MODELOS[modeloId].nombre,
     famLabel: fam.label,
-    acabadoLabel: acabadoObj.label,
+    acabadoEstrLabel: acabadoEstrObj.label,
+    acabadoTapaLabel: mismoAcabado ? null : acabadoTapaObj.label,
+    mismoAcabado,
     grosor, largo, ancho, alto, cantidad,
-    precioM2, m2Total, baseUnit,
+    precioM2Tapa, precioM2Estr,
+    m2Total, m2Tapa: tapaPieza.m2, m2Estr,
     totalUnit, totalConCantidad,
     piezas, extras, notas,
     pendiente: extras.some(e => e.precioUnit === 0),
@@ -792,8 +872,12 @@ function renderLineas() {
       <button class="linea-del" onclick="eliminarLinea(${l.id})" title="Eliminar">×</button>
       <div class="linea-top">
         <div>
-          <div class="linea-name">${udLabel} &nbsp;${l.modeloNombre} · ${l.famLabel} · ${l.acabadoLabel} · ${l.grosor} cm</div>
-          <div class="linea-specs">${l.largo}×${l.ancho}×${l.alto} cm · ${fmt(l.m2Total,4)} m² total · ${fmt(l.precioM2)} €/m²</div>
+          <div class="linea-name">${udLabel} &nbsp;${l.modeloNombre} · ${l.famLabel} · ${l.grosor} cm</div>
+          <div class="linea-specs">${l.largo}×${l.ancho}×${l.alto} cm · ${fmt(l.m2Total,4)} m² total</div>
+          <div class="linea-specs" style="margin-top:2px;">
+            Estructura: ${l.acabadoEstrLabel} · ${fmt(l.precioM2Estr)} €/m²
+            ${!l.mismoAcabado ? ` &nbsp;·&nbsp; Tapa: ${l.acabadoTapaLabel} · ${fmt(l.precioM2Tapa)} €/m²` : ""}
+          </div>
         </div>
         <div class="linea-price">${fmt(l.totalConCantidad)} €</div>
       </div>
@@ -845,10 +929,13 @@ function resetConfigurador() {
   document.getElementById("modelo").value = "";
   document.getElementById("material").innerHTML = '<option value="">— elige modelo —</option>';
   document.getElementById("material").disabled = true;
-  document.getElementById("acabado").innerHTML  = '<option value="">—</option>';
-  document.getElementById("acabado").disabled   = true;
   document.getElementById("grosor").innerHTML   = '<option value="">—</option>';
   document.getElementById("grosor").disabled    = true;
+  document.getElementById("acabado-estructura").innerHTML = '<option value="">—</option>';
+  document.getElementById("acabado-estructura").disabled  = true;
+  document.getElementById("acabado-tapa").innerHTML = '<option value="">— igual que estructura —</option>';
+  document.getElementById("acabado-tapa").disabled  = true;
+  document.getElementById("card-acabados").style.display = "none";
   document.getElementById("chip-mat").innerHTML = "";
   document.getElementById("cantidad").value = 1;
   document.getElementById("notas-linea").value = "";
@@ -895,10 +982,10 @@ function copiarTexto() {
 
   let txt = `Madera Fina · ${titulo}\nFecha: ${now}\n${sep}\n`;
   lineas.forEach((l, i) => {
-    txt += `\n${i+1}. ${l.modeloNombre} · ${l.famLabel}\n`;
-    txt += `   ${l.acabadoLabel} · Grosor ${l.grosor} cm\n`;
+    txt += `\n${i+1}. ${l.modeloNombre} · ${l.famLabel} · ${l.grosor} cm\n`;
+    txt += `   Estructura: ${l.acabadoEstrLabel}${!l.mismoAcabado ? ` · Tapa: ${l.acabadoTapaLabel}` : ""}\n`;
     txt += `   Medidas: ${l.largo}×${l.ancho}×${l.alto} cm · ${l.cantidad > 1 ? l.cantidad+" ud." : "1 ud."}\n`;
-    txt += `   Superficie total: ${fmt(l.m2Total,4)} m² · ${fmt(l.precioM2)} €/m²\n`;
+    txt += `   Superficie total: ${fmt(l.m2Total,4)} m²\n`;
     l.extras.forEach(e => {
       if (e.precioUnit > 0) txt += `   + ${e.nombre}: ${fmt(e.precioUnit)} €${e.incluido?" [incluido]":""}\n`;
     });
