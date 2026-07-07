@@ -419,6 +419,20 @@ function buildCatalogo(data) {
     }
     if (key.startsWith("esquina_")) {
       familias.forEach(fid => { if (famMeta[fid]) famMeta[fid].precioEsquina = s.venta_iva; });
+      // También añadir como suplemento seleccionable
+      const uiKey = key.replace(/_kk$/,"").replace(/_sy$/,"");
+      const existente = SUPLS_ESC.find(x => x.uiKey === uiKey && x.precio === s.venta_iva);
+      if (existente) {
+        familias.forEach(fid => { if (!existente.familias.includes(fid)) existente.familias.push(fid); });
+      } else {
+        SUPLS_ESC.push({
+          id: `${uiKey}__${SUPLS_ESC.length}`, uiKey,
+          nombre: s.nombre, precio: s.venta_iva,
+          tipo: "qty", unidad: s.unidad,
+          familias: [...familias],
+          nota: s.nota || "",
+        });
+      }
       return;
     }
     if (key.startsWith("mecantesta_")) {
@@ -1011,5 +1025,6 @@ function copiarTexto() {
 </script>
 </body>
 </html>
+
 
 
