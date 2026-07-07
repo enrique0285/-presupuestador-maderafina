@@ -436,7 +436,7 @@ function buildCatalogo(data) {
       familias.forEach(fid => { if (famMeta[fid]) famMeta[fid].cantoPrecio = s.venta_iva; });
       return;
     }
-    if (SUPLS_PERMITIDOS.some(p => key.startsWith(p))) {
+    if (["pasacables_","esquina_"].some(p => key.startsWith(p))) {
       const uiKey = key.replace(/_kk$/,"").replace(/_sy$/,"");
       const existente = SUPLS_ESC.find(x => x.uiKey === uiKey && x.precio === s.venta_iva);
       if (existente) {
@@ -498,10 +498,13 @@ function onModeloChange() {
   const chipEl = document.getElementById("chip-mat");
   matSel.innerHTML = '<option value="">Seleccionar material...</option>';
   matSel.disabled = true;
-  document.getElementById("acabado").innerHTML = '<option value="">—</option>';
-  document.getElementById("acabado").disabled = true;
   document.getElementById("grosor").innerHTML = '<option value="">—</option>';
   document.getElementById("grosor").disabled = true;
+  document.getElementById("acabado-estructura").innerHTML = '<option value="">—</option>';
+  document.getElementById("acabado-estructura").disabled = true;
+  document.getElementById("acabado-tapa").innerHTML = '<option value="">— igual que estructura —</option>';
+  document.getElementById("acabado-tapa").disabled = true;
+  document.getElementById("card-acabados").style.display = "none";
   chipEl.innerHTML = "";
   document.getElementById("card-incluido").style.display = "none";
   document.getElementById("btn-add").disabled = true;
@@ -1008,4 +1011,5 @@ function copiarTexto() {
 </script>
 </body>
 </html>
+
 
