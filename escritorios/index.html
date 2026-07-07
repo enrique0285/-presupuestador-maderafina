@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -695,8 +694,8 @@ function calcular() {
   const cardIncluido = document.getElementById("card-incluido");
   const trabajosIncluidos = document.getElementById("trabajos-incluidos");
   cardIncluido.style.display = "block";
-  const mlTotal = parseFloat(piezas.reduce((s,p) => s+(2*(p.l+p.a)/100), 0).toFixed(3));
   const cantoPrecio = fam.cantoPrecio || 0;
+  const mlTotal = parseFloat(piezas.reduce((s,p) => s+p.ml, 0).toFixed(3));
   trabajosIncluidos.innerHTML = `<strong>Incluidos en el precio</strong>
     <div class="incluido-row"><span>Canteado todos los lados (${fmt(mlTotal,2)} ml)</span><span>${cantoPrecio > 0 ? fmt(parseFloat((cantoPrecio*mlTotal).toFixed(2)))+" €" : "— pendiente precio"}</span></div>
     <div class="incluido-row"><span>Mecanizado a testa ×${mecantesta_qty}</span><span>${mecantestaPrecio > 0 ? fmt(mecantesta_total)+" €" : "— pendiente precio"}</span></div>`;
@@ -706,8 +705,6 @@ function calcular() {
   const precioEstr = acabadoEstrObj.precios[grosor] || 0;
   const tapaPieza = piezas.find(p => p.nombre === "Tapa");
   const estrPiezas = piezas.filter(p => p.nombre !== "Tapa");
-  const mlTotal = parseFloat(piezas.reduce((s,p) => s+p.ml, 0).toFixed(3));
-  const cantoPrecio = fam.cantoPrecio || 0;
   const desgloseEl = document.getElementById("desglose-piezas");
   desgloseEl.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-top:4px;">
     <span style="margin-right:12px;">Tapa: ${fmt(tapaPieza.m2,4)} m² × ${fmt(precioTapa)} €/m²</span>
@@ -1011,3 +1008,4 @@ function copiarTexto() {
 </script>
 </body>
 </html>
+
