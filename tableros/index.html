@@ -42,7 +42,7 @@ select:disabled,input:disabled{background:var(--surface2);color:var(--text3)}
 .info-box{background:var(--accent-light);border:1px solid #c3dfc9;border-radius:var(--radius);padding:10px 12px;font-size:12px;color:#1e4530;margin-bottom:12px}
 
 /* SELECTOR DE COLORES */
-.color-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:4px}
+.color-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:4px}
 .color-card{cursor:pointer;border:2px solid transparent;border-radius:var(--radius);overflow:hidden;transition:border-color .15s,transform .1s;position:relative}
 .color-card:hover{transform:scale(1.03)}
 .color-card.selected{border-color:var(--accent)}
@@ -218,13 +218,25 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
   <!-- SELECTOR COLOR / ACABADO -->
   <div class="section-card" id="card-color" style="display:none">
     <div class="section-label">Color y acabado</div>
-    <div id="info-hpl" class="info-box" style="display:none">El HPL incluye canteado en los 4 lados.</div>
-    <!-- Galería de colores (melamina y familias con colores en Gist) -->
+    <!-- INTERNO: selector desplegable con nombre y gama -->
+    <div id="selector-interno" class="solo-interno" style="display:none">
+      <div class="row c2" style="margin-bottom:0">
+        <div class="field">
+          <label>Acabado</label>
+          <select id="acabado-interno" onchange="onAcabadoInternoChange()">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field" id="acabado-interno-info" style="display:flex;align-items:flex-end;padding-bottom:2px">
+        </div>
+      </div>
+    </div>
+    <!-- CLIENTE: galería de fotos -->
     <div id="galeria-colores" style="display:none">
       <div id="color-categorias"></div>
       <div class="color-selected-info" id="color-selected-info"></div>
     </div>
-    <!-- Selector clásico para familias sin galería de colores -->
+    <!-- Selector clásico para familias sin galería -->
     <div id="selector-clasico" style="display:none">
       <div class="row c2" style="margin-bottom:0">
         <div class="field">
@@ -257,7 +269,10 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
 
   <!-- CROQUIS UNIFICADO: ESQUINAS + PASACABLES -->
   <div class="section-card">
-    <div class="section-label">Esquinas y pasacables</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div class="section-label" style="margin-bottom:0">Esquinas y pasacables</div>
+      <div id="canto-badge" style="display:none;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#D1FAE5;color:#065F46"></div>
+    </div>
     <div class="croquis-pasa">
       <svg viewBox="0 0 340 230" xmlns="http://www.w3.org/2000/svg">
         <!-- Tablero -->
@@ -410,7 +425,7 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
   <div class="lineas" id="lineas-container"></div>
 
   <div class="entrega-wrap" id="entrega-wrap">
-    <div class="entrega-row">
+    <div class="entrega-row solo-interno">
       <div class="field" style="flex:1">
         <label>Entrega</label>
         <select id="sel-entrega" onchange="calcularTotales()">
@@ -424,9 +439,16 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
         </select>
       </div>
     </div>
+    <!-- Modo cliente: solo subida, entrega estándar automática -->
+    <div class="field" id="subida-cliente" style="display:none">
+      <label>Subida a domicilio</label>
+      <select id="sel-subida-cliente" onchange="calcularTotales()">
+        <option value="">Sin subida</option>
+      </select>
+    </div>
   </div>
 
-  <div class="nota-cliente-wrap" id="nota-cliente-wrap">
+  <div class="nota-cliente-wrap solo-interno" id="nota-cliente-wrap">
     <div class="section-label" style="margin-bottom:4px">Nota para el cliente</div>
     <textarea class="notas-input" id="nota-cliente" rows="2" placeholder="Ej: consultar disponibilidad de color..."></textarea>
   </div>
@@ -669,26 +691,98 @@ function onGrosorChange(){
   const fam=CATALOGO[famId];
   cardColor.style.display="block";
 
-  // HPL info
-  document.getElementById("info-hpl").style.display=fam.hplSiempreCanteado?"block":"none";
-
-  // ¿Tiene galería de colores?
-  const tieneGaleria=COLORES[famId]&&COLORES[famId].length>0;
-  document.getElementById("galeria-colores").style.display=tieneGaleria?"block":"none";
-  document.getElementById("selector-clasico").style.display=tieneGaleria?"none":"block";
-
-  if(tieneGaleria){
-    renderGaleriaColores(famId, grosor);
+  // Badge canteado incluido
+  const cantoBadge=document.getElementById("canto-badge");
+  if(fam.hplSiempreCanteado){
+    cantoBadge.textContent="✓ Canteado 4 lados incluido";
+    cantoBadge.style.display="block";
+  } else if(fam.esAlistonado){
+    cantoBadge.textContent="✓ Fresado de cantos incluido";
+    cantoBadge.style.display="block";
   } else {
-    const acabadoSel=document.getElementById("acabado");
-    acabadoSel.innerHTML='<option value="">Seleccionar...</option>';
-    const disponibles=fam.acabados.filter(a=>a.precios[grosor]!==undefined&&a.precios[grosor]!==null);
-    disponibles.forEach(a=>{
-      const o=document.createElement("option");
-      o.value=a.id;o.textContent=a.label;
-      acabadoSel.appendChild(o);
-    });
+    cantoBadge.textContent="✓ Canteado 4 lados incluido";
+    cantoBadge.style.display="block";
   }
+
+  const tieneGaleria=COLORES[famId]&&COLORES[famId].length>0;
+
+  if(!MODO_CLIENTE){
+    // INTERNO: desplegable con nombre y gama
+    document.getElementById("selector-interno").style.display="block";
+    document.getElementById("galeria-colores").style.display="none";
+    document.getElementById("selector-clasico").style.display="none";
+    const sel=document.getElementById("acabado-interno");
+    sel.innerHTML='<option value="">Seleccionar...</option>';
+
+    if(tieneGaleria){
+      // Agrupar por categoría
+      const cats={};
+      (COLORES[famId]||[]).forEach(c=>{
+        if(!cats[c.categoria])cats[c.categoria]=[];
+        cats[c.categoria].push(c);
+      });
+      Object.entries(cats).forEach(([cat,items])=>{
+        const grp=document.createElement("optgroup");
+        grp.label=cat;
+        items.forEach(c=>{
+          const fam2=CATALOGO[famId];
+          const precioBasic=fam2.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
+          const precioGama=fam2.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||precioBasic;
+          const supl=precioGama-precioBasic;
+          const gamaLabel=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
+          const suplStr=supl>0?` (+${fmt(supl)} €/m²)`:"";
+          const o=document.createElement("option");
+          o.value=JSON.stringify({codigo:c.codigo,nombre:c.nombre,calidad:c.calidad,categoria:c.categoria});
+          o.textContent=`${c.codigo} · ${c.nombre} — ${gamaLabel}${suplStr}`;
+          grp.appendChild(o);
+        });
+        sel.appendChild(grp);
+      });
+    } else {
+      // Sin galería: opciones de acabado clásicas
+      const disponibles=fam.acabados.filter(a=>a.precios[grosor]!==undefined&&a.precios[grosor]!==null);
+      disponibles.forEach(a=>{
+        const o=document.createElement("option");
+        o.value=JSON.stringify({codigo:a.id,nombre:a.label,calidad:a.id,categoria:""});
+        o.textContent=a.label;
+        sel.appendChild(o);
+      });
+    }
+  } else {
+    // CLIENTE: galería o selector clásico
+    document.getElementById("selector-interno").style.display="none";
+    if(tieneGaleria){
+      document.getElementById("galeria-colores").style.display="block";
+      document.getElementById("selector-clasico").style.display="none";
+      renderGaleriaColores(famId, grosor);
+    } else {
+      document.getElementById("galeria-colores").style.display="none";
+      document.getElementById("selector-clasico").style.display="block";
+      const acabadoSel=document.getElementById("acabado");
+      acabadoSel.innerHTML='<option value="">Seleccionar...</option>';
+      const disponibles=fam.acabados.filter(a=>a.precios[grosor]!==undefined&&a.precios[grosor]!==null);
+      disponibles.forEach(a=>{
+        const o=document.createElement("option");
+        o.value=a.id;o.textContent=a.label;
+        acabadoSel.appendChild(o);
+      });
+    }
+  }
+  calcular();
+}
+
+function onAcabadoInternoChange(){
+  const val=document.getElementById("acabado-interno").value;
+  if(!val){colorSeleccionado=null;calcular();return;}
+  colorSeleccionado=JSON.parse(val);
+  const famId=document.getElementById("familia").value;
+  const grosor=parseFloat(document.getElementById("grosor").value);
+  const fam=CATALOGO[famId];
+  const precioBasic=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
+  const precioGama=fam.acabados.find(a=>a.id===colorSeleccionado.calidad)?.precios[grosor]||precioBasic;
+  const gamaLabel=colorSeleccionado.calidad.charAt(0).toUpperCase()+colorSeleccionado.calidad.slice(1);
+  const infoEl=document.getElementById("acabado-interno-info");
+  infoEl.innerHTML=`<span style="font-size:11px;color:var(--accent);font-weight:600">${gamaLabel} · ${fmt(precioGama)} €/m²</span>`;
   calcular();
 }
 
@@ -766,10 +860,17 @@ function buildEntregasSubidas(famId){
     if(key.startsWith("entrega_"))ENTREGAS.push({id:key,label:val.label,precio:val.precio});
     if(key.startsWith("subida_"))SUBIDAS.push({id:key,label:val.label,precio:val.precio});
   });
+  // Interno
   const selE=document.getElementById("sel-entrega");
   const selS=document.getElementById("sel-subida");
   selE.innerHTML=ENTREGAS.map(e=>`<option value="${e.id}">${e.label}${e.precio>0?" — "+fmt(e.precio)+" €":""}</option>`).join("");
   selS.innerHTML=SUBIDAS.map(s=>`<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
+  // Cliente — solo subida
+  const selSC=document.getElementById("sel-subida-cliente");
+  if(selSC){
+    selSC.innerHTML=SUBIDAS.map(s=>`<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
+    document.getElementById("subida-cliente").style.display=MODO_CLIENTE?"block":"none";
+  }
 }
 
 // ── Suplementos y trabajos ────────────────────────────────────────────────────
@@ -779,7 +880,7 @@ function buildSuplsYTrabajos(famId){
   activos.forEach(s=>{estado.supls[s.id]=0;});
 
   const trabajos=activos.filter(s=>esTrabajo(s));
-  const supls=activos.filter(s=>!esTrabajo(s));
+  const supls=activos.filter(s=>!esTrabajo(s)&&!s.uiKey.startsWith("pasacables"));
 
   const renderGrid=(items,gridId)=>{
     const g=document.getElementById(gridId);
@@ -1056,16 +1157,24 @@ function renderLineas(){
 
 function calcularTotales(){
   if(lineas.length===0)return;
-  const entregaId=document.getElementById("sel-entrega")?.value||"";
-  const subidaId=document.getElementById("sel-subida")?.value||"";
-  const entregaObj=ENTREGAS.find(e=>e.id===entregaId)||ENTREGAS[0];
-  const subidaObj=SUBIDAS.find(s=>s.id===subidaId)||SUBIDAS[0];
+  let entregaObj, subidaObj;
+  if(MODO_CLIENTE){
+    // Entrega estándar automática
+    entregaObj=ENTREGAS.find(e=>e.id.includes("est"))||ENTREGAS.find(e=>e.precio>0)||ENTREGAS[0];
+    const subidaId=document.getElementById("sel-subida-cliente")?.value||"";
+    subidaObj=SUBIDAS.find(s=>s.id===subidaId)||SUBIDAS[0];
+  } else {
+    const entregaId=document.getElementById("sel-entrega")?.value||"";
+    const subidaId=document.getElementById("sel-subida")?.value||"";
+    entregaObj=ENTREGAS.find(e=>e.id===entregaId)||ENTREGAS[0];
+    subidaObj=SUBIDAS.find(s=>s.id===subidaId)||SUBIDAS[0];
+  }
   const subtotal=lineas.filter(l=>!l.pendiente).reduce((s,l)=>s+l.totalConCantidad,0);
   const total=subtotal+entregaObj.precio+subidaObj.precio;
   const base=total/1.21,iva=total-base;
   const rowE=document.getElementById("row-entrega"),rowS=document.getElementById("row-subida");
-  if(entregaObj.precio>0){rowE.style.display="flex";document.getElementById("label-entrega").textContent=entregaObj.label;document.getElementById("t-entrega").textContent=fmt(entregaObj.precio)+" €";}else rowE.style.display="none";
-  if(subidaObj.precio>0){rowS.style.display="flex";document.getElementById("label-subida").textContent=subidaObj.label;document.getElementById("t-subida").textContent=fmt(subidaObj.precio)+" €";}else rowS.style.display="none";
+  if(rowE){if(entregaObj.precio>0){rowE.style.display="flex";document.getElementById("label-entrega").textContent=entregaObj.label;document.getElementById("t-entrega").textContent=fmt(entregaObj.precio)+" €";}else rowE.style.display="none";}
+  if(rowS){if(subidaObj.precio>0){rowS.style.display="flex";document.getElementById("label-subida").textContent=subidaObj.label;document.getElementById("t-subida").textContent=fmt(subidaObj.precio)+" €";}else rowS.style.display="none";}
   document.getElementById("t-base").textContent=fmt(base)+" €";
   document.getElementById("t-iva").textContent=fmt(iva)+" €";
   document.getElementById("t-total").textContent=fmt(total)+" €";
