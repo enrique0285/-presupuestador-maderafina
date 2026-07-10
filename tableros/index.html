@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -175,10 +176,15 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
 <!-- ===== PANEL IZQUIERDO ===== -->
 <div class="left">
   <div class="header">
-    <div class="brand">Madera Fina <span id="subtitulo-marca">· Presupuestador interno</span>
-      <span class="modo-badge interno" id="modo-badge">Interno</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+      <div class="brand">Madera Fina <span id="subtitulo-marca">· Presupuestador interno</span>
+        <span class="modo-badge interno" id="modo-badge">Interno</span>
+      </div>
+      <button id="btn-modo" onclick="cambiarModo()" style="font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;background:var(--surface);color:var(--text2);cursor:pointer;white-space:nowrap">
+        Vista cliente →
+      </button>
     </div>
-    <div id="loading-msg" style="margin-top:8px;font-size:12px;color:var(--text3)">⏳ Cargando tarifas…</div>
+    <div id="loading-msg" style="margin-top:4px;font-size:12px;color:var(--text3)">⏳ Cargando tarifas…</div>
   </div>
 
   <!-- FAMILIA -->
@@ -468,6 +474,17 @@ if (MODO_CLIENTE) {
   document.getElementById("pres-titulo").style.display = "none";
   document.getElementById("pres-titulo-cliente").style.display = "block";
   document.getElementById("btn-whatsapp").style.display = "flex";
+  document.getElementById("btn-modo").style.display = "none";
+}
+
+function cambiarModo() {
+  const url = new URL(location.href);
+  if (MODO_CLIENTE) {
+    url.searchParams.delete("modo");
+  } else {
+    url.searchParams.set("modo", "cliente");
+  }
+  window.open(url.toString(), "_blank");
 }
 
 // ── Datos ─────────────────────────────────────────────────────────────────────
@@ -827,12 +844,15 @@ function renderPasacables(){
       <button class="pasa-del" onclick="eliminarPasa(${p.id})">×</button>
     </div>`).join("");
   // Actualizar círculos SVG
+  const ids={izquierda:"izq",centro:"cen",derecha:"der"};
   ["izquierda","centro","derecha"].forEach(pos=>{
-    const ids={izquierda:"izq",centro:"cen",derecha:"der"};
     const sid=ids[pos];
     const tiene=estado.pasacables.some(p=>p.pos===pos);
-    document.getElementById("pasa-"+sid).classList.toggle("activa",tiene);
-    document.getElementById("pasa-"+sid+"-txt").classList.toggle("activa",tiene);
+    const circ=document.getElementById("pasa-"+sid);
+    if(circ){
+      circ.setAttribute("fill",tiene?"#2B5C3F":"#F2EFE9");
+      circ.setAttribute("stroke",tiene?"#2B5C3F":"#C8C4BC");
+    }
   });
 }
 
