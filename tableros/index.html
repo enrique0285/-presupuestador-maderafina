@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tableros · Madera Fina</title>
+<style>
+:root {
+  --bg:#F7F5F2;--surface:#FFFFFF;--surface2:#F2EFE9;
+  --border:#E0DDD6;--border2:#C8C4BC;
+  --text:#1C1A17;--text2:#6B6760;--text3:#9C9890;
+  --accent:#2B5C3F;--accent-light:#EAF2EC;
+  --danger:#C0392B;--radius:8px;--radius-lg:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+.app{display:grid;grid-template-columns:1fr 380px;min-height:100vh}
+.left{padding:2rem;overflow-y:auto}
+.right{background:var(--surface);border-left:1px solid var(--border);padding:2rem;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.header{margin-bottom:1.5rem}
+.brand{font-size:22px;font-weight:600;color:var(--accent);letter-spacing:-.5px}
+.brand span{color:var(--text3);font-weight:400;font-size:14px;margin-left:8px}
+.modo-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;margin-left:8px}
+.modo-badge.interno{background:#FEF3C7;color:#92400E}
+.modo-badge.cliente{background:#D1FAE5;color:#065F46}
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:1rem}
+.row{display:grid;gap:12px;margin-bottom:12px}
+.row.c2{grid-template-columns:1fr 1fr}
+.row.c3{grid-template-columns:1fr 1fr 1fr}
+.field label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500}
+select,input[type=number],input[type=text]{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s}
+select:focus,input:focus{border-color:var(--accent)}
+select:disabled,input:disabled{background:var(--surface2);color:var(--text3)}
+.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.chip.mel{background:#EBF4FF;color:#1A5276}
+.chip.hpl{background:#F4ECFF;color:#6C3483}
+.chip.mad{background:#FEF9E7;color:#784212}
+.dim-note{font-size:11px;color:var(--text3);margin-top:3px}
+.info-box{background:var(--accent-light);border:1px solid #c3dfc9;border-radius:var(--radius);padding:10px 12px;font-size:12px;color:#1e4530;margin-bottom:12px}
+
+/* SELECTOR DE COLORES */
+.color-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:4px}
+.color-card{cursor:pointer;border:2px solid transparent;border-radius:var(--radius);overflow:hidden;transition:border-color .15s,transform .1s;position:relative}
+.color-card:hover{transform:scale(1.03)}
+.color-card.selected{border-color:var(--accent)}
+.color-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--surface2)}
+.color-card .color-info{padding:4px 6px;background:var(--surface);border-top:1px solid var(--border)}
+.color-card .color-codigo{font-size:10px;font-weight:600;color:var(--text);display:block}
+.color-card .color-nombre{font-size:9px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.color-card .color-gama{font-size:9px;font-weight:600;margin-top:1px}
+.color-card .color-gama.basic{color:var(--accent)}
+.color-card .color-gama.platinium{color:#6C3483}
+.color-card .color-gama.gold{color:#B8860B}
+.color-card .selected-check{position:absolute;top:4px;right:4px;width:18px;height:18px;background:var(--accent);border-radius:50%;display:none;align-items:center;justify-content:center}
+.color-card.selected .selected-check{display:flex}
+.color-card .selected-check::after{content:'✓';color:#fff;font-size:11px;font-weight:700}
+.cat-label{font-size:11px;font-weight:600;color:var(--text2);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.05em}
+.color-selected-info{padding:8px 10px;background:var(--accent-light);border:1px solid #c3dfc9;border-radius:var(--radius);font-size:12px;color:#1e4530;margin-top:8px;display:none}
+
+/* CROQUIS PASACABLES */
+.croquis-pasa{display:flex;justify-content:center;margin:8px 0}
+.croquis-pasa svg{max-width:320px;width:100%}
+.pasa-zona{cursor:pointer;transition:opacity .15s}
+.pasa-zona:hover .pasa-circle{fill:#c3dfc9}
+.pasa-circle{fill:var(--surface2);stroke:var(--border2);stroke-width:1.5;transition:fill .15s}
+.pasa-circle.activa{fill:var(--accent);stroke:var(--accent)}
+.pasa-label{font-size:10px;fill:var(--text2);font-family:'Segoe UI',sans-serif;text-anchor:middle;pointer-events:none}
+.pasa-label.activa{fill:#fff}
+.pasa-list{margin-top:8px}
+.pasa-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:4px;font-size:12px}
+.pasa-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0 4px}
+.pasa-del:hover{color:var(--danger)}
+.pasa-color-sel{display:flex;gap:6px;margin-top:6px}
+.pasa-color-btn{padding:4px 10px;border:1.5px solid var(--border);border-radius:20px;font-size:11px;cursor:pointer;background:var(--surface);color:var(--text);transition:all .15s}
+.pasa-color-btn.sel{border-color:var(--accent);background:var(--accent-light);color:var(--accent);font-weight:600}
+
+/* SUPLEMENTOS */
+.supl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.supl-item{border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;background:var(--surface2);display:flex;align-items:center;justify-content:space-between}
+.supl-item.active{border-color:var(--accent);background:var(--accent-light)}
+.supl-name{font-size:12px;font-weight:500;color:var(--text)}
+.supl-price{font-size:11px;color:var(--text3);margin-top:1px}
+.supl-right{display:flex;align-items:center;gap:6px}
+.qty-btn{width:22px;height:22px;border:1px solid var(--border2);border-radius:5px;background:var(--surface);color:var(--text);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.qty-btn:hover{background:var(--border)}
+.qty-val{font-size:13px;font-weight:600;min-width:14px;text-align:center}
+.toggle{width:34px;height:18px;border-radius:9px;border:none;cursor:pointer;position:relative;background:var(--border2);transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle.on::after{transform:translateX(16px)}
+
+/* BOTÓN AÑADIR */
+.btn-add{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;transition:background .15s}
+.btn-add:hover{background:#1e4530}
+.btn-add:disabled{background:var(--border2);cursor:not-allowed}
+
+/* PANEL DERECHO */
+.pres-title-input{font-size:16px;font-weight:600;color:var(--text);background:transparent;border:none;border-bottom:1.5px dashed var(--border2);outline:none;width:100%;padding:2px 0;cursor:text}
+.pres-title-input:focus{border-bottom-color:var(--accent)}
+.pres-subtitle{font-size:12px;color:var(--text3);margin-top:2px}
+.lineas{flex:1;overflow-y:auto}
+.linea{border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem;margin-bottom:10px;background:var(--surface2);position:relative}
+.linea-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.linea-name{font-size:13px;font-weight:600;color:var(--text)}
+.linea-specs{font-size:11px;color:var(--text2);margin-top:2px}
+.linea-price{font-size:15px;font-weight:700;color:var(--accent);white-space:nowrap;margin-left:8px}
+.linea-del{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:2px 4px;border-radius:4px}
+.linea-del:hover{background:#fdecea;color:var(--danger)}
+.linea-extras{font-size:11px;color:var(--text3);margin-top:4px}
+.entrega-wrap{padding:10px 0 4px;border-top:1px solid var(--border);margin-top:6px;display:none}
+.entrega-row{display:flex;gap:10px}
+.entrega-row .field label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500}
+.nota-cliente-wrap{padding:10px 0 4px;border-top:1px solid var(--border);margin-top:4px;display:none}
+.notas-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;resize:none;color:var(--text);background:var(--surface)}
+.notas-input:focus{outline:none;border-color:var(--accent)}
+.totales{border-top:1px solid var(--border);padding-top:1rem;margin-top:auto}
+.total-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px}
+.total-row.big{font-size:18px;font-weight:700;color:var(--text);margin-top:8px}
+.total-row.big .val{color:var(--accent)}
+.iva-note{font-size:11px;color:var(--text3);text-align:right;margin-top:2px}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+.btn-sec{flex:1;padding:9px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);font-size:13px;cursor:pointer;color:var(--text)}
+.btn-sec:hover{background:var(--surface2)}
+.btn-prim{flex:1;padding:9px;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.btn-prim:hover{background:#1e4530}
+.btn-prim:disabled{background:var(--border2);cursor:not-allowed}
+.clausulas-print{display:none}
+
+/* MODO CLIENTE — ocultar elementos internos */
+body.modo-cliente .solo-interno{display:none!important}
+body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:transparent}
+
+@media print{
+  @page{margin:1.5cm 2cm}
+  body{background:#fff!important;font-size:12pt;color:#111!important}
+  .left{display:none!important}
+  .app{display:block}
+  .right{position:static;height:auto;border:none;padding:0;background:#fff!important}
+  .pres-title-input{font-size:18pt!important;font-weight:700!important;color:#111!important;border:none!important}
+  img[alt="Madera Fina"]{width:80px!important;height:80px!important;opacity:1!important}
+  .linea{border:1px solid #ccc!important;background:#f9f9f9!important;page-break-inside:avoid;margin-bottom:8pt}
+  .linea-name{font-size:11pt;color:#111!important}
+  .linea-specs,.linea-extras{font-size:9pt;color:#444!important}
+  .linea-price{font-size:12pt;color:#2B5C3F!important}
+  .totales{border-top:2px solid #333!important}
+  .total-row{font-size:10pt;color:#111!important}
+  .total-row.big{font-size:14pt!important}
+  .total-row.big .val{color:#2B5C3F!important}
+  .btn-row,.linea-del{display:none!important}
+  .entrega-wrap{display:block!important}
+  .entrega-row{display:none!important}
+  .nota-cliente-wrap{display:block!important;border-top:none!important;padding-top:0!important}
+  .nota-cliente-wrap .section-label{display:none}
+  #nota-cliente{border:none!important;padding:0!important;font-size:9pt;color:#333;font-style:italic}
+  .nota-cliente-wrap:has(#nota-cliente:placeholder-shown){display:none!important}
+  #nota-cliente::placeholder{color:transparent!important}
+  select{border:none!important;background:transparent!important;appearance:none;font-size:9pt;color:#444}
+  .clausulas-print{display:block!important;margin-top:24pt;border-top:1px solid #ccc;padding-top:12pt}
+  .clausula-titulo{font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:8pt}
+  .clausula-item{font-size:8pt;color:#555;margin-bottom:5pt;line-height:1.5}
+  .clausula-item strong{color:#222}
+  .solo-interno{display:none!important}
+}
+@media(max-width:860px){
+  .app{grid-template-columns:1fr}
+  .right{position:static;height:auto;border-left:none;border-top:1px solid var(--border)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== PANEL IZQUIERDO ===== -->
+<div class="left">
+  <div class="header">
+    <div class="brand">Madera Fina <span id="subtitulo-marca">· Presupuestador interno</span>
+      <span class="modo-badge interno" id="modo-badge">Interno</span>
+    </div>
+    <div id="loading-msg" style="margin-top:8px;font-size:12px;color:var(--text3)">⏳ Cargando tarifas…</div>
+  </div>
+
+  <!-- FAMILIA -->
+  <div class="section-card">
+    <div class="section-label">Producto</div>
+    <div class="row c2">
+      <div class="field">
+        <label>Familia</label>
+        <select id="familia" onchange="onFamiliaChange()">
+          <option value="">Seleccionar familia...</option>
+          <option value="melamina">Tablero Melamina</option>
+          <option value="hpl1">Tablero HPL 1 cara</option>
+          <option value="hpl2">Tablero HPL 2 caras</option>
+          <option value="rechapado-haya">Tablero Rechapado Haya</option>
+          <option value="rechapado-roble">Tablero Rechapado Roble</option>
+          <option value="rechapado-pino">Tablero Rechapado Pino</option>
+          <option value="alistonado-haya">Tablero Alistonado Haya</option>
+          <option value="alistonado-roble">Tablero Alistonado Roble</option>
+          <option value="alistonado-pino">Tablero Alistonado Pino</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Grosor (cm)</label>
+        <select id="grosor" onchange="onGrosorChange()" disabled>
+          <option value="">—</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELECTOR COLOR / ACABADO -->
+  <div class="section-card" id="card-color" style="display:none">
+    <div class="section-label">Color y acabado</div>
+    <div id="info-hpl" class="info-box" style="display:none">El HPL incluye canteado en los 4 lados.</div>
+    <!-- Galería de colores (melamina y familias con colores en Gist) -->
+    <div id="galeria-colores" style="display:none">
+      <div id="color-categorias"></div>
+      <div class="color-selected-info" id="color-selected-info"></div>
+    </div>
+    <!-- Selector clásico para familias sin galería de colores -->
+    <div id="selector-clasico" style="display:none">
+      <div class="row c2" style="margin-bottom:0">
+        <div class="field">
+          <label>Acabado</label>
+          <select id="acabado" onchange="calcular()">
+            <option value="">—</option>
+          </select>
+        </div>
+        <div class="field"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEDIDAS -->
+  <div class="section-card">
+    <div class="section-label">Medidas</div>
+    <div class="row c2">
+      <div class="field">
+        <label>Largo (cm)</label>
+        <input type="number" id="largo" value="120" min="1" oninput="calcular()">
+        <div class="dim-note" id="note-largo"></div>
+      </div>
+      <div class="field">
+        <label>Ancho (cm)</label>
+        <input type="number" id="ancho" value="60" min="1" oninput="calcular()">
+        <div class="dim-note" id="note-ancho"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CROQUIS UNIFICADO: ESQUINAS + PASACABLES -->
+  <div class="section-card">
+    <div class="section-label">Esquinas y pasacables</div>
+    <div class="croquis-pasa">
+      <svg viewBox="0 0 340 230" xmlns="http://www.w3.org/2000/svg">
+        <!-- Tablero -->
+        <rect x="40" y="30" width="260" height="155" rx="12" fill="#D4B896" stroke="#8B6914" stroke-width="1.5"/>
+
+        <!-- COTA radio esquina — esquina inf izq como ejemplo -->
+        <path d="M40,167 Q40,185 58,185" fill="none" stroke="#8B6914" stroke-width="0.8" stroke-dasharray="3,2"/>
+        <line x1="40" y1="185" x2="58" y2="185" stroke="#555" stroke-width="0.6"/>
+        <text x="34" y="192" font-size="7.5" fill="#555" font-family="'Segoe UI',sans-serif" font-style="italic">R=6cm</text>
+
+        <!-- COTA posición pasacables izq — distancia lateral 8cm -->
+        <!-- Línea vertical de referencia lateral izq → centro pasacables izq -->
+        <line x1="40" y1="108" x2="98" y2="108" stroke="#555" stroke-width="0.6" stroke-dasharray="3,2"/>
+        <line x1="40" y1="104" x2="40" y2="112" stroke="#555" stroke-width="0.8"/>
+        <line x1="98" y1="104" x2="98" y2="112" stroke="#555" stroke-width="0.8"/>
+        <text x="62" y="120" font-size="7" fill="#555" font-family="'Segoe UI',sans-serif" text-anchor="middle" font-style="italic">8cm</text>
+
+        <!-- COTA distancia fondo (top) → centro pasacables -->
+        <line x1="98" y1="30" x2="98" y2="100" stroke="#555" stroke-width="0.6" stroke-dasharray="3,2"/>
+        <line x1="92" y1="30" x2="104" y2="30" stroke="#555" stroke-width="0.8"/>
+        <line x1="92" y1="100" x2="104" y2="100" stroke="#555" stroke-width="0.8"/>
+        <text x="110" y="68" font-size="7" fill="#555" font-family="'Segoe UI',sans-serif" text-anchor="start" font-style="italic">8cm</text>
+
+        <!-- ESQUINAS clicables -->
+        <g onclick="toggleEsquina('A')" style="cursor:pointer">
+          <circle id="esq-A" cx="52" cy="42" r="14" fill="#F2EFE9" stroke="#C8C4BC" stroke-width="1.5"/>
+          <text id="esq-A-txt" x="52" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">A</text>
+        </g>
+        <g onclick="toggleEsquina('B')" style="cursor:pointer">
+          <circle id="esq-B" cx="288" cy="42" r="14" fill="#F2EFE9" stroke="#C8C4BC" stroke-width="1.5"/>
+          <text id="esq-B-txt" x="288" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">B</text>
+        </g>
+        <g onclick="toggleEsquina('C')" style="cursor:pointer">
+          <circle id="esq-C" cx="52" cy="173" r="14" fill="#F2EFE9" stroke="#C8C4BC" stroke-width="1.5"/>
+          <text id="esq-C-txt" x="52" y="177" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">C</text>
+        </g>
+        <g onclick="toggleEsquina('D')" style="cursor:pointer">
+          <circle id="esq-D" cx="288" cy="173" r="14" fill="#F2EFE9" stroke="#C8C4BC" stroke-width="1.5"/>
+          <text id="esq-D-txt" x="288" y="177" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">D</text>
+        </g>
+
+        <!-- PASACABLES: círculo exterior (encastre Ø6cm) + zona clicable -->
+        <!-- Izquierda -->
+        <g class="pasa-zona" onclick="selPasaPos('izquierda')" style="cursor:pointer">
+          <circle cx="98" cy="100" r="18" fill="none" stroke="#8B6914" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.5"/>
+          <circle id="pasa-izq" class="pasa-circle" cx="98" cy="100" r="13"/>
+          <text x="98" y="97" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Pasa</text>
+          <text x="98" y="107" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Izq.</text>
+        </g>
+        <!-- Centro -->
+        <g class="pasa-zona" onclick="selPasaPos('centro')" style="cursor:pointer">
+          <circle cx="170" cy="100" r="18" fill="none" stroke="#8B6914" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.5"/>
+          <circle id="pasa-cen" class="pasa-circle" cx="170" cy="100" r="13"/>
+          <text x="170" y="97" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Pasa</text>
+          <text x="170" y="107" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Centro</text>
+        </g>
+        <!-- Derecha -->
+        <g class="pasa-zona" onclick="selPasaPos('derecha')" style="cursor:pointer">
+          <circle cx="242" cy="100" r="18" fill="none" stroke="#8B6914" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.5"/>
+          <circle id="pasa-der" class="pasa-circle" cx="242" cy="100" r="13"/>
+          <text x="242" y="97" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Pasa</text>
+          <text x="242" y="107" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Dcha.</text>
+        </g>
+
+        <!-- Leyenda -->
+        <text x="170" y="222" text-anchor="middle" font-size="8" fill="#9C9890" font-family="'Segoe UI',sans-serif">Pulsa las esquinas A/B/C/D · Pulsa para añadir pasacables</text>
+      </svg>
+    </div>
+
+    <!-- Nota técnica -->
+    <div style="font-size:11px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;margin-bottom:8px;line-height:1.6">
+      <strong style="color:var(--text)">Especificaciones:</strong>
+      Esquinas redondeadas con radio R=6 cm ·
+      Pasacables: encastre Ø6 cm, agujero Ø7 cm ·
+      Posición: centro del pasacables a 8 cm del fondo y 8 cm del lateral más próximo
+    </div>
+
+    <!-- Color pasacables -->
+    <div id="pasa-color-wrap" style="display:none;margin-bottom:8px">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:4px;font-weight:500">Color del pasacables</div>
+      <div class="pasa-color-sel">
+        <button class="pasa-color-btn sel" id="pasa-col-blanco" onclick="selPasaColor('blanco',this)">Blanco</button>
+        <button class="pasa-color-btn" id="pasa-col-negro" onclick="selPasaColor('negro',this)">Negro</button>
+        <button class="pasa-color-btn" id="pasa-col-gris" onclick="selPasaColor('gris',this)">Gris</button>
+      </div>
+    </div>
+
+    <!-- Lista pasacables añadidos -->
+    <div class="pasa-list" id="pasa-list"></div>
+
+    <!-- Lista esquinas activas -->
+    <div id="esq-list" style="margin-top:4px"></div>
+  </div>
+
+  <!-- TRABAJOS (solo interno) -->
+  <div class="section-card solo-interno">
+    <div class="section-label">Trabajos</div>
+    <div class="supl-grid" id="trabajos-grid"></div>
+  </div>
+
+  <!-- SUPLEMENTOS -->
+  <div class="section-card">
+    <div class="section-label">Suplementos</div>
+    <div class="supl-grid" id="supl-grid"></div>
+  </div>
+
+  <!-- NOTAS INTERNAS (solo interno) -->
+  <div class="section-card solo-interno">
+    <div class="section-label">Notas internas</div>
+    <textarea class="notas-input" id="notas-linea" rows="2" placeholder="Ej: color especial, urgente..."></textarea>
+  </div>
+
+  <!-- CANTIDAD -->
+  <div class="section-card" style="background:var(--accent-light);border-color:#c3dfc9">
+    <div class="section-label" style="color:var(--accent)">Cantidad de este tablero</div>
+    <div class="row c2">
+      <div class="field">
+        <label>Nº de unidades</label>
+        <input type="number" id="cantidad" value="1" min="1" oninput="calcular()" style="font-size:16px;font-weight:600">
+      </div>
+      <div class="field" style="display:flex;align-items:flex-end;padding-bottom:1px">
+        <div style="font-size:11px;color:var(--text2);line-height:1.5">Los suplementos se multiplican por esta cantidad.</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #c3dfc9" class="solo-interno">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--text)">Pedido mínimo (45,00 €)</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">Aplica si el total es inferior a 45 €</div>
+      </div>
+      <button class="toggle on" id="tog-minimo" onclick="toggleMinimo(this)"></button>
+    </div>
+  </div>
+
+  <button class="btn-add" id="btn-add" onclick="añadirLinea()" disabled>+ Añadir al presupuesto</button>
+</div>
+
+<!-- ===== PANEL DERECHO ===== -->
+<div class="right">
+  <div style="margin-bottom:1rem">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div style="flex:1">
+        <input class="pres-title-input solo-interno" id="pres-titulo" value="Presupuesto estimado" maxlength="60">
+        <div id="pres-titulo-cliente" style="font-size:16px;font-weight:600;color:var(--text);display:none">Tu presupuesto</div>
+      </div>
+      <img src="https://enrique0285.github.io/-presupuestador-maderafina/Madera-Fina-Logo.jpg" alt="Madera Fina" style="width:64px;height:64px;object-fit:contain;opacity:.85;flex-shrink:0;margin-left:12px">
+    </div>
+    <div class="pres-subtitle" id="pres-fecha"></div>
+  </div>
+
+  <div class="lineas" id="lineas-container"></div>
+
+  <div class="entrega-wrap" id="entrega-wrap">
+    <div class="entrega-row">
+      <div class="field" style="flex:1">
+        <label>Entrega</label>
+        <select id="sel-entrega" onchange="calcularTotales()">
+          <option value="">Sin entrega</option>
+        </select>
+      </div>
+      <div class="field" style="flex:1">
+        <label>Subida a domicilio</label>
+        <select id="sel-subida" onchange="calcularTotales()">
+          <option value="">Sin subida</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="nota-cliente-wrap" id="nota-cliente-wrap">
+    <div class="section-label" style="margin-bottom:4px">Nota para el cliente</div>
+    <textarea class="notas-input" id="nota-cliente" rows="2" placeholder="Ej: consultar disponibilidad de color..."></textarea>
+  </div>
+
+  <div class="totales">
+    <div class="total-row solo-interno" id="row-entrega" style="display:none"><span id="label-entrega"></span><span id="t-entrega"></span></div>
+    <div class="total-row solo-interno" id="row-subida" style="display:none"><span id="label-subida"></span><span id="t-subida"></span></div>
+    <div class="total-row solo-interno"><span>Subtotal (sin IVA)</span><span id="t-base">—</span></div>
+    <div class="total-row solo-interno"><span>IVA 21%</span><span id="t-iva">—</span></div>
+    <div class="total-row big"><span>Total</span><span class="val" id="t-total">—</span></div>
+    <div class="iva-note">Precios incluyen IVA</div>
+    <div class="btn-row" style="margin-top:10px">
+      <button class="btn-sec" onclick="resetPresupuesto()">Nueva consulta</button>
+      <button class="btn-prim" id="btn-imprimir" onclick="imprimirPpto()" disabled>Imprimir / PDF</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-sec solo-interno" onclick="copiarTexto()" id="btn-copiar" disabled>Copiar resumen</button>
+      <button class="btn-sec" id="btn-whatsapp" onclick="compartirWhatsApp()" disabled style="display:none">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <div class="clausulas-print">
+    <div class="clausula-titulo">Condiciones del presupuesto</div>
+    <div class="clausula-item"><strong>Validez:</strong> 30 días naturales desde la fecha de emisión.</div>
+    <div class="clausula-item"><strong>Medidas:</strong> Proporcionadas por el cliente. Madera Fina no se hace responsable de errores derivados de mediciones incorrectas.</div>
+    <div class="clausula-item"><strong>Tolerancias:</strong> ±2 mm en las dimensiones indicadas.</div>
+    <div class="clausula-item"><strong>Plazo de entrega:</strong> Se comunicará al confirmar el pedido, sujeto a disponibilidad.</div>
+    <div class="clausula-item"><strong>Forma de pago:</strong> El importe total deberá abonarse al confirmar el pedido.</div>
+  </div>
+</div>
+</div>
+
+<script>
+const GIST_URL = "https://gist.githubusercontent.com/enrique0285/ab5274e8a6a37e7ad753acfda769e188/raw/tarifas-maderafina.json";
+const IMG_BASE = "https://enrique0285.github.io/-presupuestador-maderafina/img/acabados/";
+const TRABAJOS_KEYS = ["mecan_","excent_","mecantesta_"];
+
+// ── Modo interno/cliente ──────────────────────────────────────────────────────
+const MODO_CLIENTE = new URLSearchParams(location.search).get("modo") === "cliente";
+if (MODO_CLIENTE) {
+  document.body.classList.add("modo-cliente");
+  document.getElementById("modo-badge").textContent = "Cliente";
+  document.getElementById("modo-badge").className = "modo-badge cliente";
+  document.getElementById("subtitulo-marca").textContent = "";
+  document.getElementById("pres-titulo").style.display = "none";
+  document.getElementById("pres-titulo-cliente").style.display = "block";
+  document.getElementById("btn-whatsapp").style.display = "flex";
+}
+
+// ── Datos ─────────────────────────────────────────────────────────────────────
+let CATALOGO = {}, SUPLS = [], COLORES = {};
+let ENTREGAS = [{id:"",label:"Sin entrega",precio:0}];
+let SUBIDAS  = [{id:"",label:"Sin subida a domicilio",precio:0}];
+let lineas = [], lineaId = 0;
+let estado = { supls:{}, pasacables:[], pasaColorActual:"blanco", esquinas:{A:false,B:false,C:false,D:false} };
+let minimoActivo = true;
+let colorSeleccionado = null; // {codigo, nombre, calidad, categoria}
+
+function fmt(n,dec=2){ return n.toLocaleString("es-ES",{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
+function parseFamilias(f){
+  if(Array.isArray(f)) return f.map(x=>x.trim()).filter(Boolean);
+  if(typeof f==="string") return f.split(/[,\n]/).map(x=>x.trim()).filter(Boolean);
+  return [];
+}
+function esTrabajo(s){ return TRABAJOS_KEYS.some(k=>s.uiKey&&s.uiKey.startsWith(k)); }
+
+// ── Esquinas ──────────────────────────────────────────────────────────────────
+function toggleEsquina(esq){
+  estado.esquinas[esq]=!estado.esquinas[esq];
+  const activa=estado.esquinas[esq];
+  const circ=document.getElementById("esq-"+esq);
+  const txt=document.getElementById("esq-"+esq+"-txt");
+  if(circ){circ.setAttribute("fill",activa?"#2B5C3F":"#F2EFE9");circ.setAttribute("stroke",activa?"#2B5C3F":"#C8C4BC");}
+  if(txt)txt.setAttribute("fill",activa?"#fff":"#6B6760");
+  renderEsquinas();
+}
+
+function renderEsquinas(){
+  const famId=document.getElementById("familia").value;
+  const fam=famId?CATALOGO[famId]:null;
+  const precioEsq=fam?.precioEsquina||15.70;
+  const activas=Object.entries(estado.esquinas).filter(([,v])=>v).map(([k])=>k);
+  const el=document.getElementById("esq-list");
+  if(!el)return;
+  if(!activas.length){el.innerHTML="";return;}
+  el.innerHTML=`<div class="pasa-item" style="margin-top:4px">
+    <span>Esquina redondeada (${activas.join(", ")})</span>
+    <span style="font-weight:600;color:var(--accent)">${fmt(precioEsq*activas.length)} €</span>
+  </div>`;
+}
+
+function resetEsquinas(){
+  ["A","B","C","D"].forEach(esq=>{
+    estado.esquinas[esq]=false;
+    const circ=document.getElementById("esq-"+esq);
+    const txt=document.getElementById("esq-"+esq+"-txt");
+    if(circ){circ.setAttribute("fill","#F2EFE9");circ.setAttribute("stroke","#C8C4BC");}
+    if(txt)txt.setAttribute("fill","#6B6760");
+  });
+  const el=document.getElementById("esq-list");
+  if(el)el.innerHTML="";
+}
+
+// ── Build catálogo ────────────────────────────────────────────────────────────
+function buildCatalogo(data) {
+  const famMeta = {};
+  data.principal.forEach(row => {
+    const fid = row.familia_id;
+    if (!famMeta[fid]) {
+      const tipo = fid.startsWith("hpl")?"hpl":(fid.startsWith("alistonado")||fid.startsWith("rechapado"))?"madera":"melamina";
+      famMeta[fid] = {
+        label:row.nombre_familia.replace("Tablero ",""),
+        chip:tipo==="hpl"?"hpl":tipo==="madera"?"mad":"mel",
+        tipo, grosores:[], acabadosMap:{},
+        cantoPrecio:null, barnizadoNatural:null, barnizadoTintado:null,
+        precioEsquina:null, servicios:{},
+        hplSiempreCanteado:tipo==="hpl",
+        esAlistonado:fid.startsWith("alistonado"),
+        maxLargo:row.max_largo, maxAncho:row.max_ancho,
+      };
+    }
+    const fm = famMeta[fid];
+    if(!fm.grosores.includes(row.grosor)) fm.grosores.push(row.grosor);
+    if(!fm.acabadosMap[row.acabado_id]) fm.acabadosMap[row.acabado_id]={id:row.acabado_id,label:row.nombre_acabado,precios:{}};
+    fm.acabadosMap[row.acabado_id].precios[row.grosor]=row.venta_iva;
+  });
+
+  data.suplementos.forEach(s=>{
+    const familias=parseFamilias(s.familias), key=s.supl_key;
+    if(key.startsWith("canto_")||key==="fresado_alistonado"){
+      familias.forEach(fid=>{if(famMeta[fid])famMeta[fid].cantoPrecio=s.venta_iva});return;
+    }
+    if(key.startsWith("barnizado_")){
+      const esNat=key.includes("natural");
+      familias.forEach(fid=>{
+        if(!famMeta[fid])return;
+        const fm=famMeta[fid];
+        const acabId=esNat?"barnizado":"tintado";
+        if(!fm.acabadosMap[acabId]){
+          fm.acabadosMap[acabId]={id:acabId,label:esNat?"Barnizado natural":"Barnizado tintado",precios:{}};
+          fm.grosores.forEach(g=>{fm.acabadosMap[acabId].precios[g]=null});
+        }
+        if(esNat)fm.barnizadoNatural=s.venta_iva; else fm.barnizadoTintado=s.venta_iva;
+      });return;
+    }
+    if(key.startsWith("esquina_")){familias.forEach(fid=>{if(famMeta[fid])famMeta[fid].precioEsquina=s.venta_iva});return;}
+    if(key.startsWith("entrega_")||key.startsWith("subida_")){
+      familias.forEach(fid=>{if(!famMeta[fid])return;if(!famMeta[fid].servicios)famMeta[fid].servicios={};famMeta[fid].servicios[key]={label:s.nombre,precio:s.venta_iva}});return;
+    }
+    const uiKey=key.replace(/_kk$/,"").replace(/_sy$/,"");
+    const existente=SUPLS.find(x=>x.uiKey===uiKey&&x.precio===s.venta_iva);
+    if(existente){familias.forEach(fid=>{if(!existente.familias.includes(fid))existente.familias.push(fid)});}
+    else{
+      const pend=s.venta_iva===0&&s.nota==="precio sin definir";
+      SUPLS.push({id:`${uiKey}__${SUPLS.length}`,uiKey,nombre:s.nombre,precio:s.venta_iva,tipo:"qty",unidad:s.unidad,familias:[...familias],pendiente:pend,nota:s.nota||""});
+    }
+  });
+
+  // Colores
+  if(data.colores){
+    data.colores.forEach(c=>{
+      if(!COLORES[c.familia_id])COLORES[c.familia_id]=[];
+      COLORES[c.familia_id].push(c);
+    });
+  }
+
+  const ORDEN=["basic","platinium","gold","natural","barnizado","tintado"];
+  Object.keys(famMeta).forEach(fid=>{
+    const fm=famMeta[fid];
+    fm.acabados=ORDEN.filter(id=>fm.acabadosMap[id]).map(id=>fm.acabadosMap[id]);
+    fm.grosores.sort((a,b)=>a-b);
+    delete fm.acabadosMap;
+    CATALOGO[fid]=fm;
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.onload=async()=>{
+  document.getElementById("pres-fecha").textContent=new Date().toLocaleDateString("es-ES",{day:"2-digit",month:"long",year:"numeric"});
+  try{
+    const resp=await fetch(GIST_URL+"?t="+Date.now());
+    if(!resp.ok)throw new Error("HTTP "+resp.status);
+    const data=await resp.json();
+    buildCatalogo(data);
+    document.getElementById("loading-msg").remove();
+    renderLineas();
+  }catch(err){
+    document.getElementById("loading-msg").textContent="⚠ Error cargando tarifas. Recarga la página.";
+    console.error(err);
+  }
+};
+
+// ── Familia change ────────────────────────────────────────────────────────────
+function onFamiliaChange(){
+  const famId=document.getElementById("familia").value;
+  const grosorSel=document.getElementById("grosor");
+  colorSeleccionado=null;
+  grosorSel.innerHTML='<option value="">—</option>';
+  grosorSel.disabled=true;
+  document.getElementById("card-color").style.display="none";
+  document.getElementById("btn-add").disabled=true;
+  resetPasacables();
+
+  if(!famId)return;
+  const fam=CATALOGO[famId];
+  if(!fam)return;
+
+  fam.grosores.forEach(g=>{
+    const o=document.createElement("option");
+    o.value=g;o.textContent=g+" cm";
+    grosorSel.appendChild(o);
+  });
+  grosorSel.disabled=false;
+
+  document.getElementById("note-largo").textContent=`Máx. ${fam.maxLargo} cm`;
+  document.getElementById("note-ancho").textContent=`Máx. ${fam.maxAncho} cm`;
+
+  buildSuplsYTrabajos(famId);
+  buildEntregasSubidas(famId);
+}
+
+function onGrosorChange(){
+  const famId=document.getElementById("familia").value;
+  const grosor=parseFloat(document.getElementById("grosor").value);
+  const cardColor=document.getElementById("card-color");
+  colorSeleccionado=null;
+
+  if(!famId||!grosor){cardColor.style.display="none";return;}
+  const fam=CATALOGO[famId];
+  cardColor.style.display="block";
+
+  // HPL info
+  document.getElementById("info-hpl").style.display=fam.hplSiempreCanteado?"block":"none";
+
+  // ¿Tiene galería de colores?
+  const tieneGaleria=COLORES[famId]&&COLORES[famId].length>0;
+  document.getElementById("galeria-colores").style.display=tieneGaleria?"block":"none";
+  document.getElementById("selector-clasico").style.display=tieneGaleria?"none":"block";
+
+  if(tieneGaleria){
+    renderGaleriaColores(famId, grosor);
+  } else {
+    const acabadoSel=document.getElementById("acabado");
+    acabadoSel.innerHTML='<option value="">Seleccionar...</option>';
+    const disponibles=fam.acabados.filter(a=>a.precios[grosor]!==undefined&&a.precios[grosor]!==null);
+    disponibles.forEach(a=>{
+      const o=document.createElement("option");
+      o.value=a.id;o.textContent=a.label;
+      acabadoSel.appendChild(o);
+    });
+  }
+  calcular();
+}
+
+// ── Galería de colores ────────────────────────────────────────────────────────
+function renderGaleriaColores(famId, grosor){
+  const fam=CATALOGO[famId];
+  const colores=COLORES[famId]||[];
+  const precioBasic=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
+
+  // Agrupar por categoría
+  const cats={};
+  colores.forEach(c=>{
+    if(!cats[c.categoria])cats[c.categoria]=[];
+    cats[c.categoria].push(c);
+  });
+
+  const container=document.getElementById("color-categorias");
+  container.innerHTML="";
+  Object.entries(cats).forEach(([cat,items])=>{
+    const catDiv=document.createElement("div");
+    catDiv.innerHTML=`<div class="cat-label">${cat}</div>`;
+    const grid=document.createElement("div");
+    grid.className="color-grid";
+    items.forEach(c=>{
+      const precioGama=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||precioBasic;
+      const supl=precioGama-precioBasic;
+      const gamaLabel=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
+      const suplStr=supl>0?` +${fmt(supl)} €/m²`:"";
+      const card=document.createElement("div");
+      card.className="color-card";
+      card.dataset.codigo=c.codigo;
+      card.dataset.calidad=c.calidad;
+      card.innerHTML=`
+        <img src="${IMG_BASE}${c.foto}" alt="${c.nombre}" loading="lazy" onerror="this.style.background='#E0DDD6'">
+        <div class="color-info">
+          <span class="color-codigo">${c.codigo}</span>
+          <span class="color-nombre">${c.nombre}</span>
+          <span class="color-gama ${c.calidad}">${gamaLabel}${suplStr}</span>
+        </div>
+        <div class="selected-check"></div>`;
+      card.onclick=()=>seleccionarColor(c, card, famId, grosor);
+      grid.appendChild(card);
+    });
+    catDiv.appendChild(grid);
+    container.appendChild(catDiv);
+  });
+  document.getElementById("color-selected-info").style.display="none";
+}
+
+function seleccionarColor(c, card, famId, grosor){
+  // Deseleccionar anterior
+  document.querySelectorAll(".color-card.selected").forEach(el=>el.classList.remove("selected"));
+  card.classList.add("selected");
+  colorSeleccionado=c;
+
+  const fam=CATALOGO[famId];
+  const precioBasic=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
+  const precioGama=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||precioBasic;
+  const supl=precioGama-precioBasic;
+  const gamaLabel=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
+
+  const info=document.getElementById("color-selected-info");
+  info.style.display="block";
+  info.innerHTML=`<strong>${c.codigo} · ${c.nombre}</strong> · ${gamaLabel}${supl>0?` (+${fmt(supl)} €/m²)`:""}`;
+  calcular();
+}
+
+// ── Entrega/subida ────────────────────────────────────────────────────────────
+function buildEntregasSubidas(famId){
+  const fm=CATALOGO[famId];
+  if(!fm?.servicios)return;
+  ENTREGAS=[{id:"",label:"Sin entrega",precio:0}];
+  SUBIDAS=[{id:"",label:"Sin subida a domicilio",precio:0}];
+  Object.entries(fm.servicios).forEach(([key,val])=>{
+    if(key.startsWith("entrega_"))ENTREGAS.push({id:key,label:val.label,precio:val.precio});
+    if(key.startsWith("subida_"))SUBIDAS.push({id:key,label:val.label,precio:val.precio});
+  });
+  const selE=document.getElementById("sel-entrega");
+  const selS=document.getElementById("sel-subida");
+  selE.innerHTML=ENTREGAS.map(e=>`<option value="${e.id}">${e.label}${e.precio>0?" — "+fmt(e.precio)+" €":""}</option>`).join("");
+  selS.innerHTML=SUBIDAS.map(s=>`<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
+}
+
+// ── Suplementos y trabajos ────────────────────────────────────────────────────
+function buildSuplsYTrabajos(famId){
+  const activos=famId?SUPLS.filter(s=>s.familias.includes(famId)):[];
+  estado.supls={};
+  activos.forEach(s=>{estado.supls[s.id]=0;});
+
+  const trabajos=activos.filter(s=>esTrabajo(s));
+  const supls=activos.filter(s=>!esTrabajo(s));
+
+  const renderGrid=(items,gridId)=>{
+    const g=document.getElementById(gridId);
+    if(!items.length){g.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px">—</div>';return;}
+    g.innerHTML=items.map(s=>{
+      const precioStr=s.pendiente?"A consultar":s.precio>0?`${fmt(s.precio)} €/${s.unidad}`:(s.nota||"");
+      return `<div class="supl-item" id="si-${s.id}">
+        <div><div class="supl-name">${s.nombre}</div><div class="supl-price">${precioStr}</div></div>
+        <div class="supl-right">
+          <button class="qty-btn" onclick="changeQty('${s.id}',-1)">−</button>
+          <span class="qty-val" id="qty-${s.id}">0</span>
+          <button class="qty-btn" onclick="changeQty('${s.id}',1)">+</button>
+        </div>
+      </div>`;
+    }).join("");
+  };
+  renderGrid(trabajos,"trabajos-grid");
+  renderGrid(supls,"supl-grid");
+}
+
+function changeQty(id,delta){
+  estado.supls[id]=Math.max(0,(estado.supls[id]||0)+delta);
+  document.getElementById("qty-"+id).textContent=estado.supls[id];
+  document.getElementById("si-"+id).classList.toggle("active",estado.supls[id]>0);
+}
+
+// ── Pasacables ────────────────────────────────────────────────────────────────
+let pasaPosPendiente=null;
+
+function selPasaPos(pos){
+  pasaPosPendiente=pos;
+  document.getElementById("pasa-color-wrap").style.display="block";
+}
+
+function selPasaColor(color,btn){
+  estado.pasaColorActual=color;
+  document.querySelectorAll(".pasa-color-btn").forEach(b=>b.classList.remove("sel"));
+  btn.classList.add("sel");
+  if(pasaPosPendiente){
+    añadirPasacables(pasaPosPendiente,color);
+    pasaPosPendiente=null;
+  }
+}
+
+function añadirPasacables(pos,color){
+  const famId=document.getElementById("familia").value;
+  if(!famId)return;
+  const suplPasa=SUPLS.find(s=>s.uiKey==="pasacables"&&s.familias.includes(famId));
+  const precio=suplPasa?suplPasa.precio:0;
+  estado.pasacables.push({pos,color,precio,id:Date.now()});
+  renderPasacables();
+  document.getElementById("pasa-color-wrap").style.display="none";
+}
+
+function renderPasacables(){
+  const list=document.getElementById("pasa-list");
+  const posLabels={izquierda:"Izquierda",centro:"Centro",derecha:"Derecha"};
+  list.innerHTML=estado.pasacables.map(p=>`
+    <div class="pasa-item">
+      <span>Pasacables ${posLabels[p.pos]} · ${p.color.charAt(0).toUpperCase()+p.color.slice(1)}</span>
+      <span style="font-weight:600;color:var(--accent)">${fmt(p.precio)} €</span>
+      <button class="pasa-del" onclick="eliminarPasa(${p.id})">×</button>
+    </div>`).join("");
+  // Actualizar círculos SVG
+  ["izquierda","centro","derecha"].forEach(pos=>{
+    const ids={izquierda:"izq",centro:"cen",derecha:"der"};
+    const sid=ids[pos];
+    const tiene=estado.pasacables.some(p=>p.pos===pos);
+    document.getElementById("pasa-"+sid).classList.toggle("activa",tiene);
+    document.getElementById("pasa-"+sid+"-txt").classList.toggle("activa",tiene);
+  });
+}
+
+function eliminarPasa(id){
+  estado.pasacables=estado.pasacables.filter(p=>p.id!==id);
+  renderPasacables();
+}
+
+function resetPasacables(){
+  estado.pasacables=[];
+  pasaPosPendiente=null;
+  renderPasacables();
+  document.getElementById("pasa-color-wrap").style.display="none";
+}
+
+// ── Calcular ──────────────────────────────────────────────────────────────────
+function getAcabadoActual(famId){
+  const fam=CATALOGO[famId];
+  if(!fam)return null;
+  if(COLORES[famId]&&colorSeleccionado){
+    return fam.acabados.find(a=>a.id===colorSeleccionado.calidad)||null;
+  }
+  const acabadoId=document.getElementById("acabado").value;
+  return fam.acabados.find(a=>a.id===acabadoId)||null;
+}
+
+function calcular(){
+  const famId=document.getElementById("familia").value;
+  const grosor=parseFloat(document.getElementById("grosor").value);
+  const btn=document.getElementById("btn-add");
+  if(!famId||!grosor){btn.disabled=true;return;}
+  const fam=CATALOGO[famId];
+  const acabadoObj=getAcabadoActual(famId);
+  if(!acabadoObj){btn.disabled=true;return;}
+  const precioM2=acabadoObj.precios[grosor];
+  if(!precioM2&&precioM2!==0){btn.disabled=true;return;}
+  btn.disabled=false;
+}
+
+// ── Añadir línea ──────────────────────────────────────────────────────────────
+function añadirLinea(){
+  const famId=document.getElementById("familia").value;
+  const grosor=parseFloat(document.getElementById("grosor").value);
+  const largo=parseFloat(document.getElementById("largo").value);
+  const ancho=parseFloat(document.getElementById("ancho").value);
+  const cantidad=parseInt(document.getElementById("cantidad").value)||1;
+  const notas=MODO_CLIENTE?"":document.getElementById("notas-linea").value.trim();
+
+  const fam=CATALOGO[famId];
+  const acabadoObj=getAcabadoActual(famId);
+  const tieneGaleria=COLORES[famId]&&COLORES[famId].length>0;
+
+  let precioM2=acabadoObj.precios[grosor];
+  const extras=[];
+  let totalUnit=0;
+
+  // Barnizado
+  if((acabadoObj.id==="barnizado"||acabadoObj.id==="tintado")&&fam.barnizadoNatural){
+    const base=fam.acabados.find(a=>a.id==="natural");
+    precioM2=base.precios[grosor];
+    const precioBarni=acabadoObj.id==="barnizado"?fam.barnizadoNatural:fam.barnizadoTintado;
+    const barniTotal=parseFloat((precioBarni*(largo/100)*(ancho/100)).toFixed(2));
+    extras.push({nombre:acabadoObj.label,precioUnit:barniTotal,qty:null});
+    totalUnit+=barniTotal;
+  }
+
+  const m2=parseFloat(((largo/100)*(ancho/100)).toFixed(4));
+  const baseUnit=parseFloat((precioM2*m2).toFixed(2));
+  totalUnit+=baseUnit;
+
+  // Canteado automático (todos los lados)
+  const mlTotal=parseFloat((2*(largo+ancho)/100).toFixed(3));
+  const cantoPrecio=fam.hplSiempreCanteado?0:(fam.cantoPrecio||0);
+  if(!fam.hplSiempreCanteado&&cantoPrecio>0){
+    const cantoTotal=parseFloat((cantoPrecio*mlTotal).toFixed(2));
+    extras.push({nombre:`Canteado 4 lados (${fmt(mlTotal,2)} ml)`,precioUnit:cantoTotal,qty:null});
+    totalUnit+=cantoTotal;
+  } else if(fam.hplSiempreCanteado){
+    extras.push({nombre:"Canteado 4 lados (incluido)",precioUnit:0,qty:null});
+  }
+
+  // Esquinas
+  const esqActivas=["A","B","C","D"].filter(e=>estado.esquinas&&estado.esquinas[e]);
+  if(esqActivas.length>0){
+    const precioEsq=fam.precioEsquina||15.70;
+    const esqUnit=parseFloat((precioEsq*esqActivas.length).toFixed(2));
+    extras.push({nombre:`Esquina redondeada (${esqActivas.join(", ")})`,precioUnit:esqUnit,qty:null});
+    totalUnit+=esqUnit;
+  }
+
+  // Pasacables
+  estado.pasacables.forEach(p=>{
+    if(p.precio>0){
+      extras.push({nombre:`Pasacables ${p.pos} · ${p.color}`,precioUnit:p.precio,qty:null});
+      totalUnit+=p.precio;
+    }
+  });
+
+  // Suplementos (trabajos + otros)
+  SUPLS.filter(s=>s.familias.includes(famId)).forEach(s=>{
+    const v=estado.supls[s.id]||0;
+    if(v>0&&s.precio>0){
+      extras.push({nombre:s.nombre,precioUnit:parseFloat((s.precio*v).toFixed(2)),qty:v});
+      totalUnit+=parseFloat((s.precio*v).toFixed(2));
+    } else if(v>0&&(s.precio===0||s.pendiente)){
+      extras.push({nombre:s.nombre+" ⚠ precio a definir",precioUnit:null,qty:v});
+    }
+  });
+
+  totalUnit=parseFloat(totalUnit.toFixed(2));
+  const totalConCantidad=parseFloat((totalUnit*cantidad).toFixed(2));
+
+  // Pedido mínimo (solo modo interno)
+  const MINIMO=45;
+  let minimoAplicado=false, ajusteMinimo=0;
+  if(!MODO_CLIENTE&&minimoActivo&&totalConCantidad<MINIMO&&!extras.some(e=>e.precioUnit===null)){
+    ajusteMinimo=parseFloat((MINIMO-totalConCantidad).toFixed(2));
+    minimoAplicado=true;
+  }
+
+  // Nombre del color/acabado para mostrar
+  const nombreAcabado=tieneGaleria&&colorSeleccionado
+    ?`${colorSeleccionado.codigo} · ${colorSeleccionado.nombre}`
+    :acabadoObj.label;
+  const gamaLabel=tieneGaleria&&colorSeleccionado
+    ?colorSeleccionado.calidad.charAt(0).toUpperCase()+colorSeleccionado.calidad.slice(1)
+    :"";
+
+  lineas.push({
+    id:++lineaId,
+    famLabel:"Tablero "+fam.label,
+    nombreAcabado, gamaLabel,
+    grosor,largo,ancho,cantidad,
+    precioM2,m2,
+    totalUnit,
+    totalConCantidad:minimoAplicado?MINIMO:totalConCantidad,
+    ajusteMinimo,minimoAplicado,
+    extras,notas,
+    pendiente:extras.some(e=>e.precioUnit===null),
+  });
+
+  renderLineas();
+  resetConfigurador();
+}
+
+// ── Render líneas ─────────────────────────────────────────────────────────────
+function renderLineas(){
+  const container=document.getElementById("lineas-container");
+  const btnImpr=document.getElementById("btn-imprimir");
+  const btnCop=document.getElementById("btn-copiar");
+  const btnWA=document.getElementById("btn-whatsapp");
+  const entregaWrap=document.getElementById("entrega-wrap");
+  const notaWrap=document.getElementById("nota-cliente-wrap");
+
+  if(lineas.length===0){
+    container.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);text-align:center;gap:8px;padding:2rem 0">
+      <div style="font-size:32px;opacity:.4">📋</div>
+      <div style="font-size:13px;font-weight:500">Sin líneas todavía</div>
+      <div style="font-size:12px">Configura el producto y pulsa "Añadir"</div>
+    </div>`;
+    btnImpr.disabled=true;if(btnCop)btnCop.disabled=true;btnWA.disabled=true;
+    entregaWrap.style.display="none";notaWrap.style.display="none";
+    document.getElementById("t-base").textContent="—";
+    document.getElementById("t-iva").textContent="—";
+    document.getElementById("t-total").textContent="—";
+    return;
+  }
+
+  btnImpr.disabled=false;if(btnCop)btnCop.disabled=false;btnWA.disabled=false;
+  entregaWrap.style.display="block";notaWrap.style.display="block";
+
+  container.innerHTML=lineas.map(l=>{
+    const extrasHtml=l.extras.map(e=>{
+      if(e.precioUnit===null)return`<div>· ${e.nombre}</div>`;
+      if(e.precioUnit===0)return`<div>· ${e.nombre}</div>`;
+      if(e.qty)return`<div>· ${e.nombre} ×${e.qty}: ${fmt(e.precioUnit)} €</div>`;
+      return`<div>· ${e.nombre}: ${fmt(e.precioUnit)} €</div>`;
+    }).join("");
+    const udLabel=l.cantidad>1?`${l.cantidad} ud.`:"1 ud.";
+    const cantidadHtml=l.cantidad>1?`<div style="font-size:11px;color:var(--text2);margin-top:4px">Precio unitario: ${fmt(l.totalUnit)} € × ${l.cantidad} ud.</div>`:"";
+    const minimoHtml=l.minimoAplicado?`<div style="font-size:11px;color:#8B4513;margin-top:4px">+ ${fmt(l.ajusteMinimo)} € (pedido mínimo 45,00 €)</div>`:"";
+    const gamaHtml=l.gamaLabel?` <span style="font-size:10px;color:var(--text3);font-weight:400">· ${l.gamaLabel}</span>`:"";
+    return`<div class="linea">
+      <button class="linea-del" onclick="eliminarLinea(${l.id})" title="Eliminar">×</button>
+      <div class="linea-top">
+        <div>
+          <div class="linea-name">${udLabel} &nbsp;${l.famLabel} · ${l.grosor} cm</div>
+          <div class="linea-specs">${l.nombreAcabado}${gamaHtml}</div>
+          <div class="linea-specs">${l.largo}×${l.ancho} cm · ${fmt(l.m2,4)} m² · ${fmt(l.precioM2)} €/m²</div>
+        </div>
+        <div class="linea-price">${fmt(l.totalConCantidad)} €</div>
+      </div>
+      <div class="linea-extras">${extrasHtml}</div>
+      ${cantidadHtml}${minimoHtml}
+      ${l.notas?`<div style="font-size:11px;color:#8B6914;margin-top:4px;font-style:italic">📝 ${l.notas}</div>`:""}
+    </div>`;
+  }).join("");
+
+  calcularTotales();
+}
+
+function calcularTotales(){
+  if(lineas.length===0)return;
+  const entregaId=document.getElementById("sel-entrega")?.value||"";
+  const subidaId=document.getElementById("sel-subida")?.value||"";
+  const entregaObj=ENTREGAS.find(e=>e.id===entregaId)||ENTREGAS[0];
+  const subidaObj=SUBIDAS.find(s=>s.id===subidaId)||SUBIDAS[0];
+  const subtotal=lineas.filter(l=>!l.pendiente).reduce((s,l)=>s+l.totalConCantidad,0);
+  const total=subtotal+entregaObj.precio+subidaObj.precio;
+  const base=total/1.21,iva=total-base;
+  const rowE=document.getElementById("row-entrega"),rowS=document.getElementById("row-subida");
+  if(entregaObj.precio>0){rowE.style.display="flex";document.getElementById("label-entrega").textContent=entregaObj.label;document.getElementById("t-entrega").textContent=fmt(entregaObj.precio)+" €";}else rowE.style.display="none";
+  if(subidaObj.precio>0){rowS.style.display="flex";document.getElementById("label-subida").textContent=subidaObj.label;document.getElementById("t-subida").textContent=fmt(subidaObj.precio)+" €";}else rowS.style.display="none";
+  document.getElementById("t-base").textContent=fmt(base)+" €";
+  document.getElementById("t-iva").textContent=fmt(iva)+" €";
+  document.getElementById("t-total").textContent=fmt(total)+" €";
+}
+
+function eliminarLinea(id){lineas=lineas.filter(l=>l.id!==id);renderLineas();}
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
+function resetConfigurador(){
+  document.getElementById("familia").value="";
+  document.getElementById("grosor").innerHTML='<option value="">—</option>';
+  document.getElementById("grosor").disabled=true;
+  document.getElementById("card-color").style.display="none";
+  document.getElementById("note-largo").textContent="";
+  document.getElementById("note-ancho").textContent="";
+  document.getElementById("cantidad").value=1;
+  if(!MODO_CLIENTE)document.getElementById("notas-linea").value="";
+  document.getElementById("btn-add").disabled=true;
+  minimoActivo=true;
+  const togMin=document.getElementById("tog-minimo");
+  if(togMin){togMin.classList.add("on");togMin.classList.remove("off");}
+  colorSeleccionado=null;
+  resetPasacables();
+  resetEsquinas();
+  buildSuplsYTrabajos(null);
+}
+
+function resetPresupuesto(){
+  lineas=[];lineaId=0;
+  document.getElementById("sel-entrega").value="";
+  document.getElementById("sel-subida").value="";
+  document.getElementById("nota-cliente").value="";
+  if(!MODO_CLIENTE)document.getElementById("pres-titulo").value="Presupuesto estimado";
+  resetConfigurador();
+  renderLineas();
+}
+
+function toggleMinimo(btn){
+  minimoActivo=!minimoActivo;
+  btn.classList.toggle("on",minimoActivo);
+  btn.classList.toggle("off",!minimoActivo);
+}
+
+// ── Imprimir ──────────────────────────────────────────────────────────────────
+function imprimirPpto(){
+  const titulo=MODO_CLIENTE?"Presupuesto Madera Fina":(document.getElementById("pres-titulo").value||"Presupuesto estimado");
+  const fecha=new Date().toLocaleDateString("es-ES",{day:"2-digit",month:"2-digit",year:"numeric"}).replace(/\//g,"-");
+  const orig=document.title;
+  document.title=`Madera Fina · ${titulo} · ${fecha}`;
+  const notaWrap=document.getElementById("nota-cliente-wrap");
+  const notaVal=document.getElementById("nota-cliente").value.trim();
+  const notaWas=notaWrap.style.display;
+  if(!notaVal)notaWrap.style.display="none";
+  window.print();
+  setTimeout(()=>{document.title=orig;notaWrap.style.display=notaWas;},1000);
+}
+
+// ── Copiar / WhatsApp ─────────────────────────────────────────────────────────
+function buildTextoResumen(){
+  const now=new Date().toLocaleDateString("es-ES");
+  const titulo=MODO_CLIENTE?"Presupuesto Madera Fina":(document.getElementById("pres-titulo").value||"Presupuesto estimado");
+  const entregaId=document.getElementById("sel-entrega")?.value||"";
+  const subidaId=document.getElementById("sel-subida")?.value||"";
+  const entregaObj=ENTREGAS.find(e=>e.id===entregaId)||ENTREGAS[0];
+  const subidaObj=SUBIDAS.find(s=>s.id===subidaId)||SUBIDAS[0];
+  const nota=document.getElementById("nota-cliente")?.value?.trim();
+  const sep="─".repeat(42);
+  let txt=`Madera Fina · ${titulo}\nFecha: ${now}\n${sep}\n`;
+  lineas.forEach((l,i)=>{
+    txt+=`\n${i+1}. ${l.famLabel} · ${l.grosor} cm\n`;
+    txt+=`   ${l.nombreAcabado}${l.gamaLabel?" · "+l.gamaLabel:""}\n`;
+    txt+=`   Medidas: ${l.largo}×${l.ancho} cm · ${l.cantidad>1?l.cantidad+" ud.":"1 ud."}\n`;
+    l.extras.forEach(e=>{if(e.precioUnit>0)txt+=`   + ${e.nombre}: ${fmt(e.precioUnit)} €\n`;});
+    if(l.cantidad>1)txt+=`   Precio unitario: ${fmt(l.totalUnit)} € ×${l.cantidad}\n`;
+    txt+=`   Subtotal: ${fmt(l.totalConCantidad)} €\n`;
+    if(!MODO_CLIENTE&&l.notas)txt+=`   · ${l.notas}\n`;
+  });
+  const subtotal=lineas.filter(l=>!l.pendiente).reduce((s,l)=>s+l.totalConCantidad,0);
+  if(entregaObj.precio>0)txt+=`\n${entregaObj.label}: ${fmt(entregaObj.precio)} €`;
+  if(subidaObj.precio>0)txt+=`\n${subidaObj.label}: ${fmt(subidaObj.precio)} €`;
+  const total=subtotal+entregaObj.precio+subidaObj.precio;
+  txt+=`\n\n${sep}\nTOTAL (IVA incl.): ${fmt(total)} €\n`;
+  if(nota)txt+=`\n${sep}\n${nota}\n`;
+  return txt;
+}
+
+function copiarTexto(){
+  const txt=buildTextoResumen();
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=document.getElementById("btn-copiar");
+    const orig=btn.textContent;btn.textContent="✓ Copiado";
+    setTimeout(()=>btn.textContent=orig,2000);
+  });
+}
+
+function compartirWhatsApp(){
+  const txt=buildTextoResumen();
+  window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank");
+}
+</script>
+</body>
+</html>
