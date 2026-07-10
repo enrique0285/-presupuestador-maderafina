@@ -4,39 +4,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Madera Fina · Presupuestadores</title>
+<title>Madera Fina · Interno</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#F7F5F2;color:#1C1A17;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
-.logo{width:120px;margin-bottom:2rem}
-h1{font-size:24px;font-weight:600;color:#2B5C3F;margin-bottom:.5rem;letter-spacing:-.5px}
-p{font-size:14px;color:#6B6760;margin-bottom:2.5rem}
-.cards{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center}
-.card{background:#fff;border:1px solid #E0DDD6;border-radius:12px;padding:2rem 2.5rem;text-align:center;text-decoration:none;color:#1C1A17;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:transform .15s,box-shadow .15s;min-width:200px}
+.logo{width:100px;margin-bottom:1.5rem}
+h1{font-size:22px;font-weight:600;color:#2B5C3F;margin-bottom:.3rem}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#FEF3C7;color:#92400E;margin-bottom:1.5rem}
+.cards{display:flex;gap:1.25rem;flex-wrap:wrap;justify-content:center}
+.card{background:#fff;border:1px solid #E0DDD6;border-radius:12px;padding:1.75rem 2rem;text-align:center;text-decoration:none;color:#1C1A17;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:transform .15s,box-shadow .15s;min-width:180px}
 .card:hover{transform:translateY(-3px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
-.card-icon{margin-bottom:1rem;display:flex;justify-content:center;align-items:center;height:52px}
-.card-title{font-size:17px;font-weight:600;color:#2B5C3F;margin-bottom:.4rem}
-.card-desc{font-size:12px;color:#9C9890}
-.footer{margin-top:3rem;font-size:11px;color:#C8C4BC}
+.card-icon{margin-bottom:.75rem;display:flex;justify-content:center;align-items:center;height:48px}
+.card-title{font-size:16px;font-weight:600;color:#2B5C3F;margin-bottom:.3rem}
+.card-desc{font-size:11px;color:#9C9890}
+.sep{width:100%;max-width:320px;border:none;border-top:1px solid #E0DDD6;margin:2rem 0}
+.link-cliente{font-size:12px;color:#9C9890;text-decoration:none}
+.link-cliente:hover{color:#2B5C3F}
+.footer{margin-top:2rem;font-size:11px;color:#C8C4BC}
 </style>
 </head>
 <body>
   <img src="Madera-Fina-Logo.jpg" alt="Madera Fina" class="logo">
   <h1>Presupuestadores</h1>
-  <p>Selecciona el tipo de producto para generar un presupuesto</p>
+  <div class="badge">Uso interno</div>
   <div class="cards">
     <a href="tableros/" class="card">
       <div class="card-icon">
-        <svg width="56" height="40" viewBox="0 0 56 40" xmlns="http://www.w3.org/2000/svg">
-          <!-- Tablón visto desde arriba en perspectiva leve -->
+        <svg width="52" height="38" viewBox="0 0 56 40" xmlns="http://www.w3.org/2000/svg">
           <rect x="2" y="10" width="52" height="20" rx="2" fill="#D4B896" stroke="#8B6914" stroke-width="1.5"/>
-          <!-- Veta de madera -->
           <line x1="8" y1="14" x2="8" y2="26" stroke="#C4A070" stroke-width="0.8" opacity="0.7"/>
           <line x1="16" y1="13" x2="16" y2="27" stroke="#C4A070" stroke-width="0.8" opacity="0.7"/>
           <line x1="26" y1="13" x2="26" y2="27" stroke="#C4A070" stroke-width="0.8" opacity="0.5"/>
           <line x1="38" y1="13" x2="38" y2="27" stroke="#C4A070" stroke-width="0.8" opacity="0.7"/>
           <line x1="48" y1="14" x2="48" y2="26" stroke="#C4A070" stroke-width="0.8" opacity="0.5"/>
-          <!-- Canto frontal -->
           <rect x="2" y="30" width="52" height="5" rx="1" fill="#B8895A" stroke="#8B6914" stroke-width="1"/>
         </svg>
       </div>
@@ -45,18 +45,12 @@ p{font-size:14px;color:#6B6760;margin-bottom:2.5rem}
     </a>
     <a href="escritorios/" class="card">
       <div class="card-icon">
-        <svg width="56" height="48" viewBox="0 0 56 48" xmlns="http://www.w3.org/2000/svg">
-          <!-- Tapa -->
+        <svg width="52" height="46" viewBox="0 0 56 48" xmlns="http://www.w3.org/2000/svg">
           <rect x="2" y="6" width="52" height="9" rx="1.5" fill="#D4B896" stroke="#8B6914" stroke-width="1.5"/>
-          <!-- Canto tapa -->
           <rect x="2" y="15" width="52" height="3" rx="0" fill="#B8895A" stroke="#8B6914" stroke-width="0.8"/>
-          <!-- Pata izquierda -->
           <rect x="4" y="18" width="7" height="26" rx="1" fill="#E8E4DC" stroke="#999" stroke-width="1"/>
-          <!-- Pata derecha -->
           <rect x="45" y="18" width="7" height="26" rx="1" fill="#E8E4DC" stroke="#999" stroke-width="1"/>
-          <!-- Panel trasero -->
           <rect x="11" y="18" width="34" height="10" rx="1" fill="#D8D4CC" stroke="#999" stroke-width="0.8"/>
-          <!-- Suelo -->
           <line x1="2" y1="45" x2="54" y2="45" stroke="#C8C4BC" stroke-width="1"/>
         </svg>
       </div>
@@ -64,6 +58,8 @@ p{font-size:14px;color:#6B6760;margin-bottom:2.5rem}
       <div class="card-desc">Escritorio Liso y más modelos</div>
     </a>
   </div>
+  <hr class="sep">
+  <a href="cliente/" class="link-cliente">→ Acceso para clientes</a>
   <div class="footer">Madera Fina · ACR 34 S.L.</div>
 </body>
 </html>
