@@ -42,8 +42,7 @@ select:disabled,input:disabled{background:var(--surface2);color:var(--text3)}
 .info-box{background:var(--accent-light);border:1px solid #c3dfc9;border-radius:var(--radius);padding:10px 12px;font-size:12px;color:#1e4530;margin-bottom:12px}
 
 /* SELECTOR DE COLORES */
-.color-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:4px}
-.color-card{cursor:pointer;border:2px solid transparent;border-radius:var(--radius);overflow:hidden;transition:border-color .15s,transform .1s;position:relative}
+.color-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:4px}.color-card{cursor:pointer;border:2px solid transparent;border-radius:var(--radius);overflow:hidden;transition:border-color .15s,transform .1s;position:relative}
 .color-card:hover{transform:scale(1.03)}
 .color-card.selected{border-color:var(--accent)}
 .color-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--surface2)}
@@ -424,8 +423,8 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
 
   <div class="lineas" id="lineas-container"></div>
 
-  <div class="entrega-wrap" id="entrega-wrap">
-    <div class="entrega-row solo-interno">
+  <div class="entrega-wrap solo-interno" id="entrega-wrap">
+    <div class="entrega-row">
       <div class="field" style="flex:1">
         <label>Entrega</label>
         <select id="sel-entrega" onchange="calcularTotales()">
@@ -439,8 +438,11 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
         </select>
       </div>
     </div>
-    <!-- Modo cliente: solo subida, entrega estándar automática -->
-    <div class="field" id="subida-cliente" style="display:none">
+  </div>
+
+  <!-- Subida a domicilio solo en modo cliente -->
+  <div class="entrega-wrap" id="entrega-wrap-cliente" style="display:none">
+    <div class="field">
       <label>Subida a domicilio</label>
       <select id="sel-subida-cliente" onchange="calcularTotales()">
         <option value="">Sin subida</option>
@@ -865,12 +867,9 @@ function buildEntregasSubidas(famId){
   const selS=document.getElementById("sel-subida");
   selE.innerHTML=ENTREGAS.map(e=>`<option value="${e.id}">${e.label}${e.precio>0?" — "+fmt(e.precio)+" €":""}</option>`).join("");
   selS.innerHTML=SUBIDAS.map(s=>`<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
-  // Cliente — solo subida
+  // Selector subida cliente
   const selSC=document.getElementById("sel-subida-cliente");
-  if(selSC){
-    selSC.innerHTML=SUBIDAS.map(s=>`<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
-    document.getElementById("subida-cliente").style.display=MODO_CLIENTE?"block":"none";
-  }
+  if(selSC) selSC.innerHTML=SUBIDAS.map(s=>`<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
 }
 
 // ── Suplementos y trabajos ────────────────────────────────────────────────────
@@ -880,7 +879,7 @@ function buildSuplsYTrabajos(famId){
   activos.forEach(s=>{estado.supls[s.id]=0;});
 
   const trabajos=activos.filter(s=>esTrabajo(s));
-  const supls=activos.filter(s=>!esTrabajo(s)&&!s.uiKey.startsWith("pasacables"));
+  const supls=activos.filter(s=>!esTrabajo(s)&&!(s.uiKey&&s.uiKey.startsWith("pasacables")));
 
   const renderGrid=(items,gridId)=>{
     const g=document.getElementById(gridId);
@@ -1024,16 +1023,10 @@ function añadirLinea(){
   const baseUnit=parseFloat((precioM2*m2).toFixed(2));
   totalUnit+=baseUnit;
 
-  // Canteado automático (todos los lados)
+  // Canteado — siempre incluido en el precio base, se muestra como incluido
   const mlTotal=parseFloat((2*(largo+ancho)/100).toFixed(3));
-  const cantoPrecio=fam.hplSiempreCanteado?0:(fam.cantoPrecio||0);
-  if(!fam.hplSiempreCanteado&&cantoPrecio>0){
-    const cantoTotal=parseFloat((cantoPrecio*mlTotal).toFixed(2));
-    extras.push({nombre:`Canteado 4 lados (${fmt(mlTotal,2)} ml)`,precioUnit:cantoTotal,qty:null});
-    totalUnit+=cantoTotal;
-  } else if(fam.hplSiempreCanteado){
-    extras.push({nombre:"Canteado 4 lados (incluido)",precioUnit:0,qty:null});
-  }
+  const tipoFresado=fam.esAlistonado?"Fresado de cantos":"Canteado 4 lados";
+  extras.push({nombre:`${tipoFresado} (${fmt(mlTotal,2)} ml) — incluido`,precioUnit:0,qty:null});
 
   // Esquinas
   const esqActivas=["A","B","C","D"].filter(e=>estado.esquinas&&estado.esquinas[e]);
@@ -1115,7 +1108,9 @@ function renderLineas(){
       <div style="font-size:12px">Configura el producto y pulsa "Añadir"</div>
     </div>`;
     btnImpr.disabled=true;if(btnCop)btnCop.disabled=true;btnWA.disabled=true;
-    entregaWrap.style.display="none";notaWrap.style.display="none";
+    entregaWrap.style.display="none";
+    document.getElementById("entrega-wrap-cliente").style.display="none";
+    if(notaWrap)notaWrap.style.display="none";
     document.getElementById("t-base").textContent="—";
     document.getElementById("t-iva").textContent="—";
     document.getElementById("t-total").textContent="—";
@@ -1123,7 +1118,12 @@ function renderLineas(){
   }
 
   btnImpr.disabled=false;if(btnCop)btnCop.disabled=false;btnWA.disabled=false;
-  entregaWrap.style.display="block";notaWrap.style.display="block";
+  if(MODO_CLIENTE){
+    document.getElementById("entrega-wrap-cliente").style.display="block";
+  } else {
+    document.getElementById("entrega-wrap").style.display="block";
+    document.getElementById("nota-cliente-wrap").style.display="block";
+  }
 
   container.innerHTML=lineas.map(l=>{
     const extrasHtml=l.extras.map(e=>{
@@ -1159,8 +1159,7 @@ function calcularTotales(){
   if(lineas.length===0)return;
   let entregaObj, subidaObj;
   if(MODO_CLIENTE){
-    // Entrega estándar automática
-    entregaObj=ENTREGAS.find(e=>e.id.includes("est"))||ENTREGAS.find(e=>e.precio>0)||ENTREGAS[0];
+    entregaObj=ENTREGAS.find(e=>e.id.includes("est")&&e.precio>0)||ENTREGAS.find(e=>e.precio>0)||ENTREGAS[0];
     const subidaId=document.getElementById("sel-subida-cliente")?.value||"";
     subidaObj=SUBIDAS.find(s=>s.id===subidaId)||SUBIDAS[0];
   } else {
