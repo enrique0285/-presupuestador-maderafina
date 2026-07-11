@@ -1005,6 +1005,7 @@ function añadirLinea(){
   const fam=CATALOGO[famId];
   const acabadoObj=getAcabadoActual(famId);
   const tieneGaleria=COLORES[famId]&&COLORES[famId].length>0;
+  const fotoUrl=tieneGaleria&&colorSeleccionado?.foto?`${IMG_BASE}${colorSeleccionado.foto}`:null;
 
   let precioM2=acabadoObj.precios[grosor];
   const extras=[];
@@ -1075,9 +1076,6 @@ function añadirLinea(){
   const gamaLabel=tieneGaleria&&colorSeleccionado
     ?colorSeleccionado.calidad.charAt(0).toUpperCase()+colorSeleccionado.calidad.slice(1)
     :"";
-
-  const tieneGaleria=COLORES[famId]&&COLORES[famId].length>0;
-  const fotoUrl=tieneGaleria&&colorSeleccionado?.foto?`${IMG_BASE}${colorSeleccionado.foto}`:null;
 
   lineas.push({
     id:++lineaId,
@@ -1281,4 +1279,3 @@ function compartirWhatsApp(){
 </script>
 </body>
 </html>
-
