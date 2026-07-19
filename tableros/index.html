@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -101,10 +102,10 @@ select:disabled,input:disabled{background:var(--surface2);color:var(--text3)}
 .pres-subtitle{font-size:12px;color:var(--text3);margin-top:2px}
 .lineas{flex:1;overflow-y:auto}
 .linea{border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem;margin-bottom:10px;background:var(--surface2);position:relative}
-.linea-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.linea-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
 .linea-name{font-size:13px;font-weight:600;color:var(--text)}
 .linea-specs{font-size:11px;color:var(--text2);margin-top:2px}
-.linea-price{font-size:15px;font-weight:700;color:var(--accent);white-space:nowrap;margin-left:8px}
+.linea-price{font-size:15px;font-weight:700;color:var(--accent);white-space:nowrap;flex-shrink:0}
 .linea-del{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:2px 4px;border-radius:4px}
 .linea-del:hover{background:#fdecea;color:var(--danger)}
 .linea-extras{font-size:11px;color:var(--text3);margin-top:4px}
@@ -126,6 +127,17 @@ select:disabled,input:disabled{background:var(--surface2);color:var(--text3)}
 .btn-prim:hover{background:#1e4530}
 .btn-prim:disabled{background:var(--border2);cursor:not-allowed}
 .clausulas-print{display:none}
+/* TOOLTIP CORTES */
+.supl-info-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0 4px;line-height:1;vertical-align:middle}
+.supl-info-btn:hover{color:var(--accent)}
+.supl-tooltip{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.18);z-index:1000;max-width:320px;width:90%}
+.supl-tooltip.visible{display:block}
+.supl-tooltip img{width:100%;border-radius:var(--radius);margin-bottom:.75rem;max-height:180px;object-fit:cover}
+.supl-tooltip-nombre{font-size:14px;font-weight:600;color:var(--text);margin-bottom:.4rem}
+.supl-tooltip-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.supl-tooltip-close{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text3)}
+.tooltip-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:999}
+.tooltip-overlay.visible{display:block}
 
 /* MODO CLIENTE — ocultar elementos internos */
 body.modo-cliente .solo-interno{display:none!important}
@@ -143,6 +155,8 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
   .linea-name{font-size:11pt;color:#111!important}
   .linea-specs,.linea-extras{font-size:9pt;color:#333!important}
   .linea-name img{width:22px!important;height:22px!important;border-radius:3px!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .color-gama{color:#333!important}
+  .linea-specs span{color:#444!important}
   .linea-price{font-size:12pt;color:#2B5C3F!important}
   .pres-subtitle{color:#333!important;font-size:10pt}
   .iva-note{color:#555!important;font-size:8pt}
@@ -443,9 +457,9 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
 
   <!-- Subida a domicilio solo en modo cliente -->
   <div class="entrega-wrap" id="entrega-wrap-cliente" style="display:none">
-    <div class="field">
-      <label>Subida a domicilio</label>
-      <select id="sel-subida-cliente" onchange="calcularTotales()">
+    <div style="display:flex;align-items:center;gap:10px">
+      <label style="font-size:12px;color:var(--text2);font-weight:500;white-space:nowrap">Subida a domicilio</label>
+      <select id="sel-subida-cliente" onchange="calcularTotales()" style="flex:1">
         <option value="">Sin subida</option>
       </select>
     </div>
@@ -484,9 +498,46 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
 </div>
 </div>
 
-<script>
+<!-- TOOLTIP MODAL CORTES -->
+<div class="tooltip-overlay" id="tooltip-overlay" onclick="cerrarTooltip()"></div>
+<div class="supl-tooltip" id="supl-tooltip">
+  <button class="supl-tooltip-close" onclick="cerrarTooltip()">×</button>
+  <img id="tooltip-img" src="" alt="" onerror="this.style.display='none'">
+  <div class="supl-tooltip-nombre" id="tooltip-nombre"></div>
+  <div class="supl-tooltip-desc" id="tooltip-desc"></div>
+</div>
 const GIST_URL = "https://gist.githubusercontent.com/enrique0285/ab5274e8a6a37e7ad753acfda769e188/raw/tarifas-maderafina.json";
-const IMG_BASE = "https://enrique0285.github.io/-presupuestador-maderafina/img/acabados/";
+const IMG_SUPL = "https://enrique0285.github.io/-presupuestador-maderafina/img/suplementos/";
+const CORTES_INFO = {
+  "corte_chanflan": {
+    img: "corte-chanflan.jpg",
+    desc: "Corte recto en ángulo (chaflán) o corte interior en L. Permite encajar el tablero en esquinas o crear formas específicas."
+  },
+  "corte_r2": {
+    img: "corte-redondo-2.jpg",
+    desc: "Dos esquinas redondeadas opuestas o dos lados curvos. Ideal para tableros con una esquina de acceso libre."
+  },
+  "corte_r4": {
+    img: "corte-redondo-4.jpg",
+    desc: "Las cuatro esquinas con acabado curvo. Resultado completamente redondeado, sin aristas."
+  }
+};
+
+function abrirTooltip(uiKey){
+  const info=CORTES_INFO[uiKey];
+  if(!info)return;
+  const nombre=SUPLS.find(s=>s.uiKey===uiKey)?.nombre||uiKey;
+  document.getElementById("tooltip-img").src=IMG_SUPL+info.img;
+  document.getElementById("tooltip-img").style.display="block";
+  document.getElementById("tooltip-nombre").textContent=nombre;
+  document.getElementById("tooltip-desc").textContent=info.desc;
+  document.getElementById("supl-tooltip").classList.add("visible");
+  document.getElementById("tooltip-overlay").classList.add("visible");
+}
+function cerrarTooltip(){
+  document.getElementById("supl-tooltip").classList.remove("visible");
+  document.getElementById("tooltip-overlay").classList.remove("visible");
+}
 const TRABAJOS_KEYS = ["mecan_","excent_","mecantesta_"];
 
 // ── Modo interno/cliente ──────────────────────────────────────────────────────
@@ -621,11 +672,27 @@ function buildCatalogo(data) {
     }
   });
 
-  // Colores
+  // Colores — mapear hpl a hpl1+hpl2, roble/haya/pino a rechapado+alistonado
   if(data.colores){
     data.colores.forEach(c=>{
-      if(!COLORES[c.familia_id])COLORES[c.familia_id]=[];
-      COLORES[c.familia_id].push(c);
+      const fids=[];
+      if(c.familia_id==="hpl"){
+        fids.push("hpl1","hpl2");
+      } else if(c.familia_id==="roble"){
+        fids.push("rechapado-roble","alistonado-roble");
+      } else if(c.familia_id==="haya"){
+        fids.push("rechapado-haya","alistonado-haya");
+      } else if(c.familia_id==="pino"){
+        fids.push("rechapado-pino","alistonado-pino");
+      } else {
+        fids.push(c.familia_id);
+      }
+      fids.forEach(fid=>{
+        if(!COLORES[fid])COLORES[fid]=[];
+        // Evitar duplicados por código
+        if(!COLORES[fid].find(x=>x.codigo===c.codigo))
+          COLORES[fid].push({...c,familia_id:fid});
+      });
     });
   }
 
@@ -887,8 +954,10 @@ function buildSuplsYTrabajos(famId){
     if(!items.length){g.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px">—</div>';return;}
     g.innerHTML=items.map(s=>{
       const precioStr=s.pendiente?"A consultar":s.precio>0?`${fmt(s.precio)} €/${s.unidad}`:(s.nota||"");
+      const esCorte=MODO_CLIENTE&&s.uiKey&&s.uiKey.startsWith("corte_")&&CORTES_INFO[s.uiKey];
+      const infoBtn=esCorte?`<button class="supl-info-btn" onclick="abrirTooltip('${s.uiKey}')" title="Ver descripción">ℹ</button>`:"";
       return `<div class="supl-item" id="si-${s.id}">
-        <div><div class="supl-name">${s.nombre}</div><div class="supl-price">${precioStr}</div></div>
+        <div><div class="supl-name">${s.nombre}${infoBtn}</div><div class="supl-price">${precioStr}</div></div>
         <div class="supl-right">
           <button class="qty-btn" onclick="changeQty('${s.id}',-1)">−</button>
           <span class="qty-val" id="qty-${s.id}">0</span>
