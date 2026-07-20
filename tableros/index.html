@@ -307,7 +307,7 @@ body.cliente .solo-int{display:none!important}
       </svg>
     </div>
     <div style="font-size:11px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;margin:8px 0;line-height:1.6">
-      <strong style="color:var(--text)">Especificaciones:</strong> Esquinas R=6 cm · Pasacables: encastre Ø6 cm, agujero Ø7 cm · Posición a 8 cm del fondo y lateral
+      <span id="nota-croquis">Pulsa las esquinas <strong>A/B/C/D</strong> para esquina redondeada (R=6cm) · Pulsa el interior para añadir <strong>pasacables</strong> (Ø7cm, posición a 8cm del borde)</span>
     </div>
     <div id="pasa-color-wrap" style="display:none;margin-bottom:8px">
       <div style="font-size:11px;color:var(--text2);margin-bottom:4px;font-weight:500">Color del pasacables</div>
@@ -523,13 +523,6 @@ function buildCatalogo(data){
     const fids=parseFams(s.familias), key=s.supl_key;
     if(key.startsWith("canto_")||key==="fresado_alistonado"){
       fids.forEach(id=>{if(fm[id])fm[id].cantoPrecio=s.venta_iva});
-      // Para alistonado: añadir también como suplemento seleccionable
-      if(key==="fresado_alistonado"){
-        const uiKey="fresado_alistonado";
-        if(!SUPLS.find(x=>x.uiKey===uiKey)){
-          SUPLS.push({id:uiKey+"__0",uiKey,nombre:"Fresado de cantos",precio:s.venta_iva,tipo:"qty",unidad:"ml",familias:[...fids],pendiente:false,nota:"Por ml fresado"});
-        }
-      }
       return;
     }
     if(key.startsWith("barnizado_")){
@@ -617,6 +610,15 @@ function onFamiliaChange(){
   buildSupls(famId);
   buildEntregas(famId);
   mostrarLadosFresado(fam.esAlist);
+  // Nota explicativa
+  const notaEl=document.getElementById("nota-croquis");
+  if(notaEl){
+    if(fam.esAlist){
+      notaEl.innerHTML='Pulsa los <strong>lados</strong> para seleccionar el fresado · Pulsa las esquinas <strong>A/B/C/D</strong> para esquina redondeada (R=6cm) · Pulsa el interior para añadir <strong>pasacables</strong>';
+    } else {
+      notaEl.innerHTML='Pulsa las esquinas <strong>A/B/C/D</strong> para esquina redondeada (R=6cm) · Pulsa el interior para añadir <strong>pasacables</strong> (Ø7cm, posición a 8cm del borde)';
+    }
+  }
 }
 
 function onGrosorChange(){
@@ -1189,6 +1191,7 @@ function compartirWA(){window.open("https://wa.me/?text="+encodeURIComponent(bui
 </script>
 </body>
 </html>
+
 
 
 
