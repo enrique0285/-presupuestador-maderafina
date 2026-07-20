@@ -251,7 +251,23 @@ body.cliente .solo-int{display:none!important}
         <line x1="92" y1="30" x2="104" y2="30" stroke="#555" stroke-width="0.8"/>
         <line x1="92" y1="100" x2="104" y2="100" stroke="#555" stroke-width="0.8"/>
         <text x="112" y="68" font-size="7" fill="#555" font-family="'Segoe UI',sans-serif" font-style="italic">8cm</text>
-        <!-- Esquinas -->
+        <!-- Lados clicables fresado (solo alistonado) -->
+        <g id="lado-superior" onclick="toggleLado('superior')" style="cursor:pointer;display:none">
+          <line id="line-sup" x1="52" y1="30" x2="288" y2="30" stroke="#2B5C3F" stroke-width="8" stroke-linecap="round" opacity="0.25"/>
+          <text x="170" y="22" text-anchor="middle" font-size="8" fill="#2B5C3F" font-family="'Segoe UI',sans-serif">Superior</text>
+        </g>
+        <g id="lado-inferior" onclick="toggleLado('inferior')" style="cursor:pointer;display:none">
+          <line id="line-inf" x1="52" y1="185" x2="288" y2="185" stroke="#2B5C3F" stroke-width="8" stroke-linecap="round" opacity="0.25"/>
+          <text x="170" y="200" text-anchor="middle" font-size="8" fill="#2B5C3F" font-family="'Segoe UI',sans-serif">Inferior</text>
+        </g>
+        <g id="lado-izquierda" onclick="toggleLado('izquierda')" style="cursor:pointer;display:none">
+          <line id="line-izq" x1="40" y1="52" x2="40" y2="173" stroke="#2B5C3F" stroke-width="8" stroke-linecap="round" opacity="0.25"/>
+          <text x="16" y="112" text-anchor="middle" font-size="8" fill="#2B5C3F" font-family="'Segoe UI',sans-serif" transform="rotate(-90,16,112)">Izquierda</text>
+        </g>
+        <g id="lado-derecha" onclick="toggleLado('derecha')" style="cursor:pointer;display:none">
+          <line id="line-der" x1="300" y1="52" x2="300" y2="173" stroke="#2B5C3F" stroke-width="8" stroke-linecap="round" opacity="0.25"/>
+          <text x="324" y="112" text-anchor="middle" font-size="8" fill="#2B5C3F" font-family="'Segoe UI',sans-serif" transform="rotate(90,324,112)">Derecha</text>
+        </g>
         <g onclick="toggleEsquina('A')" style="cursor:pointer">
           <circle id="esq-A" cx="52" cy="42" r="14" fill="#F2EFE9" stroke="#C8C4BC" stroke-width="1.5"/>
           <text id="esq-A-t" x="52" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">A</text>
@@ -302,6 +318,7 @@ body.cliente .solo-int{display:none!important}
       </div>
     </div>
     <div id="pasa-list"></div>
+    <div id="fresado-list" style="margin-top:4px"></div>
     <div id="esq-list" style="margin-top:4px"></div>
   </div>
 
@@ -468,7 +485,7 @@ let CATALOGO={}, SUPLS=[], COLORES={};
 let ENTREGAS=[{id:"",label:"Sin entrega",precio:0}];
 let SUBIDAS=[{id:"",label:"Sin subida",precio:0}];
 let lineas=[], lineaId=0;
-let estado={supls:{},pasacables:[],pasaColorActual:"blanco",esquinas:{A:false,B:false,C:false,D:false}};
+let estado={supls:{},pasacables:[],pasaColorActual:"blanco",esquinas:{A:false,B:false,C:false,D:false},lados:{superior:false,inferior:false,izquierda:false,derecha:false}};
 let minimoActivo=true, colorSel=null;
 
 function fmt(n,d=2){return n.toLocaleString("es-ES",{minimumFractionDigits:d,maximumFractionDigits:d})}
@@ -599,6 +616,7 @@ function onFamiliaChange(){
   document.getElementById("note-ancho").textContent="Máx. "+fam.maxAncho+" cm";
   buildSupls(famId);
   buildEntregas(famId);
+  mostrarLadosFresado(fam.esAlist);
 }
 
 function onGrosorChange(){
@@ -789,7 +807,41 @@ function resetEsquinas(){
   const el=document.getElementById("esq-list");if(el)el.innerHTML="";
 }
 
-// ── PASACABLES ────────────────────────────────────────────────────────────────
+// ── LADOS FRESADO (alistonado) ────────────────────────────────────────────────
+function mostrarLadosFresado(mostrar){
+  ["superior","inferior","izquierda","derecha"].forEach(l=>{
+    const g=document.getElementById("lado-"+l);
+    if(g)g.style.display=mostrar?"":"none";
+  });
+  if(!mostrar)resetLados();
+}
+function toggleLado(lado){
+  estado.lados[lado]=!estado.lados[lado];
+  const linea=document.getElementById("line-"+{"superior":"sup","inferior":"inf","izquierda":"izq","derecha":"der"}[lado]);
+  if(linea)linea.setAttribute("opacity",estado.lados[lado]?"1":"0.25");
+  renderFresado();
+}
+function renderFresado(){
+  const famId=document.getElementById("familia").value;
+  const fam=famId?CATALOGO[famId]:null;
+  const largo=parseFloat(document.getElementById("largo").value)||0;
+  const ancho=parseFloat(document.getElementById("ancho").value)||0;
+  const mlMap={superior:largo/100,inferior:largo/100,izquierda:ancho/100,derecha:ancho/100};
+  const activos=Object.entries(estado.lados).filter(([,v])=>v).map(([k])=>k);
+  const mlTotal=parseFloat(activos.reduce((s,l)=>s+mlMap[l],0).toFixed(3));
+  const precio=fam?.cantoPrecio||0;
+  const el=document.getElementById("fresado-list");if(!el)return;
+  el.innerHTML=activos.length?`<div class="pasa-item"><span>Fresado (${activos.join(", ")}) · ${fmt(mlTotal,2)} ml</span><span style="font-weight:600;color:var(--accent)">${fmt(precio*mlTotal)} €</span></div>`:"";
+}
+function resetLados(){
+  Object.keys(estado.lados).forEach(l=>{
+    estado.lados[l]=false;
+    const map={"superior":"sup","inferior":"inf","izquierda":"izq","derecha":"der"};
+    const linea=document.getElementById("line-"+map[l]);
+    if(linea)linea.setAttribute("opacity","0.25");
+  });
+  const el=document.getElementById("fresado-list");if(el)el.innerHTML="";
+}
 let pasaPendiente=null;
 function selPasaPos(pos){pasaPendiente=pos;document.getElementById("pasa-color-wrap").style.display="block"}
 function selPasaColor(color,btn){
@@ -860,7 +912,9 @@ function getAcabado(famId){
 function calcular(){
   const famId=document.getElementById("familia").value;
   const grosor=parseFloat(document.getElementById("grosor").value);
+  const fam=famId?CATALOGO[famId]:null;
   const btn=document.getElementById("btn-add");
+  if(fam?.esAlist)renderFresado();
   if(!famId||!grosor||!getAcabado(famId)){btn.disabled=true;return}
   btn.disabled=false;
 }
@@ -893,15 +947,21 @@ function añadirLinea(){
   totalUnit+=parseFloat((precioM2*m2).toFixed(2));
 
   // Canteado/Fresado
-  const ml=parseFloat((2*(largo+ancho)/100).toFixed(3));
   if(fam.esAlist){
-    // Fresado: solo lados seleccionados en el croquis (esquinas A/B/C/D como proxy de lados)
-    // Usamos las posiciones de pasacables como referencia de lados — pero mejor: añadimos fresado como suplemento qty
-    // El fresado_alistonado ya está en SUPLS y se añadirá con los suplementos abajo
+    // Fresado: lados seleccionados en el croquis
+    const mlMap={superior:largo/100,inferior:largo/100,izquierda:ancho/100,derecha:ancho/100};
+    const ladosAct=Object.entries(estado.lados).filter(([,v])=>v).map(([k])=>k);
+    if(ladosAct.length>0){
+      const mlTotal=parseFloat(ladosAct.reduce((s,l)=>s+mlMap[l],0).toFixed(3));
+      const precioFres=fam.cantoPrecio||0;
+      const fresTotal=parseFloat((precioFres*mlTotal).toFixed(2));
+      extras.push({nombre:`Fresado (${ladosAct.join(", ")}) · ${fmt(mlTotal,2)} ml`,precioUnit:fresTotal,qty:null});
+      totalUnit+=fresTotal;
+    }
   } else {
     // Canteado siempre incluido para melamina, hpl, rechapado
-    const tipoC=fam.hplCanteado?"Canteado 4 lados (incluido)":"Canteado 4 lados ("+fmt(ml,2)+" ml) — incluido";
-    extras.push({nombre:tipoC,precioUnit:0,qty:null});
+    const ml=parseFloat((2*(largo+ancho)/100).toFixed(3));
+    extras.push({nombre:`Canteado 4 lados (${fmt(ml,2)} ml) — incluido`,precioUnit:0,qty:null});
   }
 
   // Esquinas
@@ -1062,7 +1122,7 @@ function resetConf(){
   document.getElementById("canto-badge").style.display="none";
   minimoActivo=true;
   const tm=document.getElementById("tog-minimo");if(tm){tm.classList.add("on");tm.classList.remove("off")}
-  colorSel=null;resetPasacables();resetEsquinas();buildSupls(null);
+  colorSel=null;resetPasacables();resetEsquinas();resetLados();mostrarLadosFresado(false);buildSupls(null);
 }
 
 function resetPresupuesto(){
@@ -1129,5 +1189,6 @@ function compartirWA(){window.open("https://wa.me/?text="+encodeURIComponent(bui
 </script>
 </body>
 </html>
+
 
 
