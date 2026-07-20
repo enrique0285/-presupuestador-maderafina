@@ -113,7 +113,7 @@ select:disabled,input:disabled{background:var(--surface2);color:var(--text3)}
 .tooltip-overlay.on{display:block}
 .tooltip-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:1000;max-width:300px;width:90%}
 .tooltip-modal.on{display:block}
-.tooltip-modal img{width:100%;border-radius:var(--radius);margin-bottom:.75rem;max-height:160px;object-fit:cover}
+.tooltip-modal img{width:100%;border-radius:var(--radius);margin-bottom:.75rem;max-height:220px;object-fit:contain;background:var(--surface2)}
 .tooltip-modal h4{font-size:14px;font-weight:600;margin-bottom:.4rem}
 .tooltip-modal p{font-size:12px;color:var(--text2);line-height:1.5}
 .tooltip-close{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text3)}
@@ -1191,6 +1191,7 @@ function compartirWA(){window.open("https://wa.me/?text="+encodeURIComponent(bui
 </script>
 </body>
 </html>
+
 
 
 
