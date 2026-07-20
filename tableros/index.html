@@ -126,8 +126,10 @@ body.cliente .solo-int{display:none!important}
   .left{display:none!important}
   .app{display:block}
   .right{position:static;height:auto;border:none;padding:0;background:#fff!important}
-  .pres-title-input{font-size:18pt!important;font-weight:700!important;color:#111!important;border:none!important}
-  #pres-titulo-cliente{font-size:18pt!important;font-weight:700!important;color:#111!important}
+  .pres-title-input{font-size:18pt!important;font-weight:700!important;color:#111!important;border:none!important;display:block!important}
+  #pres-titulo-cliente{font-size:18pt!important;font-weight:700!important;color:#111!important;display:none!important}
+  body.cliente .pres-title-input{display:none!important}
+  body.cliente #pres-titulo-cliente{display:block!important}
   img[alt="Madera Fina"]{width:80px!important;height:80px!important;opacity:1!important}
   .linea{border:1px solid #ccc!important;background:#f9f9f9!important;page-break-inside:avoid;margin-bottom:8pt}
   .linea-name{font-size:11pt;color:#111!important}
@@ -690,9 +692,19 @@ function onAcabadoInternoChange(){
   const famId=document.getElementById("familia").value;
   const grosor=parseFloat(document.getElementById("grosor").value);
   const fam=CATALOGO[famId];
-  const pG=fam.acabados.find(a=>a.id===colorSel.calidad)?.precios[grosor]||0;
-  const gl=colorSel.calidad.charAt(0).toUpperCase()+colorSel.calidad.slice(1);
-  document.getElementById("acabado-interno-info").innerHTML=`<span style="color:var(--accent);font-weight:600">${gl} · ${fmt(pG)} €/m²</span>`;
+  let infoHtml="";
+  if(fam.tipo==="madera"){
+    const pBase=fam.acabados.find(a=>a.id==="natural")?.precios[grosor]||0;
+    let suplStr="";
+    if(colorSel.calidad==="barnizado"&&fam.barnizadoNatural) suplStr=` +${fmt(fam.barnizadoNatural)} €/m²`;
+    else if(colorSel.calidad==="tintado"&&fam.barnizadoTintado) suplStr=` +${fmt(fam.barnizadoTintado)} €/m²`;
+    infoHtml=`<span style="color:var(--accent);font-weight:600">${fmt(pBase)} €/m²${suplStr}</span>`;
+  } else {
+    const pG=fam.acabados.find(a=>a.id===colorSel.calidad)?.precios[grosor]||0;
+    const gl=colorSel.calidad.charAt(0).toUpperCase()+colorSel.calidad.slice(1);
+    infoHtml=`<span style="color:var(--accent);font-weight:600">${gl} · ${fmt(pG)} €/m²</span>`;
+  }
+  document.getElementById("acabado-interno-info").innerHTML=infoHtml;
   calcular();
 }
 
@@ -700,7 +712,9 @@ function onAcabadoInternoChange(){
 function renderGaleria(famId,grosor){
   const fam=CATALOGO[famId];
   const colores=COLORES[famId]||[];
-  const pB=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
+  const esMadera=fam.tipo==="madera";
+  // Para madera: precio base = sin barnizar. Suplemento = barnizadoNatural o barnizadoTintado
+  const pBase=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||fam.acabados.find(a=>a.id==="natural")?.precios[grosor]||0;
   const cats={};
   colores.forEach(c=>{if(!cats[c.categoria])cats[c.categoria]=[];cats[c.categoria].push(c)});
   const container=document.getElementById("galeria-cats");
@@ -710,12 +724,25 @@ function renderGaleria(famId,grosor){
     d.innerHTML=`<div class="cat-label">${cat}</div>`;
     const grid=document.createElement("div");grid.className="color-grid";
     items.forEach(c=>{
-      const pG=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||pB;
-      const s=pG-pB;const gl=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
+      let suplStr="",gamaStr="";
+      if(esMadera){
+        // Sin barnizar: sin suplemento. Barnizado: mostrar precio suplemento
+        if(c.calidad==="barnizado"&&fam.barnizadoNatural){
+          suplStr=` +${fmt(fam.barnizadoNatural)} €/m²`;
+        } else if(c.calidad==="tintado"&&fam.barnizadoTintado){
+          suplStr=` +${fmt(fam.barnizadoTintado)} €/m²`;
+        }
+        gamaStr=c.calidad==="natural"?"Sin barnizar":c.calidad==="barnizado"?"Barnizado natural":"Barnizado tintado";
+      } else {
+        const pG=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||pBase;
+        const s=pG-pBase;
+        gamaStr=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
+        suplStr=s>0?` +${fmt(s)} €/m²`:"";
+      }
       const card=document.createElement("div");card.className="color-card";card.dataset.cod=c.codigo;
       card.innerHTML=`<img src="${IMG_BASE}${c.foto}" alt="${c.nombre}" loading="lazy" onerror="this.style.background='#E0DDD6'">
         <div class="ci"><span class="ci-cod">${c.codigo}</span><span class="ci-nom">${c.nombre}</span>
-        <span class="ci-gama ${c.calidad}">${gl}${s>0?` +${fmt(s)} €/m²`:""}</span></div>
+        <span class="ci-gama ${c.calidad}">${gamaStr}${suplStr}</span></div>
         <div class="ck">✓</div>`;
       card.onclick=()=>selColor(c,card,famId,grosor);
       grid.appendChild(card);
@@ -729,12 +756,22 @@ function selColor(c,card,famId,grosor){
   document.querySelectorAll(".color-card.selected").forEach(el=>el.classList.remove("selected"));
   card.classList.add("selected");colorSel=c;
   const fam=CATALOGO[famId];
-  const pB=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
-  const pG=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||pB;
-  const s=pG-pB;const gl=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
   const info=document.getElementById("color-sel-info");
   info.style.display="block";
-  info.innerHTML=`<strong>${c.codigo} · ${c.nombre}</strong> · ${gl}${s>0?` (+${fmt(s)} €/m²)`:""}`;
+  let infoStr="";
+  if(fam.tipo==="madera"){
+    let suplStr="";
+    if(c.calidad==="barnizado"&&fam.barnizadoNatural) suplStr=` (+${fmt(fam.barnizadoNatural)} €/m²)`;
+    else if(c.calidad==="tintado"&&fam.barnizadoTintado) suplStr=` (+${fmt(fam.barnizadoTintado)} €/m²)`;
+    const lbl=c.calidad==="natural"?"Sin barnizar":c.calidad==="barnizado"?"Barnizado natural":"Barnizado tintado";
+    infoStr=`<strong>${c.codigo} · ${c.nombre}</strong> · ${lbl}${suplStr}`;
+  } else {
+    const pB=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
+    const pG=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||pB;
+    const s=pG-pB;const gl=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
+    infoStr=`<strong>${c.codigo} · ${c.nombre}</strong> · ${gl}${s>0?` (+${fmt(s)} €/m²)`:""}`;
+  }
+  info.innerHTML=infoStr;
   calcular();
 }
 
@@ -1225,6 +1262,7 @@ function compartirWA(){window.open("https://wa.me/?text="+encodeURIComponent(bui
 </script>
 </body>
 </html>
+
 
 
 
