@@ -403,7 +403,8 @@ body.cliente .solo-int{display:none!important}
   <div class="entrega-wrap" id="entrega-wrap-cli" style="display:none">
     <div style="display:flex;align-items:center;gap:10px">
       <label style="font-size:12px;color:var(--text2);font-weight:500;white-space:nowrap;flex-shrink:0">Subida a domicilio</label>
-      <select id="sel-subida-cli" onchange="calcularTotales()" style="flex:1"><option value="">Sin subida</option></select>
+      <select id="sel-subida-cli" onchange="calcularTotales();actualizarTextoSubida()" style="flex:1"><option value="">Sin subida</option></select>
+      <span id="subida-cli-texto" style="display:none;font-size:13px;color:var(--text)"></span>
     </div>
   </div>
 
@@ -416,6 +417,7 @@ body.cliente .solo-int{display:none!important}
   <div class="totales">
     <div class="total-row" id="row-entrega" style="display:none"><span id="lbl-entrega"></span><span id="t-entrega"></span></div>
     <div class="total-row" id="row-subida" style="display:none"><span id="lbl-subida"></span><span id="t-subida"></span></div>
+    <div class="total-row" id="row-minimo" style="display:none;color:var(--accent)"><span>Pedido mínimo</span><span id="t-minimo"></span></div>
     <div class="total-row solo-int"><span>Subtotal (sin IVA)</span><span id="t-base">—</span></div>
     <div class="total-row solo-int"><span>IVA 21%</span><span id="t-iva">—</span></div>
     <div class="total-row big"><span>Total</span><span class="val" id="t-total">—</span></div>
@@ -756,7 +758,7 @@ function buildSupls(famId){
   const activos=famId?SUPLS.filter(s=>s.familias.includes(famId)):[];
   estado.supls={};activos.forEach(s=>{estado.supls[s.id]=0});
   const trabajos=activos.filter(s=>esTrabajo(s));
-  const supls=activos.filter(s=>!esTrabajo(s)&&!(s.uiKey&&s.uiKey.startsWith("pasacables")));
+  const supls=activos.filter(s=>!esTrabajo(s)&&!(s.uiKey&&s.uiKey.startsWith("pasacables"))&&s.uiKey!=="fresado_alistonado");
   const renderG=(items,gridId)=>{
     const g=document.getElementById(gridId);if(!g)return;
     if(!items.length){g.innerHTML='<div style="font-size:12px;color:var(--text3);padding:4px">—</div>';return}
@@ -1097,8 +1099,20 @@ function calcularTotales(){
     entObj=ENTREGAS.find(e=>e.id===eid)||ENTREGAS[0];
     subObj=SUBIDAS.find(s=>s.id===sid)||SUBIDAS[0];
   }
+  const MIN=45;
   const sub=lineas.filter(l=>!l.pendiente).reduce((s,l)=>s+l.totalCant,0);
-  const total=sub+entObj.precio+subObj.precio;
+  const subConEntrega=sub+entObj.precio+subObj.precio;
+  // Pedido mínimo: por pedido en modo cliente, ya aplicado por línea en interno
+  let ajusteMin=0;
+  const rowMin=document.getElementById("row-minimo");
+  if(ES_CLIENTE&&sub<MIN&&sub>0&&!lineas.some(l=>l.pendiente)){
+    ajusteMin=parseFloat((MIN-sub).toFixed(2));
+    rowMin.style.display="flex";
+    document.getElementById("t-minimo").textContent=fmt(ajusteMin)+" €";
+  } else {
+    rowMin.style.display="none";
+  }
+  const total=sub+ajusteMin+entObj.precio+subObj.precio;
   const base=total/1.21,iva=total-base;
   const rE=document.getElementById("row-entrega"),rS=document.getElementById("row-subida");
   if(entObj.precio>0){rE.style.display="flex";document.getElementById("lbl-entrega").textContent=entObj.label;document.getElementById("t-entrega").textContent=fmt(entObj.precio)+" €"}else rE.style.display="none";
@@ -1142,13 +1156,29 @@ function resetPresupuesto(){
 function toggleMinimo(btn){minimoActivo=!minimoActivo;btn.classList.toggle("on",minimoActivo);btn.classList.toggle("off",!minimoActivo)}
 
 // ── IMPRIMIR ──────────────────────────────────────────────────────────────────
+function actualizarTextoSubida(){
+  const sid=document.getElementById("sel-subida-cli")?.value||"";
+  const subObj=SUBIDAS.find(s=>s.id===sid)||SUBIDAS[0];
+  const txt=document.getElementById("subida-cli-texto");
+  if(txt)txt.textContent=subObj.precio>0?`${subObj.label} — ${fmt(subObj.precio)} €`:"Sin subida";
+}
+
 function imprimirPpto(){
+  actualizarTextoSubida();
+  const sel=document.getElementById("sel-subida-cli");
+  const txt=document.getElementById("subida-cli-texto");
+  if(sel)sel.style.display="none";
+  if(txt)txt.style.display="block";
   const titulo=ES_CLIENTE?"Presupuesto Madera Fina":(document.getElementById("pres-titulo").value||"Presupuesto estimado");
   const fecha=new Date().toLocaleDateString("es-ES",{day:"2-digit",month:"2-digit",year:"numeric"}).replace(/\//g,"-");
   const orig=document.title;
   document.title=`Madera Fina · ${titulo} · ${fecha}`;
   window.print();
-  setTimeout(()=>document.title=orig,1500);
+  setTimeout(()=>{
+    document.title=orig;
+    if(sel)sel.style.display="";
+    if(txt)txt.style.display="none";
+  },1500);
 }
 
 // ── COPIAR / WHATSAPP ─────────────────────────────────────────────────────────
@@ -1175,9 +1205,13 @@ function buildTexto(){
     entObj=ENTREGAS.find(e=>e.id===(document.getElementById("sel-entrega")?.value||""))||ENTREGAS[0];
     subObj=SUBIDAS.find(s=>s.id===(document.getElementById("sel-subida")?.value||""))||SUBIDAS[0];
   }
-  const total=lineas.reduce((s,l)=>s+l.totalCant,0)+entObj.precio+subObj.precio;
+  const subTotal=lineas.reduce((s,l)=>s+l.totalCant,0);
+  const MIN=45;
+  const ajusteMin=(ES_CLIENTE&&subTotal<MIN&&subTotal>0)?parseFloat((MIN-subTotal).toFixed(2)):0;
+  if(ajusteMin>0)txt+=`\nPedido mínimo: +${fmt(ajusteMin)} €`;
   if(entObj.precio>0)txt+=`\n${entObj.label}: ${fmt(entObj.precio)} €`;
   if(subObj.precio>0)txt+=`\n${subObj.label}: ${fmt(subObj.precio)} €`;
+  const total=subTotal+ajusteMin+entObj.precio+subObj.precio;
   txt+=`\n\n${sep}\nBase imponible: ${fmt(total/1.21)} €\nIVA 21%: ${fmt(total-total/1.21)} €\nTOTAL: ${fmt(total)} €\n`;
   if(nota)txt+=`\n${sep}\n${nota}\n`;
   return txt;
@@ -1191,6 +1225,7 @@ function compartirWA(){window.open("https://wa.me/?text="+encodeURIComponent(bui
 </script>
 </body>
 </html>
+
 
 
 
