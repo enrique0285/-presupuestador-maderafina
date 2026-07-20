@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tableros · Madera Fina</title>
 <style>
-:root {
-  --bg:#F7F5F2;--surface:#FFFFFF;--surface2:#F2EFE9;
+:root{
+  --bg:#F7F5F2;--surface:#FFF;--surface2:#F2EFE9;
   --border:#E0DDD6;--border2:#C8C4BC;
   --text:#1C1A17;--text2:#6B6760;--text3:#9C9890;
   --accent:#2B5C3F;--accent-light:#EAF2EC;
@@ -19,69 +19,53 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .left{padding:2rem;overflow-y:auto}
 .right{background:var(--surface);border-left:1px solid var(--border);padding:2rem;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
 .header{margin-bottom:1.5rem}
-.brand{font-size:22px;font-weight:600;color:var(--accent);letter-spacing:-.5px}
-.brand span{color:var(--text3);font-weight:400;font-size:14px;margin-left:8px}
-.modo-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;margin-left:8px}
+.brand{font-size:20px;font-weight:600;color:var(--accent);letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
+.brand span{color:var(--text3);font-weight:400;font-size:13px}
+.modo-badge{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
 .modo-badge.interno{background:#FEF3C7;color:#92400E}
 .modo-badge.cliente{background:#D1FAE5;color:#065F46}
+.btn-modo{font-size:11px;padding:3px 10px;border:1px solid var(--border2);border-radius:20px;background:var(--surface);color:var(--text2);cursor:pointer;margin-left:auto}
 .section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow)}
 .section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:1rem}
 .row{display:grid;gap:12px;margin-bottom:12px}
 .row.c2{grid-template-columns:1fr 1fr}
 .row.c3{grid-template-columns:1fr 1fr 1fr}
 .field label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500}
-select,input[type=number],input[type=text]{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s}
-select:focus,input:focus{border-color:var(--accent)}
+select,input[type=number],input[type=text],textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s}
+select:focus,input:focus,textarea:focus{border-color:var(--accent)}
 select:disabled,input:disabled{background:var(--surface2);color:var(--text3)}
-.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.chip.mel{background:#EBF4FF;color:#1A5276}
-.chip.hpl{background:#F4ECFF;color:#6C3483}
-.chip.mad{background:#FEF9E7;color:#784212}
 .dim-note{font-size:11px;color:var(--text3);margin-top:3px}
-.info-box{background:var(--accent-light);border:1px solid #c3dfc9;border-radius:var(--radius);padding:10px 12px;font-size:12px;color:#1e4530;margin-bottom:12px}
-
-/* SELECTOR DE COLORES */
-.color-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:4px}.color-card{cursor:pointer;border:2px solid transparent;border-radius:var(--radius);overflow:hidden;transition:border-color .15s,transform .1s;position:relative}
+/* COLOR GRID */
+.color-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:4px}
+.color-card{cursor:pointer;border:2px solid transparent;border-radius:var(--radius);overflow:hidden;transition:border-color .15s,transform .1s;position:relative}
 .color-card:hover{transform:scale(1.03)}
 .color-card.selected{border-color:var(--accent)}
 .color-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--surface2)}
-.color-card .color-info{padding:4px 6px;background:var(--surface);border-top:1px solid var(--border)}
-.color-card .color-codigo{font-size:10px;font-weight:600;color:var(--text);display:block}
-.color-card .color-nombre{font-size:9px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.color-card .color-gama{font-size:9px;font-weight:600;margin-top:1px}
-.color-card .color-gama.basic{color:var(--accent)}
-.color-card .color-gama.platinium{color:#6C3483}
-.color-card .color-gama.gold{color:#B8860B}
-.color-card .selected-check{position:absolute;top:4px;right:4px;width:18px;height:18px;background:var(--accent);border-radius:50%;display:none;align-items:center;justify-content:center}
-.color-card.selected .selected-check{display:flex}
-.color-card .selected-check::after{content:'✓';color:#fff;font-size:11px;font-weight:700}
+.color-card .ci{padding:3px 5px;background:var(--surface);border-top:1px solid var(--border)}
+.color-card .ci-cod{font-size:9px;font-weight:600;color:var(--text);display:block}
+.color-card .ci-nom{font-size:8px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.color-card .ci-gama{font-size:8px;font-weight:600;margin-top:1px}
+.ci-gama.basic{color:var(--accent)}.ci-gama.platinium{color:#6C3483}.ci-gama.gold{color:#B8860B}
+.color-card .ck{position:absolute;top:3px;right:3px;width:16px;height:16px;background:var(--accent);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700}
+.color-card.selected .ck{display:flex}
 .cat-label{font-size:11px;font-weight:600;color:var(--text2);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.05em}
-.color-selected-info{padding:8px 10px;background:var(--accent-light);border:1px solid #c3dfc9;border-radius:var(--radius);font-size:12px;color:#1e4530;margin-top:8px;display:none}
-
-/* CROQUIS PASACABLES */
-.croquis-pasa{display:flex;justify-content:center;margin:8px 0}
-.croquis-pasa svg{max-width:320px;width:100%}
-.pasa-zona{cursor:pointer;transition:opacity .15s}
+.color-sel-info{padding:8px 10px;background:var(--accent-light);border:1px solid #c3dfc9;border-radius:var(--radius);font-size:12px;color:#1e4530;margin-top:8px;display:none}
+/* CROQUIS */
+.pasa-circle{fill:var(--surface2);stroke:var(--border2);stroke-width:1.5;transition:fill .15s,stroke .15s}
+.pasa-zona{cursor:pointer}
 .pasa-zona:hover .pasa-circle{fill:#c3dfc9}
-.pasa-circle{fill:var(--surface2);stroke:var(--border2);stroke-width:1.5;transition:fill .15s}
-.pasa-circle.activa{fill:var(--accent);stroke:var(--accent)}
-.pasa-label{font-size:10px;fill:var(--text2);font-family:'Segoe UI',sans-serif;text-anchor:middle;pointer-events:none}
-.pasa-label.activa{fill:#fff}
-.pasa-list{margin-top:8px}
 .pasa-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:4px;font-size:12px}
 .pasa-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0 4px}
 .pasa-del:hover{color:var(--danger)}
 .pasa-color-sel{display:flex;gap:6px;margin-top:6px}
 .pasa-color-btn{padding:4px 10px;border:1.5px solid var(--border);border-radius:20px;font-size:11px;cursor:pointer;background:var(--surface);color:var(--text);transition:all .15s}
 .pasa-color-btn.sel{border-color:var(--accent);background:var(--accent-light);color:var(--accent);font-weight:600}
-
 /* SUPLEMENTOS */
 .supl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .supl-item{border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;background:var(--surface2);display:flex;align-items:center;justify-content:space-between}
 .supl-item.active{border-color:var(--accent);background:var(--accent-light)}
 .supl-name{font-size:12px;font-weight:500;color:var(--text)}
 .supl-price{font-size:11px;color:var(--text3);margin-top:1px}
-.supl-right{display:flex;align-items:center;gap:6px}
 .qty-btn{width:22px;height:22px;border:1px solid var(--border2);border-radius:5px;background:var(--surface);color:var(--text);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .qty-btn:hover{background:var(--border)}
 .qty-val{font-size:13px;font-weight:600;min-width:14px;text-align:center}
@@ -89,31 +73,30 @@ select:disabled,input:disabled{background:var(--surface2);color:var(--text3)}
 .toggle.on{background:var(--accent)}
 .toggle::after{content:'';position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s}
 .toggle.on::after{transform:translateX(16px)}
-
+.info-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0 3px;vertical-align:middle}
+.info-btn:hover{color:var(--accent)}
 /* BOTÓN AÑADIR */
 .btn-add{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;transition:background .15s}
 .btn-add:hover{background:#1e4530}
 .btn-add:disabled{background:var(--border2);cursor:not-allowed}
-
 /* PANEL DERECHO */
 .pres-title-input{font-size:16px;font-weight:600;color:var(--text);background:transparent;border:none;border-bottom:1.5px dashed var(--border2);outline:none;width:100%;padding:2px 0;cursor:text}
 .pres-title-input:focus{border-bottom-color:var(--accent)}
-.pres-subtitle{font-size:12px;color:var(--text3);margin-top:2px}
+.pres-subtitle{font-size:12px;color:var(--text2);margin-top:2px}
 .lineas{flex:1;overflow-y:auto}
+.pres-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);text-align:center;gap:8px;padding:2rem 0}
 .linea{border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem;margin-bottom:10px;background:var(--surface2);position:relative}
 .linea-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
-.linea-name{font-size:13px;font-weight:600;color:var(--text)}
+.linea-name{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.linea-thumb{width:28px;height:28px;object-fit:cover;border-radius:4px;border:1px solid var(--border);flex-shrink:0}
 .linea-specs{font-size:11px;color:var(--text2);margin-top:2px}
 .linea-price{font-size:15px;font-weight:700;color:var(--accent);white-space:nowrap;flex-shrink:0}
+.linea-extras{font-size:11px;color:var(--text3);margin-top:4px}
 .linea-del{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:2px 4px;border-radius:4px}
 .linea-del:hover{background:#fdecea;color:var(--danger)}
-.linea-extras{font-size:11px;color:var(--text3);margin-top:4px}
-.entrega-wrap{padding:10px 0 4px;border-top:1px solid var(--border);margin-top:6px;display:none}
-.entrega-row{display:flex;gap:10px}
-.entrega-row .field label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500}
-.nota-cliente-wrap{padding:10px 0 4px;border-top:1px solid var(--border);margin-top:4px;display:none}
 .notas-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;resize:none;color:var(--text);background:var(--surface)}
 .notas-input:focus{outline:none;border-color:var(--accent)}
+.entrega-wrap{padding:10px 0 4px;border-top:1px solid var(--border);margin-top:6px;display:none}
 .totales{border-top:1px solid var(--border);padding-top:1rem;margin-top:auto}
 .total-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px}
 .total-row.big{font-size:18px;font-weight:700;color:var(--text);margin-top:8px}
@@ -124,58 +107,48 @@ select:disabled,input:disabled{background:var(--surface2);color:var(--text3)}
 .btn-sec:hover{background:var(--surface2)}
 .btn-prim{flex:1;padding:9px;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer}
 .btn-prim:hover{background:#1e4530}
-.btn-prim:disabled{background:var(--border2);cursor:not-allowed}
+.btn-prim:disabled,.btn-sec:disabled{background:var(--border2);cursor:not-allowed;color:#fff}
+/* TOOLTIP */
+.tooltip-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:999}
+.tooltip-overlay.on{display:block}
+.tooltip-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:1000;max-width:300px;width:90%}
+.tooltip-modal.on{display:block}
+.tooltip-modal img{width:100%;border-radius:var(--radius);margin-bottom:.75rem;max-height:160px;object-fit:cover}
+.tooltip-modal h4{font-size:14px;font-weight:600;margin-bottom:.4rem}
+.tooltip-modal p{font-size:12px;color:var(--text2);line-height:1.5}
+.tooltip-close{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text3)}
+/* MODO CLIENTE */
+body.cliente .solo-int{display:none!important}
 .clausulas-print{display:none}
-/* TOOLTIP CORTES */
-.supl-info-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0 4px;line-height:1;vertical-align:middle}
-.supl-info-btn:hover{color:var(--accent)}
-.supl-tooltip{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.18);z-index:1000;max-width:320px;width:90%}
-.supl-tooltip.visible{display:block}
-.supl-tooltip img{width:100%;border-radius:var(--radius);margin-bottom:.75rem;max-height:180px;object-fit:cover}
-.supl-tooltip-nombre{font-size:14px;font-weight:600;color:var(--text);margin-bottom:.4rem}
-.supl-tooltip-desc{font-size:12px;color:var(--text2);line-height:1.5}
-.supl-tooltip-close{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text3)}
-.tooltip-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:999}
-.tooltip-overlay.visible{display:block}
-
-/* MODO CLIENTE — ocultar elementos internos */
-body.modo-cliente .solo-interno{display:none!important}
-body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:transparent}
-
 @media print{
   @page{margin:1.5cm 2cm}
-  body{background:#fff!important;font-size:12pt;color:#111!important}
+  body{background:#fff!important;color:#111!important;font-size:12pt}
   .left{display:none!important}
   .app{display:block}
   .right{position:static;height:auto;border:none;padding:0;background:#fff!important}
   .pres-title-input{font-size:18pt!important;font-weight:700!important;color:#111!important;border:none!important}
+  #pres-titulo-cliente{font-size:18pt!important;font-weight:700!important;color:#111!important}
   img[alt="Madera Fina"]{width:80px!important;height:80px!important;opacity:1!important}
   .linea{border:1px solid #ccc!important;background:#f9f9f9!important;page-break-inside:avoid;margin-bottom:8pt}
   .linea-name{font-size:11pt;color:#111!important}
-  .linea-specs,.linea-extras{font-size:9pt;color:#333!important}
-  .linea-name img{width:22px!important;height:22px!important;border-radius:3px!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}
-  .color-gama{color:#333!important}
-  .linea-specs span{color:#444!important}
+  .linea-thumb{width:22px!important;height:22px!important}
+  .linea-specs{font-size:9pt;color:#333!important}
+  .linea-extras{font-size:9pt;color:#333!important}
   .linea-price{font-size:12pt;color:#2B5C3F!important}
+  .linea-specs span,.ci-gama{color:#444!important}
   .pres-subtitle{color:#333!important;font-size:10pt}
   .iva-note{color:#555!important;font-size:8pt}
   .totales{border-top:2px solid #333!important}
   .total-row{display:flex!important;font-size:10pt;color:#111!important}
   .total-row.big{font-size:14pt!important}
   .total-row.big .val{color:#2B5C3F!important}
-  .btn-row,.linea-del,.btn-modo{display:none!important}
+  .btn-row,.linea-del,.btn-modo,.tooltip-overlay,.tooltip-modal{display:none!important}
   .entrega-wrap{display:block!important}
-  .entrega-wrap-cliente{display:block!important}
-  .entrega-row{display:none!important}
-  .nota-cliente-wrap{display:none!important}
-  select{border:none!important;background:transparent!important;appearance:none;font-size:9pt;color:#444}
   .clausulas-print{display:block!important;margin-top:24pt;border-top:1px solid #ccc;padding-top:12pt}
   .clausula-titulo{font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:8pt}
   .clausula-item{font-size:8pt;color:#555;margin-bottom:5pt;line-height:1.5}
   .clausula-item strong{color:#222}
-  .solo-interno{display:flex!important}
-  .solo-interno.total-row{display:flex!important}
-  body.modo-cliente .solo-interno{display:none!important}
+  .solo-int{display:none!important}
 }
 @media(max-width:860px){
   .app{grid-template-columns:1fr}
@@ -185,29 +158,24 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
 </head>
 <body>
 <div class="app">
-
-<!-- ===== PANEL IZQUIERDO ===== -->
 <div class="left">
   <div class="header">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
-      <div class="brand">Madera Fina <span id="subtitulo-marca">· Presupuestador interno</span>
-        <span class="modo-badge interno" id="modo-badge">Interno</span>
-      </div>
-      <button id="btn-modo" onclick="cambiarModo()" style="font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;background:var(--surface);color:var(--text2);cursor:pointer;white-space:nowrap">
-        Vista cliente →
-      </button>
+    <div class="brand">
+      Madera Fina <span id="marca-sub">· Presupuestador interno</span>
+      <span class="modo-badge interno" id="modo-badge">Interno</span>
+      <button class="btn-modo solo-int" id="btn-modo" onclick="abrirModoCliente()">Vista cliente →</button>
     </div>
-    <div id="loading-msg" style="margin-top:4px;font-size:12px;color:var(--text3)">⏳ Cargando tarifas…</div>
+    <div id="loading-msg" style="margin-top:6px;font-size:12px;color:var(--text3)">⏳ Cargando tarifas…</div>
   </div>
 
-  <!-- FAMILIA -->
+  <!-- PRODUCTO -->
   <div class="section-card">
     <div class="section-label">Producto</div>
     <div class="row c2">
       <div class="field">
         <label>Familia</label>
         <select id="familia" onchange="onFamiliaChange()">
-          <option value="">Seleccionar familia...</option>
+          <option value="">Seleccionar…</option>
           <option value="melamina">Tablero Melamina</option>
           <option value="hpl1">Tablero HPL 1 cara</option>
           <option value="hpl2">Tablero HPL 2 caras</option>
@@ -221,45 +189,28 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
       </div>
       <div class="field">
         <label>Grosor (cm)</label>
-        <select id="grosor" onchange="onGrosorChange()" disabled>
-          <option value="">—</option>
-        </select>
+        <select id="grosor" onchange="onGrosorChange()" disabled><option value="">—</option></select>
       </div>
     </div>
+    <div class="dim-note" id="dim-notes"></div>
   </div>
 
-  <!-- SELECTOR COLOR / ACABADO -->
+  <!-- COLOR/ACABADO -->
   <div class="section-card" id="card-color" style="display:none">
     <div class="section-label">Color y acabado</div>
-    <!-- INTERNO: selector desplegable con nombre y gama -->
-    <div id="selector-interno" class="solo-interno" style="display:none">
-      <div class="row c2" style="margin-bottom:0">
-        <div class="field">
-          <label>Acabado</label>
-          <select id="acabado-interno" onchange="onAcabadoInternoChange()">
-            <option value="">Seleccionar...</option>
-          </select>
-        </div>
-        <div class="field" id="acabado-interno-info" style="display:flex;align-items:flex-end;padding-bottom:2px">
-        </div>
-      </div>
+    <!-- Interno: desplegable -->
+    <div id="sel-interno" class="solo-int" style="display:none">
+      <select id="acabado-interno" onchange="onAcabadoInternoChange()"><option value="">Seleccionar…</option></select>
+      <div id="acabado-interno-info" style="margin-top:6px;font-size:11px;color:var(--accent);font-weight:600"></div>
     </div>
-    <!-- CLIENTE: galería de fotos -->
-    <div id="galeria-colores" style="display:none">
-      <div id="color-categorias"></div>
-      <div class="color-selected-info" id="color-selected-info"></div>
+    <!-- Cliente: galería -->
+    <div id="galeria" style="display:none">
+      <div id="galeria-cats"></div>
+      <div class="color-sel-info" id="color-sel-info"></div>
     </div>
-    <!-- Selector clásico para familias sin galería -->
-    <div id="selector-clasico" style="display:none">
-      <div class="row c2" style="margin-bottom:0">
-        <div class="field">
-          <label>Acabado</label>
-          <select id="acabado" onchange="calcular()">
-            <option value="">—</option>
-          </select>
-        </div>
-        <div class="field"></div>
-      </div>
+    <!-- Sin galería: selector clásico -->
+    <div id="sel-clasico" style="display:none">
+      <select id="acabado" onchange="calcular()"><option value="">Seleccionar…</option></select>
     </div>
   </div>
 
@@ -280,139 +231,113 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
     </div>
   </div>
 
-  <!-- CROQUIS UNIFICADO: ESQUINAS + PASACABLES -->
+  <!-- ESQUINAS + PASACABLES -->
   <div class="section-card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
       <div class="section-label" style="margin-bottom:0">Esquinas y pasacables</div>
       <div id="canto-badge" style="display:none;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#D1FAE5;color:#065F46"></div>
     </div>
-    <div class="croquis-pasa">
-      <svg viewBox="0 0 340 230" xmlns="http://www.w3.org/2000/svg">
-        <!-- Tablero -->
+    <div style="display:flex;justify-content:center">
+      <svg width="100%" viewBox="0 0 340 230" style="max-width:340px" xmlns="http://www.w3.org/2000/svg">
         <rect x="40" y="30" width="260" height="155" rx="12" fill="#D4B896" stroke="#8B6914" stroke-width="1.5"/>
-
-        <!-- COTA radio esquina — esquina inf izq como ejemplo -->
+        <!-- Cotas -->
         <path d="M40,167 Q40,185 58,185" fill="none" stroke="#8B6914" stroke-width="0.8" stroke-dasharray="3,2"/>
-        <line x1="40" y1="185" x2="58" y2="185" stroke="#555" stroke-width="0.6"/>
-        <text x="34" y="192" font-size="7.5" fill="#555" font-family="'Segoe UI',sans-serif" font-style="italic">R=6cm</text>
-
-        <!-- COTA posición pasacables izq — distancia lateral 8cm -->
-        <!-- Línea vertical de referencia lateral izq → centro pasacables izq -->
+        <text x="34" y="196" font-size="7.5" fill="#555" font-family="'Segoe UI',sans-serif" font-style="italic">R=6cm</text>
         <line x1="40" y1="108" x2="98" y2="108" stroke="#555" stroke-width="0.6" stroke-dasharray="3,2"/>
         <line x1="40" y1="104" x2="40" y2="112" stroke="#555" stroke-width="0.8"/>
         <line x1="98" y1="104" x2="98" y2="112" stroke="#555" stroke-width="0.8"/>
-        <text x="62" y="120" font-size="7" fill="#555" font-family="'Segoe UI',sans-serif" text-anchor="middle" font-style="italic">8cm</text>
-
-        <!-- COTA distancia fondo (top) → centro pasacables -->
+        <text x="62" y="122" font-size="7" fill="#555" font-family="'Segoe UI',sans-serif" text-anchor="middle" font-style="italic">8cm</text>
         <line x1="98" y1="30" x2="98" y2="100" stroke="#555" stroke-width="0.6" stroke-dasharray="3,2"/>
         <line x1="92" y1="30" x2="104" y2="30" stroke="#555" stroke-width="0.8"/>
         <line x1="92" y1="100" x2="104" y2="100" stroke="#555" stroke-width="0.8"/>
-        <text x="110" y="68" font-size="7" fill="#555" font-family="'Segoe UI',sans-serif" text-anchor="start" font-style="italic">8cm</text>
-
-        <!-- ESQUINAS clicables -->
+        <text x="112" y="68" font-size="7" fill="#555" font-family="'Segoe UI',sans-serif" font-style="italic">8cm</text>
+        <!-- Esquinas -->
         <g onclick="toggleEsquina('A')" style="cursor:pointer">
           <circle id="esq-A" cx="52" cy="42" r="14" fill="#F2EFE9" stroke="#C8C4BC" stroke-width="1.5"/>
-          <text id="esq-A-txt" x="52" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">A</text>
+          <text id="esq-A-t" x="52" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">A</text>
         </g>
         <g onclick="toggleEsquina('B')" style="cursor:pointer">
           <circle id="esq-B" cx="288" cy="42" r="14" fill="#F2EFE9" stroke="#C8C4BC" stroke-width="1.5"/>
-          <text id="esq-B-txt" x="288" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">B</text>
+          <text id="esq-B-t" x="288" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">B</text>
         </g>
         <g onclick="toggleEsquina('C')" style="cursor:pointer">
           <circle id="esq-C" cx="52" cy="173" r="14" fill="#F2EFE9" stroke="#C8C4BC" stroke-width="1.5"/>
-          <text id="esq-C-txt" x="52" y="177" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">C</text>
+          <text id="esq-C-t" x="52" y="177" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">C</text>
         </g>
         <g onclick="toggleEsquina('D')" style="cursor:pointer">
           <circle id="esq-D" cx="288" cy="173" r="14" fill="#F2EFE9" stroke="#C8C4BC" stroke-width="1.5"/>
-          <text id="esq-D-txt" x="288" y="177" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">D</text>
+          <text id="esq-D-t" x="288" y="177" text-anchor="middle" font-size="10" font-weight="700" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">D</text>
         </g>
-
-        <!-- PASACABLES: círculo exterior (encastre Ø6cm) + zona clicable -->
-        <!-- Izquierda -->
+        <!-- Pasacables -->
         <g class="pasa-zona" onclick="selPasaPos('izquierda')" style="cursor:pointer">
-          <circle cx="98" cy="100" r="18" fill="none" stroke="#8B6914" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.5"/>
-          <circle id="pasa-izq" class="pasa-circle" cx="98" cy="100" r="13"/>
-          <text x="98" y="97" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Pasa</text>
-          <text x="98" y="107" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Izq.</text>
+          <circle id="pasa-izq" class="pasa-circle" cx="98" cy="107" r="18"/>
+          <circle cx="98" cy="107" r="22" fill="none" stroke="#8B6914" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.5"/>
+          <text x="98" y="104" text-anchor="middle" font-size="8" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">Pasa</text>
+          <text x="98" y="114" text-anchor="middle" font-size="8" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">Izq.</text>
         </g>
-        <!-- Centro -->
         <g class="pasa-zona" onclick="selPasaPos('centro')" style="cursor:pointer">
-          <circle cx="170" cy="100" r="18" fill="none" stroke="#8B6914" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.5"/>
-          <circle id="pasa-cen" class="pasa-circle" cx="170" cy="100" r="13"/>
-          <text x="170" y="97" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Pasa</text>
-          <text x="170" y="107" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Centro</text>
+          <circle id="pasa-cen" class="pasa-circle" cx="170" cy="107" r="18"/>
+          <circle cx="170" cy="107" r="22" fill="none" stroke="#8B6914" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.5"/>
+          <text x="170" y="104" text-anchor="middle" font-size="8" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">Pasa</text>
+          <text x="170" y="114" text-anchor="middle" font-size="8" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">Centro</text>
         </g>
-        <!-- Derecha -->
         <g class="pasa-zona" onclick="selPasaPos('derecha')" style="cursor:pointer">
-          <circle cx="242" cy="100" r="18" fill="none" stroke="#8B6914" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.5"/>
-          <circle id="pasa-der" class="pasa-circle" cx="242" cy="100" r="13"/>
-          <text x="242" y="97" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Pasa</text>
-          <text x="242" y="107" font-family="'Segoe UI',sans-serif" font-size="8" text-anchor="middle" pointer-events="none" fill="#6B6760">Dcha.</text>
+          <circle id="pasa-der" class="pasa-circle" cx="242" cy="107" r="18"/>
+          <circle cx="242" cy="107" r="22" fill="none" stroke="#8B6914" stroke-width="0.7" stroke-dasharray="2,2" opacity="0.5"/>
+          <text x="242" y="104" text-anchor="middle" font-size="8" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">Pasa</text>
+          <text x="242" y="114" text-anchor="middle" font-size="8" fill="#6B6760" font-family="'Segoe UI',sans-serif" pointer-events="none">Dcha.</text>
         </g>
-
-        <!-- Leyenda -->
-        <text x="170" y="222" text-anchor="middle" font-size="8" fill="#9C9890" font-family="'Segoe UI',sans-serif">Pulsa las esquinas A/B/C/D · Pulsa para añadir pasacables</text>
+        <text x="170" y="222" text-anchor="middle" font-size="8" fill="#9C9890" font-family="'Segoe UI',sans-serif">Esquinas A/B/C/D · Pasacables izq/centro/dcha</text>
       </svg>
     </div>
-
-    <!-- Nota técnica -->
-    <div style="font-size:11px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;margin-bottom:8px;line-height:1.6">
-      <strong style="color:var(--text)">Especificaciones:</strong>
-      Esquinas redondeadas con radio R=6 cm ·
-      Pasacables: encastre Ø6 cm, agujero Ø7 cm ·
-      Posición: centro del pasacables a 8 cm del fondo y 8 cm del lateral más próximo
+    <div style="font-size:11px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;margin:8px 0;line-height:1.6">
+      <strong style="color:var(--text)">Especificaciones:</strong> Esquinas R=6 cm · Pasacables: encastre Ø6 cm, agujero Ø7 cm · Posición a 8 cm del fondo y lateral
     </div>
-
-    <!-- Color pasacables -->
     <div id="pasa-color-wrap" style="display:none;margin-bottom:8px">
       <div style="font-size:11px;color:var(--text2);margin-bottom:4px;font-weight:500">Color del pasacables</div>
       <div class="pasa-color-sel">
-        <button class="pasa-color-btn sel" id="pasa-col-blanco" onclick="selPasaColor('blanco',this)">Blanco</button>
-        <button class="pasa-color-btn" id="pasa-col-negro" onclick="selPasaColor('negro',this)">Negro</button>
-        <button class="pasa-color-btn" id="pasa-col-gris" onclick="selPasaColor('gris',this)">Gris</button>
+        <button class="pasa-color-btn sel" onclick="selPasaColor('blanco',this)">Blanco</button>
+        <button class="pasa-color-btn" onclick="selPasaColor('negro',this)">Negro</button>
+        <button class="pasa-color-btn" onclick="selPasaColor('gris',this)">Gris</button>
       </div>
     </div>
-
-    <!-- Lista pasacables añadidos -->
-    <div class="pasa-list" id="pasa-list"></div>
-
-    <!-- Lista esquinas activas -->
+    <div id="pasa-list"></div>
     <div id="esq-list" style="margin-top:4px"></div>
   </div>
 
   <!-- TRABAJOS (solo interno) -->
-  <div class="section-card solo-interno">
+  <div class="section-card solo-int">
     <div class="section-label">Trabajos</div>
-    <div class="supl-grid" id="trabajos-grid"></div>
+    <div class="supl-grid" id="trabajos-grid"><div style="font-size:12px;color:var(--text3)">—</div></div>
   </div>
 
   <!-- SUPLEMENTOS -->
   <div class="section-card">
     <div class="section-label">Suplementos</div>
-    <div class="supl-grid" id="supl-grid"></div>
+    <div class="supl-grid" id="supl-grid"><div style="font-size:12px;color:var(--text3)">—</div></div>
   </div>
 
-  <!-- NOTAS INTERNAS (solo interno) -->
-  <div class="section-card solo-interno">
+  <!-- NOTAS INTERNAS -->
+  <div class="section-card solo-int">
     <div class="section-label">Notas internas</div>
-    <textarea class="notas-input" id="notas-linea" rows="2" placeholder="Ej: color especial, urgente..."></textarea>
+    <textarea class="notas-input" id="notas-linea" rows="2" placeholder="Notas internas…"></textarea>
   </div>
 
   <!-- CANTIDAD -->
   <div class="section-card" style="background:var(--accent-light);border-color:#c3dfc9">
-    <div class="section-label" style="color:var(--accent)">Cantidad de este tablero</div>
-    <div class="row c2">
+    <div class="section-label" style="color:var(--accent)">Cantidad</div>
+    <div class="row c2" style="margin-bottom:0">
       <div class="field">
         <label>Nº de unidades</label>
         <input type="number" id="cantidad" value="1" min="1" oninput="calcular()" style="font-size:16px;font-weight:600">
       </div>
-      <div class="field" style="display:flex;align-items:flex-end;padding-bottom:1px">
+      <div class="field" style="display:flex;align-items:flex-end;padding-bottom:2px">
         <div style="font-size:11px;color:var(--text2);line-height:1.5">Los suplementos se multiplican por esta cantidad.</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #c3dfc9" class="solo-interno">
+    <div class="solo-int" style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid #c3dfc9">
       <div>
-        <div style="font-size:13px;font-weight:500;color:var(--text)">Pedido mínimo (45,00 €)</div>
+        <div style="font-size:13px;font-weight:500">Pedido mínimo (45,00 €)</div>
         <div style="font-size:11px;color:var(--text2);margin-top:2px">Aplica si el total es inferior a 45 €</div>
       </div>
       <button class="toggle on" id="tog-minimo" onclick="toggleMinimo(this)"></button>
@@ -422,58 +347,60 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
   <button class="btn-add" id="btn-add" onclick="añadirLinea()" disabled>+ Añadir al presupuesto</button>
 </div>
 
-<!-- ===== PANEL DERECHO ===== -->
+<!-- PANEL DERECHO -->
 <div class="right">
   <div style="margin-bottom:1rem">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div style="flex:1">
-        <input class="pres-title-input solo-interno" id="pres-titulo" value="Presupuesto estimado" maxlength="60">
-        <div id="pres-titulo-cliente" style="font-size:16px;font-weight:600;color:var(--text);display:none">Tu presupuesto</div>
+        <input class="pres-title-input solo-int" id="pres-titulo" value="Presupuesto estimado" maxlength="60">
+        <div id="pres-titulo-cliente" style="font-size:16px;font-weight:600;display:none">Tu presupuesto</div>
       </div>
       <img src="https://enrique0285.github.io/-presupuestador-maderafina/Madera-Fina-Logo.jpg" alt="Madera Fina" style="width:64px;height:64px;object-fit:contain;opacity:.85;flex-shrink:0;margin-left:12px">
     </div>
     <div class="pres-subtitle" id="pres-fecha"></div>
   </div>
 
-  <div class="lineas" id="lineas-container"></div>
+  <div class="lineas" id="lineas-container">
+    <div class="pres-empty">
+      <div style="font-size:32px;opacity:.4">📋</div>
+      <div style="font-size:13px;font-weight:500">Sin líneas todavía</div>
+      <div style="font-size:12px">Configura el producto y pulsa "Añadir"</div>
+    </div>
+  </div>
 
-  <div class="entrega-wrap solo-interno" id="entrega-wrap">
-    <div class="entrega-row">
+  <!-- ENTREGA/SUBIDA INTERNO -->
+  <div class="entrega-wrap solo-int" id="entrega-wrap-int">
+    <div style="display:flex;gap:10px">
       <div class="field" style="flex:1">
         <label>Entrega</label>
-        <select id="sel-entrega" onchange="calcularTotales()">
-          <option value="">Sin entrega</option>
-        </select>
+        <select id="sel-entrega" onchange="calcularTotales()"><option value="">Sin entrega</option></select>
       </div>
       <div class="field" style="flex:1">
-        <label>Subida a domicilio</label>
-        <select id="sel-subida" onchange="calcularTotales()">
-          <option value="">Sin subida</option>
-        </select>
+        <label>Subida</label>
+        <select id="sel-subida" onchange="calcularTotales()"><option value="">Sin subida</option></select>
       </div>
     </div>
   </div>
 
-  <!-- Subida a domicilio solo en modo cliente -->
-  <div class="entrega-wrap" id="entrega-wrap-cliente" style="display:none">
+  <!-- SUBIDA CLIENTE -->
+  <div class="entrega-wrap" id="entrega-wrap-cli" style="display:none">
     <div style="display:flex;align-items:center;gap:10px">
-      <label style="font-size:12px;color:var(--text2);font-weight:500;white-space:nowrap">Subida a domicilio</label>
-      <select id="sel-subida-cliente" onchange="calcularTotales()" style="flex:1">
-        <option value="">Sin subida</option>
-      </select>
+      <label style="font-size:12px;color:var(--text2);font-weight:500;white-space:nowrap;flex-shrink:0">Subida a domicilio</label>
+      <select id="sel-subida-cli" onchange="calcularTotales()" style="flex:1"><option value="">Sin subida</option></select>
     </div>
   </div>
 
-  <div class="nota-cliente-wrap solo-interno" id="nota-cliente-wrap">
-    <div class="section-label" style="margin-bottom:4px">Nota para el cliente</div>
-    <textarea class="notas-input" id="nota-cliente" rows="2" placeholder="Ej: consultar disponibilidad de color..."></textarea>
+  <!-- NOTA CLIENTE (solo interno) -->
+  <div class="entrega-wrap solo-int" id="nota-wrap">
+    <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:4px">Nota para el cliente</div>
+    <textarea class="notas-input" id="nota-cliente" rows="2" placeholder="Nota visible en el presupuesto…"></textarea>
   </div>
 
   <div class="totales">
-    <div class="total-row" id="row-entrega" style="display:none"><span id="label-entrega"></span><span id="t-entrega"></span></div>
-    <div class="total-row" id="row-subida" style="display:none"><span id="label-subida"></span><span id="t-subida"></span></div>
-    <div class="total-row"><span>Subtotal (sin IVA)</span><span id="t-base">—</span></div>
-    <div class="total-row"><span>IVA 21%</span><span id="t-iva">—</span></div>
+    <div class="total-row" id="row-entrega" style="display:none"><span id="lbl-entrega"></span><span id="t-entrega"></span></div>
+    <div class="total-row" id="row-subida" style="display:none"><span id="lbl-subida"></span><span id="t-subida"></span></div>
+    <div class="total-row solo-int"><span>Subtotal (sin IVA)</span><span id="t-base">—</span></div>
+    <div class="total-row solo-int"><span>IVA 21%</span><span id="t-iva">—</span></div>
     <div class="total-row big"><span>Total</span><span class="val" id="t-total">—</span></div>
     <div class="iva-note">Precios incluyen IVA</div>
     <div class="btn-row" style="margin-top:10px">
@@ -481,8 +408,8 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
       <button class="btn-prim" id="btn-imprimir" onclick="imprimirPpto()" disabled>Imprimir / PDF</button>
     </div>
     <div class="btn-row">
-      <button class="btn-sec solo-interno" onclick="copiarTexto()" id="btn-copiar" disabled>Copiar resumen</button>
-      <button class="btn-sec" id="btn-whatsapp" onclick="compartirWhatsApp()" disabled style="display:none">Enviar por WhatsApp</button>
+      <button class="btn-sec solo-int" id="btn-copiar" onclick="copiarTexto()" disabled>Copiar resumen</button>
+      <button class="btn-sec" id="btn-wa" onclick="compartirWA()" disabled style="display:none">WhatsApp</button>
     </div>
   </div>
 
@@ -497,212 +424,135 @@ body.modo-cliente .pres-title-input{pointer-events:none;border-bottom-color:tran
 </div>
 </div>
 
-<!-- TOOLTIP MODAL CORTES -->
-<div class="tooltip-overlay" id="tooltip-overlay" onclick="cerrarTooltip()"></div>
-<div class="supl-tooltip" id="supl-tooltip">
-  <button class="supl-tooltip-close" onclick="cerrarTooltip()">×</button>
-  <img id="tooltip-img" src="" alt="" onerror="this.style.display='none'">
-  <div class="supl-tooltip-nombre" id="tooltip-nombre"></div>
-  <div class="supl-tooltip-desc" id="tooltip-desc"></div>
+<!-- TOOLTIP -->
+<div class="tooltip-overlay" id="t-overlay" onclick="cerrarTooltip()"></div>
+<div class="tooltip-modal" id="t-modal">
+  <button class="tooltip-close" onclick="cerrarTooltip()">×</button>
+  <img id="t-img" src="" alt="" onerror="this.style.display='none'">
+  <h4 id="t-nombre"></h4>
+  <p id="t-desc"></p>
 </div>
+
+<script>
+// ── CONSTANTES ────────────────────────────────────────────────────────────────
 const GIST_URL = "https://gist.githubusercontent.com/enrique0285/ab5274e8a6a37e7ad753acfda769e188/raw/tarifas-maderafina.json";
 const IMG_BASE = "https://enrique0285.github.io/-presupuestador-maderafina/img/acabados/";
 const IMG_SUPL = "https://enrique0285.github.io/-presupuestador-maderafina/img/suplementos/";
+const TRABAJOS_KEYS = ["mecan_","excent_","mecantesta_"];
 const CORTES_INFO = {
-  "corte_chanflan": {
-    img: "corte-chanflan.jpg",
-    desc: "Corte recto en ángulo (chaflán) o corte interior en L. Permite encajar el tablero en esquinas o crear formas específicas."
-  },
-  "corte_r2": {
-    img: "corte-redondo-2.jpg",
-    desc: "Dos esquinas redondeadas opuestas o dos lados curvos. Ideal para tableros con una esquina de acceso libre."
-  },
-  "corte_r4": {
-    img: "corte-redondo-4.jpg",
-    desc: "Las cuatro esquinas con acabado curvo. Resultado completamente redondeado, sin aristas."
-  }
+  corte_chanflan:{img:"corte-chanflan.jpg",desc:"Corte recto en ángulo (chaflán) o corte interior en L. Permite encajar el tablero en esquinas o crear formas específicas."},
+  corte_r2:{img:"corte-redondo-2.jpg",desc:"Dos esquinas con acabado curvo. Ideal para tableros con una esquina de acceso libre."},
+  corte_r4:{img:"corte-redondo-4.jpg",desc:"Las cuatro esquinas con acabado curvo. Resultado completamente redondeado, sin aristas."}
 };
 
-function abrirTooltip(uiKey){
-  const info=CORTES_INFO[uiKey];
-  if(!info)return;
-  const nombre=SUPLS.find(s=>s.uiKey===uiKey)?.nombre||uiKey;
-  document.getElementById("tooltip-img").src=IMG_SUPL+info.img;
-  document.getElementById("tooltip-img").style.display="block";
-  document.getElementById("tooltip-nombre").textContent=nombre;
-  document.getElementById("tooltip-desc").textContent=info.desc;
-  document.getElementById("supl-tooltip").classList.add("visible");
-  document.getElementById("tooltip-overlay").classList.add("visible");
-}
-function cerrarTooltip(){
-  document.getElementById("supl-tooltip").classList.remove("visible");
-  document.getElementById("tooltip-overlay").classList.remove("visible");
-}
-const TRABAJOS_KEYS = ["mecan_","excent_","mecantesta_"];
-
-// ── Modo interno/cliente ──────────────────────────────────────────────────────
-const MODO_CLIENTE = new URLSearchParams(location.search).get("modo") === "cliente";
-if (MODO_CLIENTE) {
-  document.body.classList.add("modo-cliente");
+// ── MODO ──────────────────────────────────────────────────────────────────────
+const ES_CLIENTE = new URLSearchParams(location.search).get("modo") === "cliente";
+if (ES_CLIENTE) {
+  document.body.classList.add("cliente");
   document.getElementById("modo-badge").textContent = "Cliente";
   document.getElementById("modo-badge").className = "modo-badge cliente";
-  document.getElementById("subtitulo-marca").textContent = "";
+  document.getElementById("marca-sub").textContent = "";
   document.getElementById("pres-titulo").style.display = "none";
   document.getElementById("pres-titulo-cliente").style.display = "block";
-  document.getElementById("btn-whatsapp").style.display = "flex";
-  document.getElementById("btn-modo").style.display = "none";
+  document.getElementById("btn-wa").style.display = "flex";
 }
 
-function cambiarModo() {
-  const url = new URL(location.href);
-  if (MODO_CLIENTE) {
-    url.searchParams.delete("modo");
-  } else {
-    url.searchParams.set("modo", "cliente");
-  }
-  window.open(url.toString(), "_blank");
+function abrirModoCliente(){
+  const u = new URL(location.href);
+  u.searchParams.set("modo","cliente");
+  window.open(u.toString(),"_blank");
 }
 
-// ── Datos ─────────────────────────────────────────────────────────────────────
-let CATALOGO = {}, SUPLS = [], COLORES = {};
-let ENTREGAS = [{id:"",label:"Sin entrega",precio:0}];
-let SUBIDAS  = [{id:"",label:"Sin subida a domicilio",precio:0}];
-let lineas = [], lineaId = 0;
-let estado = { supls:{}, pasacables:[], pasaColorActual:"blanco", esquinas:{A:false,B:false,C:false,D:false} };
-let minimoActivo = true;
-let colorSeleccionado = null; // {codigo, nombre, calidad, categoria}
+// ── DATOS ─────────────────────────────────────────────────────────────────────
+let CATALOGO={}, SUPLS=[], COLORES={};
+let ENTREGAS=[{id:"",label:"Sin entrega",precio:0}];
+let SUBIDAS=[{id:"",label:"Sin subida",precio:0}];
+let lineas=[], lineaId=0;
+let estado={supls:{},pasacables:[],pasaColorActual:"blanco",esquinas:{A:false,B:false,C:false,D:false}};
+let minimoActivo=true, colorSel=null;
 
-function fmt(n,dec=2){ return n.toLocaleString("es-ES",{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
-function parseFamilias(f){
-  if(Array.isArray(f)) return f.map(x=>x.trim()).filter(Boolean);
-  if(typeof f==="string") return f.split(/[,\n]/).map(x=>x.trim()).filter(Boolean);
-  return [];
+function fmt(n,d=2){return n.toLocaleString("es-ES",{minimumFractionDigits:d,maximumFractionDigits:d})}
+function parseFams(f){
+  if(Array.isArray(f))return f.map(x=>x.trim()).filter(Boolean);
+  if(typeof f==="string")return f.split(/[,\n]/).map(x=>x.trim()).filter(Boolean);
+  return[];
 }
-function esTrabajo(s){ return TRABAJOS_KEYS.some(k=>s.uiKey&&s.uiKey.startsWith(k)); }
+function esTrabajo(s){return TRABAJOS_KEYS.some(k=>s.uiKey&&s.uiKey.startsWith(k))}
 
-// ── Esquinas ──────────────────────────────────────────────────────────────────
-function toggleEsquina(esq){
-  estado.esquinas[esq]=!estado.esquinas[esq];
-  const activa=estado.esquinas[esq];
-  const circ=document.getElementById("esq-"+esq);
-  const txt=document.getElementById("esq-"+esq+"-txt");
-  if(circ){circ.setAttribute("fill",activa?"#2B5C3F":"#F2EFE9");circ.setAttribute("stroke",activa?"#2B5C3F":"#C8C4BC");}
-  if(txt)txt.setAttribute("fill",activa?"#fff":"#6B6760");
-  renderEsquinas();
-}
-
-function renderEsquinas(){
-  const famId=document.getElementById("familia").value;
-  const fam=famId?CATALOGO[famId]:null;
-  const precioEsq=fam?.precioEsquina||15.70;
-  const activas=Object.entries(estado.esquinas).filter(([,v])=>v).map(([k])=>k);
-  const el=document.getElementById("esq-list");
-  if(!el)return;
-  if(!activas.length){el.innerHTML="";return;}
-  el.innerHTML=`<div class="pasa-item" style="margin-top:4px">
-    <span>Esquina redondeada (${activas.join(", ")})</span>
-    <span style="font-weight:600;color:var(--accent)">${fmt(precioEsq*activas.length)} €</span>
-  </div>`;
-}
-
-function resetEsquinas(){
-  ["A","B","C","D"].forEach(esq=>{
-    estado.esquinas[esq]=false;
-    const circ=document.getElementById("esq-"+esq);
-    const txt=document.getElementById("esq-"+esq+"-txt");
-    if(circ){circ.setAttribute("fill","#F2EFE9");circ.setAttribute("stroke","#C8C4BC");}
-    if(txt)txt.setAttribute("fill","#6B6760");
-  });
-  const el=document.getElementById("esq-list");
-  if(el)el.innerHTML="";
-}
-
-// ── Build catálogo ────────────────────────────────────────────────────────────
-function buildCatalogo(data) {
-  const famMeta = {};
-  data.principal.forEach(row => {
-    const fid = row.familia_id;
-    if (!famMeta[fid]) {
-      const tipo = fid.startsWith("hpl")?"hpl":(fid.startsWith("alistonado")||fid.startsWith("rechapado"))?"madera":"melamina";
-      famMeta[fid] = {
-        label:row.nombre_familia.replace("Tablero ",""),
+// ── BUILD CATÁLOGO ────────────────────────────────────────────────────────────
+function buildCatalogo(data){
+  const fm={};
+  data.principal.forEach(r=>{
+    const fid=r.familia_id;
+    if(!fm[fid]){
+      const tipo=fid.startsWith("hpl")?"hpl":(fid.startsWith("alistonado")||fid.startsWith("rechapado"))?"madera":"melamina";
+      fm[fid]={
+        label:r.nombre_familia.replace("Tablero ",""),
         chip:tipo==="hpl"?"hpl":tipo==="madera"?"mad":"mel",
-        tipo, grosores:[], acabadosMap:{},
-        cantoPrecio:null, barnizadoNatural:null, barnizadoTintado:null,
-        precioEsquina:null, servicios:{},
-        hplSiempreCanteado:tipo==="hpl",
-        esAlistonado:fid.startsWith("alistonado"),
-        maxLargo:row.max_largo, maxAncho:row.max_ancho,
+        tipo,grosores:[],acabadosMap:{},
+        cantoPrecio:null,barnizadoNatural:null,barnizadoTintado:null,
+        precioEsquina:null,servicios:{},
+        hplCanteado:tipo==="hpl",esAlist:fid.startsWith("alistonado"),
+        maxLargo:r.max_largo,maxAncho:r.max_ancho
       };
     }
-    const fm = famMeta[fid];
-    if(!fm.grosores.includes(row.grosor)) fm.grosores.push(row.grosor);
-    if(!fm.acabadosMap[row.acabado_id]) fm.acabadosMap[row.acabado_id]={id:row.acabado_id,label:row.nombre_acabado,precios:{}};
-    fm.acabadosMap[row.acabado_id].precios[row.grosor]=row.venta_iva;
+    const f=fm[fid];
+    if(!f.grosores.includes(r.grosor))f.grosores.push(r.grosor);
+    if(!f.acabadosMap[r.acabado_id])f.acabadosMap[r.acabado_id]={id:r.acabado_id,label:r.nombre_acabado,precios:{}};
+    f.acabadosMap[r.acabado_id].precios[r.grosor]=r.venta_iva;
   });
 
   data.suplementos.forEach(s=>{
-    const familias=parseFamilias(s.familias), key=s.supl_key;
-    if(key.startsWith("canto_")||key==="fresado_alistonado"){
-      familias.forEach(fid=>{if(famMeta[fid])famMeta[fid].cantoPrecio=s.venta_iva});return;
-    }
+    const fids=parseFams(s.familias), key=s.supl_key;
+    if(key.startsWith("canto_")||key==="fresado_alistonado"){fids.forEach(id=>{if(fm[id])fm[id].cantoPrecio=s.venta_iva});return}
     if(key.startsWith("barnizado_")){
-      const esNat=key.includes("natural");
-      familias.forEach(fid=>{
-        if(!famMeta[fid])return;
-        const fm=famMeta[fid];
-        const acabId=esNat?"barnizado":"tintado";
-        if(!fm.acabadosMap[acabId]){
-          fm.acabadosMap[acabId]={id:acabId,label:esNat?"Barnizado natural":"Barnizado tintado",precios:{}};
-          fm.grosores.forEach(g=>{fm.acabadosMap[acabId].precios[g]=null});
+      const esN=key.includes("natural");
+      fids.forEach(id=>{
+        if(!fm[id])return;
+        const f=fm[id],aid=esN?"barnizado":"tintado";
+        if(!f.acabadosMap[aid]){
+          f.acabadosMap[aid]={id:aid,label:esN?"Barnizado natural":"Barnizado tintado",precios:{}};
+          f.grosores.forEach(g=>{f.acabadosMap[aid].precios[g]=null});
         }
-        if(esNat)fm.barnizadoNatural=s.venta_iva; else fm.barnizadoTintado=s.venta_iva;
+        if(esN)f.barnizadoNatural=s.venta_iva; else f.barnizadoTintado=s.venta_iva;
       });return;
     }
-    if(key.startsWith("esquina_")){familias.forEach(fid=>{if(famMeta[fid])famMeta[fid].precioEsquina=s.venta_iva});return;}
+    if(key.startsWith("esquina_")){fids.forEach(id=>{if(fm[id])fm[id].precioEsquina=s.venta_iva});return}
     if(key.startsWith("entrega_")||key.startsWith("subida_")){
-      familias.forEach(fid=>{if(!famMeta[fid])return;if(!famMeta[fid].servicios)famMeta[fid].servicios={};famMeta[fid].servicios[key]={label:s.nombre,precio:s.venta_iva}});return;
+      fids.forEach(id=>{if(!fm[id])return;if(!fm[id].servicios)fm[id].servicios={};fm[id].servicios[key]={label:s.nombre,precio:s.venta_iva}});return;
     }
     const uiKey=key.replace(/_kk$/,"").replace(/_sy$/,"");
-    const existente=SUPLS.find(x=>x.uiKey===uiKey&&x.precio===s.venta_iva);
-    if(existente){familias.forEach(fid=>{if(!existente.familias.includes(fid))existente.familias.push(fid)});}
+    const ex=SUPLS.find(x=>x.uiKey===uiKey&&x.precio===s.venta_iva);
+    if(ex){fids.forEach(id=>{if(!ex.familias.includes(id))ex.familias.push(id)})}
     else{
       const pend=s.venta_iva===0&&s.nota==="precio sin definir";
-      SUPLS.push({id:`${uiKey}__${SUPLS.length}`,uiKey,nombre:s.nombre,precio:s.venta_iva,tipo:"qty",unidad:s.unidad,familias:[...familias],pendiente:pend,nota:s.nota||""});
+      SUPLS.push({id:`${uiKey}__${SUPLS.length}`,uiKey,nombre:s.nombre,precio:s.venta_iva,tipo:"qty",unidad:s.unidad,familias:[...fids],pendiente:pend,nota:s.nota||""});
     }
   });
 
-  // Colores — mapear hpl a hpl1+hpl2, roble/haya/pino a rechapado+alistonado
+  // Colores — mapear hpl→hpl1+hpl2, roble/haya/pino→rechapado+alistonado
   if(data.colores){
     data.colores.forEach(c=>{
-      const fids=[];
-      if(c.familia_id==="hpl"){
-        fids.push("hpl1","hpl2");
-      } else if(c.familia_id==="roble"){
-        fids.push("rechapado-roble","alistonado-roble");
-      } else if(c.familia_id==="haya"){
-        fids.push("rechapado-haya","alistonado-haya");
-      } else if(c.familia_id==="pino"){
-        fids.push("rechapado-pino","alistonado-pino");
-      } else {
-        fids.push(c.familia_id);
-      }
-      fids.forEach(fid=>{
+      let destinos=[];
+      if(c.familia_id==="hpl")destinos=["hpl1","hpl2"];
+      else if(c.familia_id==="roble")destinos=["rechapado-roble","alistonado-roble"];
+      else if(c.familia_id==="haya")destinos=["rechapado-haya","alistonado-haya"];
+      else if(c.familia_id==="pino")destinos=["rechapado-pino","alistonado-pino"];
+      else destinos=[c.familia_id];
+      destinos.forEach(fid=>{
         if(!COLORES[fid])COLORES[fid]=[];
-        // Evitar duplicados por código
-        if(!COLORES[fid].find(x=>x.codigo===c.codigo))
-          COLORES[fid].push({...c,familia_id:fid});
+        if(!COLORES[fid].find(x=>x.codigo===c.codigo))COLORES[fid].push({...c,familia_id:fid});
       });
     });
   }
 
   const ORDEN=["basic","platinium","gold","natural","barnizado","tintado"];
-  Object.keys(famMeta).forEach(fid=>{
-    const fm=famMeta[fid];
-    fm.acabados=ORDEN.filter(id=>fm.acabadosMap[id]).map(id=>fm.acabadosMap[id]);
-    fm.grosores.sort((a,b)=>a-b);
-    delete fm.acabadosMap;
-    CATALOGO[fid]=fm;
+  Object.keys(fm).forEach(fid=>{
+    const f=fm[fid];
+    f.acabados=ORDEN.filter(id=>f.acabadosMap[id]).map(id=>f.acabadosMap[id]);
+    f.grosores.sort((a,b)=>a-b);
+    delete f.acabadosMap;
+    CATALOGO[fid]=f;
   });
 }
 
@@ -710,132 +560,88 @@ function buildCatalogo(data) {
 window.onload=async()=>{
   document.getElementById("pres-fecha").textContent=new Date().toLocaleDateString("es-ES",{day:"2-digit",month:"long",year:"numeric"});
   try{
-    const resp=await fetch(GIST_URL+"?t="+Date.now());
-    if(!resp.ok)throw new Error("HTTP "+resp.status);
-    const data=await resp.json();
-    buildCatalogo(data);
+    const r=await fetch(GIST_URL+"?t="+Date.now());
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    buildCatalogo(await r.json());
     document.getElementById("loading-msg").remove();
-    renderLineas();
-  }catch(err){
-    document.getElementById("loading-msg").textContent="⚠ Error cargando tarifas. Recarga la página.";
-    console.error(err);
+  }catch(e){
+    document.getElementById("loading-msg").textContent="⚠ Error cargando tarifas. Recarga.";
+    console.error(e);
   }
 };
 
-// ── Familia change ────────────────────────────────────────────────────────────
+// ── FAMILIA ───────────────────────────────────────────────────────────────────
 function onFamiliaChange(){
   const famId=document.getElementById("familia").value;
-  const grosorSel=document.getElementById("grosor");
-  colorSeleccionado=null;
-  grosorSel.innerHTML='<option value="">—</option>';
-  grosorSel.disabled=true;
+  colorSel=null;
+  const gEl=document.getElementById("grosor");
+  gEl.innerHTML='<option value="">—</option>';gEl.disabled=true;
   document.getElementById("card-color").style.display="none";
   document.getElementById("btn-add").disabled=true;
-  resetPasacables();
-
-  if(!famId)return;
+  document.getElementById("dim-notes").textContent="";
+  resetPasacables();resetEsquinas();
+  buildSupls(null);
+  if(!famId||!CATALOGO[famId])return;
   const fam=CATALOGO[famId];
-  if(!fam)return;
-
-  fam.grosores.forEach(g=>{
-    const o=document.createElement("option");
-    o.value=g;o.textContent=g+" cm";
-    grosorSel.appendChild(o);
-  });
-  grosorSel.disabled=false;
-
-  document.getElementById("note-largo").textContent=`Máx. ${fam.maxLargo} cm`;
-  document.getElementById("note-ancho").textContent=`Máx. ${fam.maxAncho} cm`;
-
-  buildSuplsYTrabajos(famId);
-  buildEntregasSubidas(famId);
+  fam.grosores.forEach(g=>{const o=document.createElement("option");o.value=g;o.textContent=g+" cm";gEl.appendChild(o)});
+  gEl.disabled=false;
+  document.getElementById("note-largo").textContent="Máx. "+fam.maxLargo+" cm";
+  document.getElementById("note-ancho").textContent="Máx. "+fam.maxAncho+" cm";
+  buildSupls(famId);
+  buildEntregas(famId);
 }
 
 function onGrosorChange(){
   const famId=document.getElementById("familia").value;
   const grosor=parseFloat(document.getElementById("grosor").value);
-  const cardColor=document.getElementById("card-color");
-  colorSeleccionado=null;
-
-  if(!famId||!grosor){cardColor.style.display="none";return;}
+  colorSel=null;
+  const card=document.getElementById("card-color");
+  if(!famId||!grosor){card.style.display="none";return}
   const fam=CATALOGO[famId];
-  cardColor.style.display="block";
-
-  // Badge canteado incluido
-  const cantoBadge=document.getElementById("canto-badge");
-  if(fam.hplSiempreCanteado){
-    cantoBadge.textContent="✓ Canteado 4 lados incluido";
-    cantoBadge.style.display="block";
-  } else if(fam.esAlistonado){
-    cantoBadge.textContent="✓ Fresado de cantos incluido";
-    cantoBadge.style.display="block";
-  } else {
-    cantoBadge.textContent="✓ Canteado 4 lados incluido";
-    cantoBadge.style.display="block";
-  }
-
-  const tieneGaleria=COLORES[famId]&&COLORES[famId].length>0;
-
-  if(!MODO_CLIENTE){
-    // INTERNO: desplegable con nombre y gama
-    document.getElementById("selector-interno").style.display="block";
-    document.getElementById("galeria-colores").style.display="none";
-    document.getElementById("selector-clasico").style.display="none";
+  card.style.display="block";
+  // Badge canteado
+  const badge=document.getElementById("canto-badge");
+  badge.textContent=fam.esAlist?"✓ Fresado de cantos incluido":"✓ Canteado 4 lados incluido";
+  badge.style.display="block";
+  const tieneGal=!!(COLORES[famId]&&COLORES[famId].length>0);
+  // Interno: desplegable
+  const selInt=document.getElementById("sel-interno");
+  const galEl=document.getElementById("galeria");
+  const selCl=document.getElementById("sel-clasico");
+  if(!ES_CLIENTE){
+    selInt.style.display="block";galEl.style.display="none";selCl.style.display="none";
     const sel=document.getElementById("acabado-interno");
-    sel.innerHTML='<option value="">Seleccionar...</option>';
-
-    if(tieneGaleria){
-      // Agrupar por categoría
+    sel.innerHTML='<option value="">Seleccionar…</option>';
+    if(tieneGal){
       const cats={};
-      (COLORES[famId]||[]).forEach(c=>{
-        if(!cats[c.categoria])cats[c.categoria]=[];
-        cats[c.categoria].push(c);
-      });
+      COLORES[famId].forEach(c=>{if(!cats[c.categoria])cats[c.categoria]=[];cats[c.categoria].push(c)});
       Object.entries(cats).forEach(([cat,items])=>{
-        const grp=document.createElement("optgroup");
-        grp.label=cat;
+        const grp=document.createElement("optgroup");grp.label=cat;
         items.forEach(c=>{
-          const fam2=CATALOGO[famId];
-          const precioBasic=fam2.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
-          const precioGama=fam2.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||precioBasic;
-          const supl=precioGama-precioBasic;
-          const gamaLabel=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
-          const suplStr=supl>0?` (+${fmt(supl)} €/m²)`:"";
+          const pB=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
+          const pG=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||pB;
+          const s=pG-pB;const gl=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
           const o=document.createElement("option");
-          o.value=JSON.stringify({codigo:c.codigo,nombre:c.nombre,calidad:c.calidad,categoria:c.categoria});
-          o.textContent=`${c.codigo} · ${c.nombre} — ${gamaLabel}${suplStr}`;
+          o.value=JSON.stringify({codigo:c.codigo,nombre:c.nombre,calidad:c.calidad,categoria:c.categoria,foto:c.foto});
+          o.textContent=c.codigo+" · "+c.nombre+" — "+gl+(s>0?" (+"+fmt(s)+" €/m²)":"");
           grp.appendChild(o);
         });
         sel.appendChild(grp);
       });
     } else {
-      // Sin galería: opciones de acabado clásicas
-      const disponibles=fam.acabados.filter(a=>a.precios[grosor]!==undefined&&a.precios[grosor]!==null);
-      disponibles.forEach(a=>{
+      fam.acabados.filter(a=>a.precios[grosor]!=null).forEach(a=>{
         const o=document.createElement("option");
-        o.value=JSON.stringify({codigo:a.id,nombre:a.label,calidad:a.id,categoria:""});
-        o.textContent=a.label;
-        sel.appendChild(o);
+        o.value=JSON.stringify({codigo:a.id,nombre:a.label,calidad:a.id,categoria:"",foto:null});
+        o.textContent=a.label;sel.appendChild(o);
       });
     }
   } else {
-    // CLIENTE: galería o selector clásico
-    document.getElementById("selector-interno").style.display="none";
-    if(tieneGaleria){
-      document.getElementById("galeria-colores").style.display="block";
-      document.getElementById("selector-clasico").style.display="none";
-      renderGaleriaColores(famId, grosor);
-    } else {
-      document.getElementById("galeria-colores").style.display="none";
-      document.getElementById("selector-clasico").style.display="block";
-      const acabadoSel=document.getElementById("acabado");
-      acabadoSel.innerHTML='<option value="">Seleccionar...</option>';
-      const disponibles=fam.acabados.filter(a=>a.precios[grosor]!==undefined&&a.precios[grosor]!==null);
-      disponibles.forEach(a=>{
-        const o=document.createElement("option");
-        o.value=a.id;o.textContent=a.label;
-        acabadoSel.appendChild(o);
-      });
+    selInt.style.display="none";
+    if(tieneGal){galEl.style.display="block";selCl.style.display="none";renderGaleria(famId,grosor)}
+    else{galEl.style.display="none";selCl.style.display="block";
+      const sel=document.getElementById("acabado");
+      sel.innerHTML='<option value="">Seleccionar…</option>';
+      fam.acabados.filter(a=>a.precios[grosor]!=null).forEach(a=>{const o=document.createElement("option");o.value=a.id;o.textContent=a.label;sel.appendChild(o)});
     }
   }
   calcular();
@@ -843,269 +649,247 @@ function onGrosorChange(){
 
 function onAcabadoInternoChange(){
   const val=document.getElementById("acabado-interno").value;
-  if(!val){colorSeleccionado=null;calcular();return;}
-  colorSeleccionado=JSON.parse(val);
+  if(!val){colorSel=null;document.getElementById("acabado-interno-info").innerHTML="";calcular();return}
+  colorSel=JSON.parse(val);
   const famId=document.getElementById("familia").value;
   const grosor=parseFloat(document.getElementById("grosor").value);
   const fam=CATALOGO[famId];
-  const precioBasic=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
-  const precioGama=fam.acabados.find(a=>a.id===colorSeleccionado.calidad)?.precios[grosor]||precioBasic;
-  const gamaLabel=colorSeleccionado.calidad.charAt(0).toUpperCase()+colorSeleccionado.calidad.slice(1);
-  const infoEl=document.getElementById("acabado-interno-info");
-  infoEl.innerHTML=`<span style="font-size:11px;color:var(--accent);font-weight:600">${gamaLabel} · ${fmt(precioGama)} €/m²</span>`;
+  const pG=fam.acabados.find(a=>a.id===colorSel.calidad)?.precios[grosor]||0;
+  const gl=colorSel.calidad.charAt(0).toUpperCase()+colorSel.calidad.slice(1);
+  document.getElementById("acabado-interno-info").innerHTML=`<span style="color:var(--accent);font-weight:600">${gl} · ${fmt(pG)} €/m²</span>`;
   calcular();
 }
 
-// ── Galería de colores ────────────────────────────────────────────────────────
-function renderGaleriaColores(famId, grosor){
+// ── GALERÍA ───────────────────────────────────────────────────────────────────
+function renderGaleria(famId,grosor){
   const fam=CATALOGO[famId];
   const colores=COLORES[famId]||[];
-  const precioBasic=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
-
-  // Agrupar por categoría
+  const pB=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
   const cats={};
-  colores.forEach(c=>{
-    if(!cats[c.categoria])cats[c.categoria]=[];
-    cats[c.categoria].push(c);
-  });
-
-  const container=document.getElementById("color-categorias");
+  colores.forEach(c=>{if(!cats[c.categoria])cats[c.categoria]=[];cats[c.categoria].push(c)});
+  const container=document.getElementById("galeria-cats");
   container.innerHTML="";
   Object.entries(cats).forEach(([cat,items])=>{
-    const catDiv=document.createElement("div");
-    catDiv.innerHTML=`<div class="cat-label">${cat}</div>`;
-    const grid=document.createElement("div");
-    grid.className="color-grid";
+    const d=document.createElement("div");
+    d.innerHTML=`<div class="cat-label">${cat}</div>`;
+    const grid=document.createElement("div");grid.className="color-grid";
     items.forEach(c=>{
-      const precioGama=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||precioBasic;
-      const supl=precioGama-precioBasic;
-      const gamaLabel=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
-      const suplStr=supl>0?` +${fmt(supl)} €/m²`:"";
-      const card=document.createElement("div");
-      card.className="color-card";
-      card.dataset.codigo=c.codigo;
-      card.dataset.calidad=c.calidad;
-      card.innerHTML=`
-        <img src="${IMG_BASE}${c.foto}" alt="${c.nombre}" loading="lazy" onerror="this.style.background='#E0DDD6'">
-        <div class="color-info">
-          <span class="color-codigo">${c.codigo}</span>
-          <span class="color-nombre">${c.nombre}</span>
-          <span class="color-gama ${c.calidad}">${gamaLabel}${suplStr}</span>
-        </div>
-        <div class="selected-check"></div>`;
-      card.onclick=()=>seleccionarColor(c, card, famId, grosor);
+      const pG=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||pB;
+      const s=pG-pB;const gl=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
+      const card=document.createElement("div");card.className="color-card";card.dataset.cod=c.codigo;
+      card.innerHTML=`<img src="${IMG_BASE}${c.foto}" alt="${c.nombre}" loading="lazy" onerror="this.style.background='#E0DDD6'">
+        <div class="ci"><span class="ci-cod">${c.codigo}</span><span class="ci-nom">${c.nombre}</span>
+        <span class="ci-gama ${c.calidad}">${gl}${s>0?` +${fmt(s)} €/m²`:""}</span></div>
+        <div class="ck">✓</div>`;
+      card.onclick=()=>selColor(c,card,famId,grosor);
       grid.appendChild(card);
     });
-    catDiv.appendChild(grid);
-    container.appendChild(catDiv);
+    d.appendChild(grid);container.appendChild(d);
   });
-  document.getElementById("color-selected-info").style.display="none";
+  document.getElementById("color-sel-info").style.display="none";
 }
 
-function seleccionarColor(c, card, famId, grosor){
-  // Deseleccionar anterior
+function selColor(c,card,famId,grosor){
   document.querySelectorAll(".color-card.selected").forEach(el=>el.classList.remove("selected"));
-  card.classList.add("selected");
-  colorSeleccionado=c;
-
+  card.classList.add("selected");colorSel=c;
   const fam=CATALOGO[famId];
-  const precioBasic=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
-  const precioGama=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||precioBasic;
-  const supl=precioGama-precioBasic;
-  const gamaLabel=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
-
-  const info=document.getElementById("color-selected-info");
+  const pB=fam.acabados.find(a=>a.id==="basic")?.precios[grosor]||0;
+  const pG=fam.acabados.find(a=>a.id===c.calidad)?.precios[grosor]||pB;
+  const s=pG-pB;const gl=c.calidad.charAt(0).toUpperCase()+c.calidad.slice(1);
+  const info=document.getElementById("color-sel-info");
   info.style.display="block";
-  info.innerHTML=`<strong>${c.codigo} · ${c.nombre}</strong> · ${gamaLabel}${supl>0?` (+${fmt(supl)} €/m²)`:""}`;
+  info.innerHTML=`<strong>${c.codigo} · ${c.nombre}</strong> · ${gl}${s>0?` (+${fmt(s)} €/m²)`:""}`;
   calcular();
 }
 
-// ── Entrega/subida ────────────────────────────────────────────────────────────
-function buildEntregasSubidas(famId){
-  const fm=CATALOGO[famId];
-  if(!fm?.servicios)return;
+// ── ENTREGAS ──────────────────────────────────────────────────────────────────
+function buildEntregas(famId){
+  const fam=CATALOGO[famId];if(!fam?.servicios)return;
   ENTREGAS=[{id:"",label:"Sin entrega",precio:0}];
-  SUBIDAS=[{id:"",label:"Sin subida a domicilio",precio:0}];
-  Object.entries(fm.servicios).forEach(([key,val])=>{
-    if(key.startsWith("entrega_"))ENTREGAS.push({id:key,label:val.label,precio:val.precio});
-    if(key.startsWith("subida_"))SUBIDAS.push({id:key,label:val.label,precio:val.precio});
+  SUBIDAS=[{id:"",label:"Sin subida",precio:0}];
+  Object.entries(fam.servicios).forEach(([k,v])=>{
+    if(k.startsWith("entrega_"))ENTREGAS.push({id:k,label:v.label,precio:v.precio});
+    if(k.startsWith("subida_"))SUBIDAS.push({id:k,label:v.label,precio:v.precio});
   });
-  // Interno
-  const selE=document.getElementById("sel-entrega");
-  const selS=document.getElementById("sel-subida");
-  selE.innerHTML=ENTREGAS.map(e=>`<option value="${e.id}">${e.label}${e.precio>0?" — "+fmt(e.precio)+" €":""}</option>`).join("");
-  selS.innerHTML=SUBIDAS.map(s=>`<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
-  // Selector subida cliente
-  const selSC=document.getElementById("sel-subida-cliente");
-  if(selSC) selSC.innerHTML=SUBIDAS.map(s=>`<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
+  const sE=document.getElementById("sel-entrega"),sS=document.getElementById("sel-subida"),sSC=document.getElementById("sel-subida-cli");
+  sE.innerHTML=ENTREGAS.map(e=>`<option value="${e.id}">${e.label}${e.precio>0?" — "+fmt(e.precio)+" €":""}</option>`).join("");
+  sS.innerHTML=SUBIDAS.map(s=>`<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
+  sSC.innerHTML=SUBIDAS.map(s=>`<option value="${s.id}">${s.label}${s.precio>0?" — "+fmt(s.precio)+" €":""}</option>`).join("");
 }
 
-// ── Suplementos y trabajos ────────────────────────────────────────────────────
-function buildSuplsYTrabajos(famId){
+// ── SUPLEMENTOS ───────────────────────────────────────────────────────────────
+function buildSupls(famId){
   const activos=famId?SUPLS.filter(s=>s.familias.includes(famId)):[];
-  estado.supls={};
-  activos.forEach(s=>{estado.supls[s.id]=0;});
-
+  estado.supls={};activos.forEach(s=>{estado.supls[s.id]=0});
   const trabajos=activos.filter(s=>esTrabajo(s));
   const supls=activos.filter(s=>!esTrabajo(s)&&!(s.uiKey&&s.uiKey.startsWith("pasacables")));
-
-  const renderGrid=(items,gridId)=>{
-    const g=document.getElementById(gridId);
-    if(!items.length){g.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px">—</div>';return;}
+  const renderG=(items,gridId)=>{
+    const g=document.getElementById(gridId);if(!g)return;
+    if(!items.length){g.innerHTML='<div style="font-size:12px;color:var(--text3);padding:4px">—</div>';return}
     g.innerHTML=items.map(s=>{
-      const precioStr=s.pendiente?"A consultar":s.precio>0?`${fmt(s.precio)} €/${s.unidad}`:(s.nota||"");
-      const esCorte=MODO_CLIENTE&&s.uiKey&&s.uiKey.startsWith("corte_")&&CORTES_INFO[s.uiKey];
-      const infoBtn=esCorte?`<button class="supl-info-btn" onclick="abrirTooltip('${s.uiKey}')" title="Ver descripción">ℹ</button>`:"";
-      return `<div class="supl-item" id="si-${s.id}">
-        <div><div class="supl-name">${s.nombre}${infoBtn}</div><div class="supl-price">${precioStr}</div></div>
-        <div class="supl-right">
-          <button class="qty-btn" onclick="changeQty('${s.id}',-1)">−</button>
+      const ps=s.pendiente?"A consultar":s.precio>0?`${fmt(s.precio)} €/${s.unidad}`:(s.nota||"");
+      const esC=ES_CLIENTE&&s.uiKey&&CORTES_INFO[s.uiKey];
+      const iBtn=esC?`<button class="info-btn" onclick="abrirTooltip('${s.uiKey}')" title="Ver descripción">ℹ</button>`:"";
+      return`<div class="supl-item" id="si-${s.id}">
+        <div><div class="supl-name">${s.nombre}${iBtn}</div><div class="supl-price">${ps}</div></div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="qty-btn" onclick="chgQty('${s.id}',-1)">−</button>
           <span class="qty-val" id="qty-${s.id}">0</span>
-          <button class="qty-btn" onclick="changeQty('${s.id}',1)">+</button>
+          <button class="qty-btn" onclick="chgQty('${s.id}',1)">+</button>
         </div>
       </div>`;
     }).join("");
   };
-  renderGrid(trabajos,"trabajos-grid");
-  renderGrid(supls,"supl-grid");
+  renderG(trabajos,"trabajos-grid");renderG(supls,"supl-grid");
 }
 
-function changeQty(id,delta){
-  estado.supls[id]=Math.max(0,(estado.supls[id]||0)+delta);
+function chgQty(id,d){
+  estado.supls[id]=Math.max(0,(estado.supls[id]||0)+d);
   document.getElementById("qty-"+id).textContent=estado.supls[id];
   document.getElementById("si-"+id).classList.toggle("active",estado.supls[id]>0);
 }
 
-// ── Pasacables ────────────────────────────────────────────────────────────────
-let pasaPosPendiente=null;
-
-function selPasaPos(pos){
-  pasaPosPendiente=pos;
-  document.getElementById("pasa-color-wrap").style.display="block";
+// ── ESQUINAS ──────────────────────────────────────────────────────────────────
+function toggleEsquina(e){
+  estado.esquinas[e]=!estado.esquinas[e];const a=estado.esquinas[e];
+  document.getElementById("esq-"+e).setAttribute("fill",a?"#2B5C3F":"#F2EFE9");
+  document.getElementById("esq-"+e).setAttribute("stroke",a?"#2B5C3F":"#C8C4BC");
+  document.getElementById("esq-"+e+"-t").setAttribute("fill",a?"#fff":"#6B6760");
+  renderEsquinas();
+}
+function renderEsquinas(){
+  const famId=document.getElementById("familia").value;
+  const fam=famId?CATALOGO[famId]:null;
+  const pE=fam?.precioEsquina||15.70;
+  const act=Object.entries(estado.esquinas).filter(([,v])=>v).map(([k])=>k);
+  const el=document.getElementById("esq-list");if(!el)return;
+  el.innerHTML=act.length?`<div class="pasa-item"><span>Esquina redondeada (${act.join(", ")})</span><span style="font-weight:600;color:var(--accent)">${fmt(pE*act.length)} €</span></div>`:"";
+}
+function resetEsquinas(){
+  ["A","B","C","D"].forEach(e=>{
+    estado.esquinas[e]=false;
+    document.getElementById("esq-"+e)?.setAttribute("fill","#F2EFE9");
+    document.getElementById("esq-"+e)?.setAttribute("stroke","#C8C4BC");
+    document.getElementById("esq-"+e+"-t")?.setAttribute("fill","#6B6760");
+  });
+  const el=document.getElementById("esq-list");if(el)el.innerHTML="";
 }
 
+// ── PASACABLES ────────────────────────────────────────────────────────────────
+let pasaPendiente=null;
+function selPasaPos(pos){pasaPendiente=pos;document.getElementById("pasa-color-wrap").style.display="block"}
 function selPasaColor(color,btn){
   estado.pasaColorActual=color;
   document.querySelectorAll(".pasa-color-btn").forEach(b=>b.classList.remove("sel"));
   btn.classList.add("sel");
-  if(pasaPosPendiente){
-    añadirPasacables(pasaPosPendiente,color);
-    pasaPosPendiente=null;
-  }
+  if(pasaPendiente){añadirPasa(pasaPendiente,color);pasaPendiente=null}
 }
-
-function añadirPasacables(pos,color){
-  const famId=document.getElementById("familia").value;
-  if(!famId)return;
-  const suplPasa=SUPLS.find(s=>s.uiKey==="pasacables"&&s.familias.includes(famId));
-  const precio=suplPasa?suplPasa.precio:0;
-  estado.pasacables.push({pos,color,precio,id:Date.now()});
-  renderPasacables();
-  document.getElementById("pasa-color-wrap").style.display="none";
+function añadirPasa(pos,color){
+  const famId=document.getElementById("familia").value;if(!famId)return;
+  const sp=SUPLS.find(s=>s.uiKey&&s.uiKey.startsWith("pasacables")&&s.familias.includes(famId));
+  estado.pasacables.push({pos,color,precio:sp?sp.precio:0,id:Date.now()});
+  renderPasas();document.getElementById("pasa-color-wrap").style.display="none";
 }
-
-function renderPasacables(){
-  const list=document.getElementById("pasa-list");
-  const posLabels={izquierda:"Izquierda",centro:"Centro",derecha:"Derecha"};
-  list.innerHTML=estado.pasacables.map(p=>`
+function renderPasas(){
+  const labels={izquierda:"Izquierda",centro:"Centro",derecha:"Derecha"};
+  document.getElementById("pasa-list").innerHTML=estado.pasacables.map(p=>`
     <div class="pasa-item">
-      <span>Pasacables ${posLabels[p.pos]} · ${p.color.charAt(0).toUpperCase()+p.color.slice(1)}</span>
+      <span>Pasacables ${labels[p.pos]} · ${p.color.charAt(0).toUpperCase()+p.color.slice(1)}</span>
       <span style="font-weight:600;color:var(--accent)">${fmt(p.precio)} €</span>
-      <button class="pasa-del" onclick="eliminarPasa(${p.id})">×</button>
+      <button class="pasa-del" onclick="elimPasa(${p.id})">×</button>
     </div>`).join("");
-  // Actualizar círculos SVG
   const ids={izquierda:"izq",centro:"cen",derecha:"der"};
-  ["izquierda","centro","derecha"].forEach(pos=>{
-    const sid=ids[pos];
-    const tiene=estado.pasacables.some(p=>p.pos===pos);
-    const circ=document.getElementById("pasa-"+sid);
-    if(circ){
-      circ.setAttribute("fill",tiene?"#2B5C3F":"#F2EFE9");
-      circ.setAttribute("stroke",tiene?"#2B5C3F":"#C8C4BC");
-    }
+  ["izquierda","centro","derecha"].forEach(p=>{
+    const tiene=estado.pasacables.some(x=>x.pos===p);
+    const c=document.getElementById("pasa-"+ids[p]);if(!c)return;
+    c.setAttribute("fill",tiene?"#2B5C3F":"#F2EFE9");c.setAttribute("stroke",tiene?"#2B5C3F":"#C8C4BC");
   });
 }
-
-function eliminarPasa(id){
-  estado.pasacables=estado.pasacables.filter(p=>p.id!==id);
-  renderPasacables();
-}
-
+function elimPasa(id){estado.pasacables=estado.pasacables.filter(p=>p.id!==id);renderPasas()}
 function resetPasacables(){
-  estado.pasacables=[];
-  pasaPosPendiente=null;
-  renderPasacables();
-  document.getElementById("pasa-color-wrap").style.display="none";
+  estado.pasacables=[];pasaPendiente=null;
+  renderPasas();document.getElementById("pasa-color-wrap").style.display="none";
 }
 
-// ── Calcular ──────────────────────────────────────────────────────────────────
-function getAcabadoActual(famId){
-  const fam=CATALOGO[famId];
-  if(!fam)return null;
-  if(COLORES[famId]&&colorSeleccionado){
-    return fam.acabados.find(a=>a.id===colorSeleccionado.calidad)||null;
+// ── TOOLTIP ───────────────────────────────────────────────────────────────────
+function abrirTooltip(uiKey){
+  const info=CORTES_INFO[uiKey];if(!info)return;
+  const nombre=SUPLS.find(s=>s.uiKey===uiKey)?.nombre||uiKey;
+  document.getElementById("t-img").src=IMG_SUPL+info.img;
+  document.getElementById("t-img").style.display="block";
+  document.getElementById("t-nombre").textContent=nombre;
+  document.getElementById("t-desc").textContent=info.desc;
+  document.getElementById("t-overlay").classList.add("on");
+  document.getElementById("t-modal").classList.add("on");
+}
+function cerrarTooltip(){
+  document.getElementById("t-overlay").classList.remove("on");
+  document.getElementById("t-modal").classList.remove("on");
+}
+
+// ── CALCULAR ──────────────────────────────────────────────────────────────────
+function getAcabado(famId){
+  const fam=CATALOGO[famId];if(!fam)return null;
+  if(COLORES[famId]&&colorSel){
+    return fam.acabados.find(a=>a.id===colorSel.calidad)||null;
   }
-  const acabadoId=document.getElementById("acabado").value;
-  return fam.acabados.find(a=>a.id===acabadoId)||null;
+  if(!ES_CLIENTE){
+    const val=document.getElementById("acabado-interno").value;
+    if(!val)return null;
+    const parsed=JSON.parse(val);
+    return fam.acabados.find(a=>a.id===parsed.calidad)||null;
+  }
+  const aid=document.getElementById("acabado").value;
+  return fam.acabados.find(a=>a.id===aid)||null;
 }
 
 function calcular(){
   const famId=document.getElementById("familia").value;
   const grosor=parseFloat(document.getElementById("grosor").value);
   const btn=document.getElementById("btn-add");
-  if(!famId||!grosor){btn.disabled=true;return;}
-  const fam=CATALOGO[famId];
-  const acabadoObj=getAcabadoActual(famId);
-  if(!acabadoObj){btn.disabled=true;return;}
-  const precioM2=acabadoObj.precios[grosor];
-  if(!precioM2&&precioM2!==0){btn.disabled=true;return;}
+  if(!famId||!grosor||!getAcabado(famId)){btn.disabled=true;return}
   btn.disabled=false;
 }
 
-// ── Añadir línea ──────────────────────────────────────────────────────────────
+// ── AÑADIR LÍNEA ──────────────────────────────────────────────────────────────
 function añadirLinea(){
   const famId=document.getElementById("familia").value;
   const grosor=parseFloat(document.getElementById("grosor").value);
-  const largo=parseFloat(document.getElementById("largo").value);
-  const ancho=parseFloat(document.getElementById("ancho").value);
+  const largo=parseFloat(document.getElementById("largo").value)||0;
+  const ancho=parseFloat(document.getElementById("ancho").value)||0;
   const cantidad=parseInt(document.getElementById("cantidad").value)||1;
-  const notas=MODO_CLIENTE?"":document.getElementById("notas-linea").value.trim();
-
+  const notas=ES_CLIENTE?"":document.getElementById("notas-linea").value.trim();
   const fam=CATALOGO[famId];
-  const acabadoObj=getAcabadoActual(famId);
-  const tieneGaleria=COLORES[famId]&&COLORES[famId].length>0;
-  const fotoUrl=tieneGaleria&&colorSeleccionado?.foto?`${IMG_BASE}${colorSeleccionado.foto}`:null;
+  const acabadoObj=getAcabado(famId);
+  if(!acabadoObj)return;
 
   let precioM2=acabadoObj.precios[grosor];
-  const extras=[];
-  let totalUnit=0;
+  const extras=[];let totalUnit=0;
 
   // Barnizado
   if((acabadoObj.id==="barnizado"||acabadoObj.id==="tintado")&&fam.barnizadoNatural){
     const base=fam.acabados.find(a=>a.id==="natural");
     precioM2=base.precios[grosor];
-    const precioBarni=acabadoObj.id==="barnizado"?fam.barnizadoNatural:fam.barnizadoTintado;
-    const barniTotal=parseFloat((precioBarni*(largo/100)*(ancho/100)).toFixed(2));
-    extras.push({nombre:acabadoObj.label,precioUnit:barniTotal,qty:null});
-    totalUnit+=barniTotal;
+    const pb=acabadoObj.id==="barnizado"?fam.barnizadoNatural:fam.barnizadoTintado;
+    extras.push({nombre:acabadoObj.label,precioUnit:parseFloat((pb*(largo/100)*(ancho/100)).toFixed(2)),qty:null});
+    totalUnit+=extras[extras.length-1].precioUnit;
   }
 
   const m2=parseFloat(((largo/100)*(ancho/100)).toFixed(4));
-  const baseUnit=parseFloat((precioM2*m2).toFixed(2));
-  totalUnit+=baseUnit;
+  totalUnit+=parseFloat((precioM2*m2).toFixed(2));
 
-  // Canteado — siempre incluido en el precio base, se muestra como incluido
-  const mlTotal=parseFloat((2*(largo+ancho)/100).toFixed(3));
-  const tipoFresado=fam.esAlistonado?"Fresado de cantos":"Canteado 4 lados";
-  extras.push({nombre:`${tipoFresado} (${fmt(mlTotal,2)} ml) — incluido`,precioUnit:0,qty:null});
+  // Canteado — siempre incluido
+  const ml=parseFloat((2*(largo+ancho)/100).toFixed(3));
+  const tipoC=fam.esAlist?"Fresado de cantos":"Canteado 4 lados";
+  extras.push({nombre:`${tipoC} (${fmt(ml,2)} ml) — incluido`,precioUnit:0,qty:null});
 
   // Esquinas
-  const esqActivas=["A","B","C","D"].filter(e=>estado.esquinas&&estado.esquinas[e]);
-  if(esqActivas.length>0){
-    const precioEsq=fam.precioEsquina||15.70;
-    const esqUnit=parseFloat((precioEsq*esqActivas.length).toFixed(2));
-    extras.push({nombre:`Esquina redondeada (${esqActivas.join(", ")})`,precioUnit:esqUnit,qty:null});
-    totalUnit+=esqUnit;
+  const esqAct=Object.entries(estado.esquinas).filter(([,v])=>v).map(([k])=>k);
+  if(esqAct.length>0){
+    const pe=fam.precioEsquina||15.70;
+    const eu=parseFloat((pe*esqAct.length).toFixed(2));
+    extras.push({nombre:`Esquina redondeada (${esqAct.join(", ")})`,precioUnit:eu,qty:null});
+    totalUnit+=eu;
   }
 
   // Pasacables
@@ -1116,110 +900,100 @@ function añadirLinea(){
     }
   });
 
-  // Suplementos (trabajos + otros)
-  SUPLS.filter(s=>s.familias.includes(famId)).forEach(s=>{
-    const v=estado.supls[s.id]||0;
-    if(v>0&&s.precio>0){
+  // Suplementos
+  SUPLS.filter(s=>s.familias.includes(famId)&&!esTrabajo(s)&&!(s.uiKey&&s.uiKey.startsWith("pasacables"))).forEach(s=>{
+    const v=estado.supls[s.id]||0;if(!v)return;
+    if(s.precio>0){
       extras.push({nombre:s.nombre,precioUnit:parseFloat((s.precio*v).toFixed(2)),qty:v});
       totalUnit+=parseFloat((s.precio*v).toFixed(2));
-    } else if(v>0&&(s.precio===0||s.pendiente)){
+    } else if(s.pendiente){
       extras.push({nombre:s.nombre+" ⚠ precio a definir",precioUnit:null,qty:v});
     }
   });
-
-  totalUnit=parseFloat(totalUnit.toFixed(2));
-  const totalConCantidad=parseFloat((totalUnit*cantidad).toFixed(2));
-
-  // Pedido mínimo (solo modo interno)
-  const MINIMO=45;
-  let minimoAplicado=false, ajusteMinimo=0;
-  if(!MODO_CLIENTE&&minimoActivo&&totalConCantidad<MINIMO&&!extras.some(e=>e.precioUnit===null)){
-    ajusteMinimo=parseFloat((MINIMO-totalConCantidad).toFixed(2));
-    minimoAplicado=true;
+  // Trabajos (solo interno)
+  if(!ES_CLIENTE){
+    SUPLS.filter(s=>s.familias.includes(famId)&&esTrabajo(s)).forEach(s=>{
+      const v=estado.supls[s.id]||0;if(!v)return;
+      if(s.precio>0){
+        extras.push({nombre:s.nombre,precioUnit:parseFloat((s.precio*v).toFixed(2)),qty:v});
+        totalUnit+=parseFloat((s.precio*v).toFixed(2));
+      }
+    });
   }
 
-  // Nombre del color/acabado para mostrar
-  const nombreAcabado=tieneGaleria&&colorSeleccionado
-    ?`${colorSeleccionado.codigo} · ${colorSeleccionado.nombre}`
-    :acabadoObj.label;
-  const gamaLabel=tieneGaleria&&colorSeleccionado
-    ?colorSeleccionado.calidad.charAt(0).toUpperCase()+colorSeleccionado.calidad.slice(1)
-    :"";
+  totalUnit=parseFloat(totalUnit.toFixed(2));
+  const totalCant=parseFloat((totalUnit*cantidad).toFixed(2));
+
+  // Pedido mínimo
+  const MIN=45;let minApl=false,minAdj=0;
+  if(!ES_CLIENTE&&minimoActivo&&totalCant<MIN&&!extras.some(e=>e.precioUnit===null)){
+    minAdj=parseFloat((MIN-totalCant).toFixed(2));minApl=true;
+  }
+
+  // Nombre y foto del acabado
+  const tieneGal=!!(COLORES[famId]&&COLORES[famId].length>0);
+  const nomAcabado=tieneGal&&colorSel?`${colorSel.codigo} · ${colorSel.nombre}`:acabadoObj.label;
+  const gamaLbl=tieneGal&&colorSel?colorSel.calidad.charAt(0).toUpperCase()+colorSel.calidad.slice(1):"";
+  const fotoUrl=(tieneGal&&colorSel&&colorSel.foto)?IMG_BASE+colorSel.foto:null;
 
   lineas.push({
     id:++lineaId,
     famLabel:"Tablero "+fam.label,
-    nombreAcabado, gamaLabel, fotoUrl,
+    nomAcabado,gamaLbl,fotoUrl,
     grosor,largo,ancho,cantidad,
     precioM2,m2,
     totalUnit,
-    totalConCantidad:minimoAplicado?MINIMO:totalConCantidad,
-    ajusteMinimo,minimoAplicado,
+    totalCant:minApl?MIN:totalCant,
+    minApl,minAdj,
     extras,notas,
-    pendiente:extras.some(e=>e.precioUnit===null),
+    pendiente:extras.some(e=>e.precioUnit===null)
   });
 
-  renderLineas();
-  resetConfigurador();
+  renderLineas();resetConf();
 }
 
-// ── Render líneas ─────────────────────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function renderLineas(){
-  const container=document.getElementById("lineas-container");
-  const btnImpr=document.getElementById("btn-imprimir");
-  const btnCop=document.getElementById("btn-copiar");
-  const btnWA=document.getElementById("btn-whatsapp");
-  const entregaWrap=document.getElementById("entrega-wrap");
-  const notaWrap=document.getElementById("nota-cliente-wrap");
+  const c=document.getElementById("lineas-container");
+  const hbt=document.getElementById("btn-imprimir"),hbc=document.getElementById("btn-copiar"),hbw=document.getElementById("btn-wa");
+  const ewI=document.getElementById("entrega-wrap-int"),ewC=document.getElementById("entrega-wrap-cli"),nw=document.getElementById("nota-wrap");
 
-  if(lineas.length===0){
-    container.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);text-align:center;gap:8px;padding:2rem 0">
-      <div style="font-size:32px;opacity:.4">📋</div>
-      <div style="font-size:13px;font-weight:500">Sin líneas todavía</div>
-      <div style="font-size:12px">Configura el producto y pulsa "Añadir"</div>
-    </div>`;
-    btnImpr.disabled=true;if(btnCop)btnCop.disabled=true;btnWA.disabled=true;
-    entregaWrap.style.display="none";
-    document.getElementById("entrega-wrap-cliente").style.display="none";
-    if(notaWrap)notaWrap.style.display="none";
-    document.getElementById("t-base").textContent="—";
-    document.getElementById("t-iva").textContent="—";
-    document.getElementById("t-total").textContent="—";
+  if(!lineas.length){
+    c.innerHTML=`<div class="pres-empty"><div style="font-size:32px;opacity:.4">📋</div><div style="font-size:13px;font-weight:500">Sin líneas todavía</div><div style="font-size:12px">Configura el producto y pulsa "Añadir"</div></div>`;
+    hbt.disabled=true;if(hbc)hbc.disabled=true;hbw.disabled=true;
+    ewI.style.display="none";ewC.style.display="none";if(nw)nw.style.display="none";
+    document.getElementById("t-base").textContent=document.getElementById("t-iva").textContent=document.getElementById("t-total").textContent="—";
+    document.getElementById("row-entrega").style.display=document.getElementById("row-subida").style.display="none";
     return;
   }
 
-  btnImpr.disabled=false;if(btnCop)btnCop.disabled=false;btnWA.disabled=false;
-  if(MODO_CLIENTE){
-    document.getElementById("entrega-wrap-cliente").style.display="block";
-  } else {
-    document.getElementById("entrega-wrap").style.display="block";
-    document.getElementById("nota-cliente-wrap").style.display="block";
-  }
+  hbt.disabled=false;if(hbc)hbc.disabled=false;hbw.disabled=false;
+  if(ES_CLIENTE){ewI.style.display="none";ewC.style.display="block";if(nw)nw.style.display="none"}
+  else{ewI.style.display="block";ewC.style.display="none";if(nw)nw.style.display="block"}
 
-  container.innerHTML=lineas.map(l=>{
-    const extrasHtml=l.extras.map(e=>{
+  c.innerHTML=lineas.map(l=>{
+    const extHtml=l.extras.map(e=>{
       if(e.precioUnit===null)return`<div>· ${e.nombre}</div>`;
-      if(e.precioUnit===0)return`<div>· ${e.nombre}</div>`;
-      if(e.qty)return`<div>· ${e.nombre} ×${e.qty}: ${fmt(e.precioUnit)} €</div>`;
-      return`<div>· ${e.nombre}: ${fmt(e.precioUnit)} €</div>`;
+      if(e.precioUnit===0)return`<div style="color:var(--accent)">· ${e.nombre}</div>`;
+      return`<div>· ${e.nombre}${e.qty?` ×${e.qty}`:""}: ${fmt(e.precioUnit)} €</div>`;
     }).join("");
-    const udLabel=l.cantidad>1?`${l.cantidad} ud.`:"1 ud.";
-    const cantidadHtml=l.cantidad>1?`<div style="font-size:11px;color:var(--text2);margin-top:4px">Precio unitario: ${fmt(l.totalUnit)} € × ${l.cantidad} ud.</div>`:"";
-    const minimoHtml=l.minimoAplicado?`<div style="font-size:11px;color:#8B4513;margin-top:4px">+ ${fmt(l.ajusteMinimo)} € (pedido mínimo 45,00 €)</div>`:"";
-    const gamaHtml=l.gamaLabel?` <span style="font-size:10px;color:var(--text3);font-weight:400">· ${l.gamaLabel}</span>`:"";
-    const fotoHtml=l.fotoUrl?`<img src="${l.fotoUrl}" alt="${l.nombreAcabado}" style="width:28px;height:28px;object-fit:cover;border-radius:4px;border:1px solid var(--border);margin-left:8px;vertical-align:middle;flex-shrink:0" onerror="this.style.display='none'">`:"";
+    const udLbl=l.cantidad>1?`${l.cantidad} ud.`:"1 ud.";
+    const cantHtml=l.cantidad>1?`<div style="font-size:11px;color:var(--text2);margin-top:4px">Precio unitario: ${fmt(l.totalUnit)} € × ${l.cantidad} ud.</div>`:"";
+    const minHtml=l.minApl?`<div style="font-size:11px;color:#8B4513;margin-top:4px">+ ${fmt(l.minAdj)} € (pedido mínimo 45,00 €)</div>`:"";
+    const gamaHtml=l.gamaLbl?` <span style="font-size:10px;color:var(--text3)">· ${l.gamaLbl}</span>`:"";
+    const thumbHtml=l.fotoUrl?`<img class="linea-thumb" src="${l.fotoUrl}" alt="${l.nomAcabado}" onerror="this.style.display='none'">`:"";
     return`<div class="linea">
-      <button class="linea-del" onclick="eliminarLinea(${l.id})" title="Eliminar">×</button>
+      <button class="linea-del" onclick="elimLinea(${l.id})">×</button>
       <div class="linea-top">
         <div style="flex:1">
-          <div class="linea-name" style="display:flex;align-items:center;gap:4px">${udLabel} &nbsp;${l.famLabel} · ${l.grosor} cm${fotoHtml}</div>
-          <div class="linea-specs">${l.nombreAcabado}${gamaHtml}</div>
+          <div class="linea-name">${thumbHtml}${udLbl} ${l.famLabel} · ${l.grosor} cm</div>
+          <div class="linea-specs">${l.nomAcabado}${gamaHtml}</div>
           <div class="linea-specs">${l.largo}×${l.ancho} cm · ${fmt(l.m2,4)} m² · ${fmt(l.precioM2)} €/m²</div>
         </div>
-        <div class="linea-price">${fmt(l.totalConCantidad)} €</div>
+        <div class="linea-price">${fmt(l.totalCant)} €</div>
       </div>
-      <div class="linea-extras">${extrasHtml}</div>
-      ${cantidadHtml}${minimoHtml}
+      <div class="linea-extras">${extHtml}</div>
+      ${cantHtml}${minHtml}
       ${l.notas?`<div style="font-size:11px;color:#8B6914;margin-top:4px;font-style:italic">📝 ${l.notas}</div>`:""}
     </div>`;
   }).join("");
@@ -1228,123 +1002,110 @@ function renderLineas(){
 }
 
 function calcularTotales(){
-  if(lineas.length===0)return;
-  let entregaObj, subidaObj;
-  if(MODO_CLIENTE){
-    entregaObj=ENTREGAS.find(e=>e.id.includes("est")&&e.precio>0)||ENTREGAS.find(e=>e.precio>0)||ENTREGAS[0];
-    const subidaId=document.getElementById("sel-subida-cliente")?.value||"";
-    subidaObj=SUBIDAS.find(s=>s.id===subidaId)||SUBIDAS[0];
+  if(!lineas.length)return;
+  let entObj,subObj;
+  if(ES_CLIENTE){
+    entObj=ENTREGAS.find(e=>e.id.includes("_est_")&&e.precio>0)||ENTREGAS.find(e=>e.precio>0)||ENTREGAS[0];
+    const sid=document.getElementById("sel-subida-cli")?.value||"";
+    subObj=SUBIDAS.find(s=>s.id===sid)||SUBIDAS[0];
   } else {
-    const entregaId=document.getElementById("sel-entrega")?.value||"";
-    const subidaId=document.getElementById("sel-subida")?.value||"";
-    entregaObj=ENTREGAS.find(e=>e.id===entregaId)||ENTREGAS[0];
-    subidaObj=SUBIDAS.find(s=>s.id===subidaId)||SUBIDAS[0];
+    const eid=document.getElementById("sel-entrega")?.value||"";
+    const sid=document.getElementById("sel-subida")?.value||"";
+    entObj=ENTREGAS.find(e=>e.id===eid)||ENTREGAS[0];
+    subObj=SUBIDAS.find(s=>s.id===sid)||SUBIDAS[0];
   }
-  const subtotal=lineas.filter(l=>!l.pendiente).reduce((s,l)=>s+l.totalConCantidad,0);
-  const total=subtotal+entregaObj.precio+subidaObj.precio;
+  const sub=lineas.filter(l=>!l.pendiente).reduce((s,l)=>s+l.totalCant,0);
+  const total=sub+entObj.precio+subObj.precio;
   const base=total/1.21,iva=total-base;
-  const rowE=document.getElementById("row-entrega"),rowS=document.getElementById("row-subida");
-  if(rowE){if(entregaObj.precio>0){rowE.style.display="flex";document.getElementById("label-entrega").textContent=entregaObj.label;document.getElementById("t-entrega").textContent=fmt(entregaObj.precio)+" €";}else rowE.style.display="none";}
-  if(rowS){if(subidaObj.precio>0){rowS.style.display="flex";document.getElementById("label-subida").textContent=subidaObj.label;document.getElementById("t-subida").textContent=fmt(subidaObj.precio)+" €";}else rowS.style.display="none";}
+  const rE=document.getElementById("row-entrega"),rS=document.getElementById("row-subida");
+  if(entObj.precio>0){rE.style.display="flex";document.getElementById("lbl-entrega").textContent=entObj.label;document.getElementById("t-entrega").textContent=fmt(entObj.precio)+" €"}else rE.style.display="none";
+  if(subObj.precio>0){rS.style.display="flex";document.getElementById("lbl-subida").textContent=subObj.label;document.getElementById("t-subida").textContent=fmt(subObj.precio)+" €"}else rS.style.display="none";
   document.getElementById("t-base").textContent=fmt(base)+" €";
   document.getElementById("t-iva").textContent=fmt(iva)+" €";
   document.getElementById("t-total").textContent=fmt(total)+" €";
 }
 
-function eliminarLinea(id){lineas=lineas.filter(l=>l.id!==id);renderLineas();}
+function elimLinea(id){lineas=lineas.filter(l=>l.id!==id);renderLineas()}
 
-// ── Reset ─────────────────────────────────────────────────────────────────────
-function resetConfigurador(){
+// ── RESET ─────────────────────────────────────────────────────────────────────
+function resetConf(){
   document.getElementById("familia").value="";
-  document.getElementById("grosor").innerHTML='<option value="">—</option>';
-  document.getElementById("grosor").disabled=true;
+  const g=document.getElementById("grosor");g.innerHTML='<option value="">—</option>';g.disabled=true;
   document.getElementById("card-color").style.display="none";
+  document.getElementById("dim-notes").textContent="";
   document.getElementById("note-largo").textContent="";
   document.getElementById("note-ancho").textContent="";
   document.getElementById("cantidad").value=1;
-  if(!MODO_CLIENTE)document.getElementById("notas-linea").value="";
+  if(!ES_CLIENTE)document.getElementById("notas-linea").value="";
   document.getElementById("btn-add").disabled=true;
+  document.getElementById("canto-badge").style.display="none";
   minimoActivo=true;
-  const togMin=document.getElementById("tog-minimo");
-  if(togMin){togMin.classList.add("on");togMin.classList.remove("off");}
-  colorSeleccionado=null;
-  resetPasacables();
-  resetEsquinas();
-  buildSuplsYTrabajos(null);
+  const tm=document.getElementById("tog-minimo");if(tm){tm.classList.add("on");tm.classList.remove("off")}
+  colorSel=null;resetPasacables();resetEsquinas();buildSupls(null);
 }
 
 function resetPresupuesto(){
   lineas=[];lineaId=0;
   document.getElementById("sel-entrega").value="";
   document.getElementById("sel-subida").value="";
-  document.getElementById("nota-cliente").value="";
-  if(!MODO_CLIENTE)document.getElementById("pres-titulo").value="Presupuesto estimado";
-  resetConfigurador();
-  renderLineas();
+  document.getElementById("sel-subida-cli").value="";
+  if(!ES_CLIENTE){
+    document.getElementById("nota-cliente").value="";
+    document.getElementById("pres-titulo").value="Presupuesto estimado";
+  }
+  resetConf();renderLineas();
 }
 
-function toggleMinimo(btn){
-  minimoActivo=!minimoActivo;
-  btn.classList.toggle("on",minimoActivo);
-  btn.classList.toggle("off",!minimoActivo);
-}
+function toggleMinimo(btn){minimoActivo=!minimoActivo;btn.classList.toggle("on",minimoActivo);btn.classList.toggle("off",!minimoActivo)}
 
-// ── Imprimir ──────────────────────────────────────────────────────────────────
+// ── IMPRIMIR ──────────────────────────────────────────────────────────────────
 function imprimirPpto(){
-  const titulo=MODO_CLIENTE?"Presupuesto Madera Fina":(document.getElementById("pres-titulo").value||"Presupuesto estimado");
+  const titulo=ES_CLIENTE?"Presupuesto Madera Fina":(document.getElementById("pres-titulo").value||"Presupuesto estimado");
   const fecha=new Date().toLocaleDateString("es-ES",{day:"2-digit",month:"2-digit",year:"numeric"}).replace(/\//g,"-");
   const orig=document.title;
   document.title=`Madera Fina · ${titulo} · ${fecha}`;
-  const notaWrap=document.getElementById("nota-cliente-wrap");
-  const notaVal=document.getElementById("nota-cliente").value.trim();
-  const notaWas=notaWrap.style.display;
-  if(!notaVal)notaWrap.style.display="none";
   window.print();
-  setTimeout(()=>{document.title=orig;notaWrap.style.display=notaWas;},1000);
+  setTimeout(()=>document.title=orig,1500);
 }
 
-// ── Copiar / WhatsApp ─────────────────────────────────────────────────────────
-function buildTextoResumen(){
+// ── COPIAR / WHATSAPP ─────────────────────────────────────────────────────────
+function buildTexto(){
   const now=new Date().toLocaleDateString("es-ES");
-  const titulo=MODO_CLIENTE?"Presupuesto Madera Fina":(document.getElementById("pres-titulo").value||"Presupuesto estimado");
-  const entregaId=document.getElementById("sel-entrega")?.value||"";
-  const subidaId=document.getElementById("sel-subida")?.value||"";
-  const entregaObj=ENTREGAS.find(e=>e.id===entregaId)||ENTREGAS[0];
-  const subidaObj=SUBIDAS.find(s=>s.id===subidaId)||SUBIDAS[0];
-  const nota=document.getElementById("nota-cliente")?.value?.trim();
+  const titulo=ES_CLIENTE?"Presupuesto Madera Fina":(document.getElementById("pres-titulo")?.value||"Presupuesto estimado");
+  const nota=!ES_CLIENTE?document.getElementById("nota-cliente")?.value?.trim():"";
   const sep="─".repeat(42);
   let txt=`Madera Fina · ${titulo}\nFecha: ${now}\n${sep}\n`;
   lineas.forEach((l,i)=>{
     txt+=`\n${i+1}. ${l.famLabel} · ${l.grosor} cm\n`;
-    txt+=`   ${l.nombreAcabado}${l.gamaLabel?" · "+l.gamaLabel:""}\n`;
-    txt+=`   Medidas: ${l.largo}×${l.ancho} cm · ${l.cantidad>1?l.cantidad+" ud.":"1 ud."}\n`;
-    l.extras.forEach(e=>{if(e.precioUnit>0)txt+=`   + ${e.nombre}: ${fmt(e.precioUnit)} €\n`;});
+    txt+=`   ${l.nomAcabado}${l.gamaLbl?" · "+l.gamaLbl:""}\n`;
+    txt+=`   ${l.largo}×${l.ancho} cm · ${l.cantidad>1?l.cantidad+" ud.":"1 ud."}\n`;
+    l.extras.forEach(e=>{if(e.precioUnit>0)txt+=`   + ${e.nombre}${e.qty?" ×"+e.qty:""}: ${fmt(e.precioUnit)} €\n`});
     if(l.cantidad>1)txt+=`   Precio unitario: ${fmt(l.totalUnit)} € ×${l.cantidad}\n`;
-    txt+=`   Subtotal: ${fmt(l.totalConCantidad)} €\n`;
-    if(!MODO_CLIENTE&&l.notas)txt+=`   · ${l.notas}\n`;
+    txt+=`   Subtotal: ${fmt(l.totalCant)} €\n`;
+    if(!ES_CLIENTE&&l.notas)txt+=`   · ${l.notas}\n`;
   });
-  const subtotal=lineas.filter(l=>!l.pendiente).reduce((s,l)=>s+l.totalConCantidad,0);
-  if(entregaObj.precio>0)txt+=`\n${entregaObj.label}: ${fmt(entregaObj.precio)} €`;
-  if(subidaObj.precio>0)txt+=`\n${subidaObj.label}: ${fmt(subidaObj.precio)} €`;
-  const total=subtotal+entregaObj.precio+subidaObj.precio;
-  txt+=`\n\n${sep}\nTOTAL (IVA incl.): ${fmt(total)} €\n`;
+  let entObj,subObj;
+  if(ES_CLIENTE){
+    entObj=ENTREGAS.find(e=>e.id.includes("_est_")&&e.precio>0)||ENTREGAS[0];
+    subObj=SUBIDAS.find(s=>s.id===(document.getElementById("sel-subida-cli")?.value||""))||SUBIDAS[0];
+  } else {
+    entObj=ENTREGAS.find(e=>e.id===(document.getElementById("sel-entrega")?.value||""))||ENTREGAS[0];
+    subObj=SUBIDAS.find(s=>s.id===(document.getElementById("sel-subida")?.value||""))||SUBIDAS[0];
+  }
+  const total=lineas.reduce((s,l)=>s+l.totalCant,0)+entObj.precio+subObj.precio;
+  if(entObj.precio>0)txt+=`\n${entObj.label}: ${fmt(entObj.precio)} €`;
+  if(subObj.precio>0)txt+=`\n${subObj.label}: ${fmt(subObj.precio)} €`;
+  txt+=`\n\n${sep}\nBase imponible: ${fmt(total/1.21)} €\nIVA 21%: ${fmt(total-total/1.21)} €\nTOTAL: ${fmt(total)} €\n`;
   if(nota)txt+=`\n${sep}\n${nota}\n`;
   return txt;
 }
-
 function copiarTexto(){
-  const txt=buildTextoResumen();
-  navigator.clipboard.writeText(txt).then(()=>{
-    const btn=document.getElementById("btn-copiar");
-    const orig=btn.textContent;btn.textContent="✓ Copiado";
-    setTimeout(()=>btn.textContent=orig,2000);
+  navigator.clipboard.writeText(buildTexto()).then(()=>{
+    const b=document.getElementById("btn-copiar");const o=b.textContent;b.textContent="✓ Copiado";setTimeout(()=>b.textContent=o,2000);
   });
 }
-
-function compartirWhatsApp(){
-  const txt=buildTextoResumen();
-  window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank");
-}
+function compartirWA(){window.open("https://wa.me/?text="+encodeURIComponent(buildTexto()),"_blank")}
 </script>
 </body>
 </html>
+
