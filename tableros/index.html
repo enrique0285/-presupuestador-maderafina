@@ -145,12 +145,20 @@ body.cliente .solo-int{display:none!important}
   .total-row.big{font-size:14pt!important}
   .total-row.big .val{color:#2B5C3F!important}
   .btn-row,.linea-del,.btn-modo,.tooltip-overlay,.tooltip-modal{display:none!important}
-  .entrega-wrap{display:block!important}
+  .entrega-wrap{display:none!important}
+  #entrega-wrap-int{display:block!important}
+  #entrega-wrap-cli{display:none!important}
+  body.cliente #entrega-wrap-cli{display:block!important}
   .clausulas-print{display:block!important;margin-top:24pt;border-top:1px solid #ccc;padding-top:12pt}
   .clausula-titulo{font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:8pt}
   .clausula-item{font-size:8pt;color:#555;margin-bottom:5pt;line-height:1.5}
   .clausula-item strong{color:#222}
   .solo-int{display:none!important}
+  body:not(.cliente) .solo-int{display:flex!important}
+  body:not(.cliente) .solo-int.entrega-wrap{display:block!important}
+  body:not(.cliente) #nota-wrap{display:block!important}
+  body:not(.cliente) #nota-wrap textarea{border:none!important;padding:0!important;font-size:9pt;color:#333;font-style:italic;resize:none}
+  body:not(.cliente) #nota-wrap .section-label{display:none}
 }
 @media(max-width:860px){
   .app{grid-template-columns:1fr}
@@ -1148,6 +1156,7 @@ function calcularTotales(){
     document.getElementById("t-minimo").textContent=fmt(ajusteMin)+" €";
   } else {
     rowMin.style.display="none";
+    document.getElementById("t-minimo").textContent="";
   }
   const total=sub+ajusteMin+entObj.precio+subObj.precio;
   const base=total/1.21,iva=total-base;
@@ -1262,6 +1271,7 @@ function compartirWA(){window.open("https://wa.me/?text="+encodeURIComponent(bui
 </script>
 </body>
 </html>
+
 
 
 
