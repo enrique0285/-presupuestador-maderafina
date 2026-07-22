@@ -149,6 +149,9 @@ body.cliente .solo-int{display:none!important}
   #entrega-wrap-int{display:block!important}
   #entrega-wrap-cli{display:none!important}
   body.cliente #entrega-wrap-cli{display:block!important}
+  #entrega-wrap-int select{display:none!important}
+  #entrega-wrap-int .entrega-print-txt{display:block!important}
+  #row-minimo{display:none!important}
   .clausulas-print{display:block!important;margin-top:24pt;border-top:1px solid #ccc;padding-top:12pt}
   .clausula-titulo{font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:8pt}
   .clausula-item{font-size:8pt;color:#555;margin-bottom:5pt;line-height:1.5}
@@ -400,11 +403,13 @@ body.cliente .solo-int{display:none!important}
     <div style="display:flex;gap:10px">
       <div class="field" style="flex:1">
         <label>Entrega</label>
-        <select id="sel-entrega" onchange="calcularTotales()"><option value="">Sin entrega</option></select>
+        <select id="sel-entrega" onchange="calcularTotales();actualizarTextosEntrega()"><option value="">Sin entrega</option></select>
+        <div class="entrega-print-txt" id="txt-entrega" style="display:none;font-size:13px;color:var(--text)"></div>
       </div>
       <div class="field" style="flex:1">
         <label>Subida</label>
-        <select id="sel-subida" onchange="calcularTotales()"><option value="">Sin subida</option></select>
+        <select id="sel-subida" onchange="calcularTotales();actualizarTextosEntrega()"><option value="">Sin subida</option></select>
+        <div class="entrega-print-txt" id="txt-subida" style="display:none;font-size:13px;color:var(--text)"></div>
       </div>
     </div>
   </div>
@@ -1209,8 +1214,20 @@ function actualizarTextoSubida(){
   if(txt)txt.textContent=subObj.precio>0?`${subObj.label} — ${fmt(subObj.precio)} €`:"Sin subida";
 }
 
+function actualizarTextosEntrega(){
+  const eid=document.getElementById("sel-entrega")?.value||"";
+  const sid=document.getElementById("sel-subida")?.value||"";
+  const entObj=ENTREGAS.find(e=>e.id===eid)||ENTREGAS[0];
+  const subObj=SUBIDAS.find(s=>s.id===sid)||SUBIDAS[0];
+  const tE=document.getElementById("txt-entrega");
+  const tS=document.getElementById("txt-subida");
+  if(tE)tE.textContent=entObj.precio>0?`${entObj.label} — ${fmt(entObj.precio)} €`:"Sin entrega";
+  if(tS)tS.textContent=subObj.precio>0?`${subObj.label} — ${fmt(subObj.precio)} €`:"Sin subida";
+}
+
 function imprimirPpto(){
   actualizarTextoSubida();
+  actualizarTextosEntrega();
   const sel=document.getElementById("sel-subida-cli");
   const txt=document.getElementById("subida-cli-texto");
   if(sel)sel.style.display="none";
@@ -1271,6 +1288,7 @@ function compartirWA(){window.open("https://wa.me/?text="+encodeURIComponent(bui
 </script>
 </body>
 </html>
+
 
 
 
